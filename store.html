@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/8a6b04e7c0.js" crossorigin="anonymous"></script>
+    <link rel ="stylesheet" href="style.css">
+    </head>
+<body>
+    <!-- <header>
+        <h1>Store</h1>
+    </header> -->
+
+    <div class="hero-section">
+        <button class="moon-btn" id="theme-toggle" aria-label="Toggle dark mode">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+        </button>
+        <div class="hero-content">
+            <h2 class="hero-title">SECTION-97<span class="cursor">_</span></h2>
+            <p class="hero-subtitle">Stay Metal</p>
+        </div>
+        <button class="cart-btn" aria-label="Shopping cart">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+        </button>
+        <button class="hamburger-btn" id="hamburger-toggle" aria-label="Toggle menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Category filters for desktop -->
+    <div class="filters-section">
+        <div class="filter-buttons">
+            <button class="filter-btn glass-btn" data-category="hoodies" aria-label="Filter Hoodies">
+                <i class="fas fa-hoody"></i>
+                <span>Hoodies</span>
+            </button>
+            <button class="filter-btn glass-btn" data-category="tshirts" aria-label="Filter T-Shirts">
+                <i class="fas fa-t"></i>
+                <span>T-Shirts</span>
+            </button>
+            <button class="filter-btn glass-btn" data-category="pants" aria-label="Filter Pants">
+                <i class="fas fa-person-hiking"></i>
+                <span>Pants</span>
+            </button>
+            <button class="filter-btn glass-btn" data-category="all" aria-label="Show All Products">
+                <i class="fas fa-border-all"></i>
+                <span>All</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Hamburger menu for mobile -->
+    <div class="mobile-menu" id="mobile-menu">
+        <div class="mobile-menu-content">
+            <button class="close-btn" id="close-menu">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <div class="mobile-filter-buttons">
+                <button class="filter-btn glass-btn mobile-filter" data-category="hoodies" aria-label="Filter Hoodies">
+                    <i class="fas fa-hoody"></i>
+                    <span>Hoodies</span>
+                </button>
+                <button class="filter-btn glass-btn mobile-filter" data-category="tshirts" aria-label="Filter T-Shirts">
+                    <i class="fas fa-t"></i>
+                    <span>T-Shirts</span>
+                </button>
+                <button class="filter-btn glass-btn mobile-filter" data-category="pants" aria-label="Filter Pants">
+                    <i class="fas fa-person-hiking"></i>
+                    <span>Pants</span>
+                </button>
+                <button class="filter-btn glass-btn mobile-filter" data-category="all" aria-label="Show All Products">
+                    <i class="fas fa-border-all"></i>
+                    <span>All</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+<div class="container" id="product-container">
+        
+</div>
+    
+    <footer>
+        <p>&copy; 2026. Created by METALBEARD. BIG things coming.</p>
+    </footer>
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
