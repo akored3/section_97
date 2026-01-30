@@ -27,17 +27,24 @@ A minimal, cyberpunk-inspired streetwear e-commerce store featuring premium bran
 
 new_web/
 ├── store.html              # Main store page
+
 ├── style.css               # All styling (dark/light themes)
+
 ├── js/
 │   ├── main.js            # Entry point
 │   ├── data/
+
 │   │   └── products.js    # Product data
 │   ├── components/
+
 │   │   ├── productRenderer.js  # DOM rendering
+
 │   │   └── filters.js          # Filter logic
 │   └── ui/
 │       ├── theme.js       # Theme toggle
+
 │       └── menu.js        # Mobile menu
+
 ├── images/                # Product images
 └── favicon.ico
 
