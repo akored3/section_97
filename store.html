@@ -7,7 +7,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/8a6b04e7c0.js" crossorigin="anonymous"></script>
     <link rel ="stylesheet" href="style.css">
     </head>
 <body>
@@ -41,28 +40,6 @@
         </button>
     </div>
 
-    <!-- Category filters for desktop -->
-    <div class="filters-section">
-        <div class="filter-buttons">
-            <button class="filter-btn glass-btn" data-category="hoodies" aria-label="Filter Hoodies">
-                <i class="fas fa-hoody"></i>
-                <span>Hoodies</span>
-            </button>
-            <button class="filter-btn glass-btn" data-category="tshirts" aria-label="Filter T-Shirts">
-                <i class="fas fa-t"></i>
-                <span>T-Shirts</span>
-            </button>
-            <button class="filter-btn glass-btn" data-category="pants" aria-label="Filter Pants">
-                <i class="fas fa-person-hiking"></i>
-                <span>Pants</span>
-            </button>
-            <button class="filter-btn glass-btn" data-category="all" aria-label="Show All Products">
-                <i class="fas fa-border-all"></i>
-                <span>All</span>
-            </button>
-        </div>
-    </div>
-
     <!-- Hamburger menu for mobile -->
     <div class="mobile-menu" id="mobile-menu">
         <div class="mobile-menu-content">
@@ -74,28 +51,75 @@
             </button>
             <div class="mobile-filter-buttons">
                 <button class="filter-btn glass-btn mobile-filter" data-category="hoodies" aria-label="Filter Hoodies">
-                    <i class="fas fa-hoody"></i>
+                    <img src="icons/icons8-hoodie-100.png" alt="" class="filter-icon">
                     <span>Hoodies</span>
                 </button>
                 <button class="filter-btn glass-btn mobile-filter" data-category="tshirts" aria-label="Filter T-Shirts">
-                    <i class="fas fa-t"></i>
+                    <img src="icons/icons8-tshirt-64.png" alt="" class="filter-icon">
                     <span>T-Shirts</span>
                 </button>
                 <button class="filter-btn glass-btn mobile-filter" data-category="pants" aria-label="Filter Pants">
-                    <i class="fas fa-person-hiking"></i>
+                    <img src="icons/icons8-pants-64.png" alt="" class="filter-icon">
                     <span>Pants</span>
                 </button>
+                <button class="filter-btn glass-btn mobile-filter" data-category="jackets" aria-label="Filter Jackets">
+                    <img src="icons/icons8-jacket-100.png" alt="" class="filter-icon">
+                    <span>Jackets</span>
+                </button>
+                <button class="filter-btn glass-btn mobile-filter" data-category="shoes" aria-label="Filter Shoes">
+                    <img src="icons/icons8-shoes-100.png" alt="" class="filter-icon">
+                    <span>Shoes</span>
+                </button>
+                <button class="filter-btn glass-btn mobile-filter" data-category="bags" aria-label="Filter Bags">
+                    <img src="icons/icons8-backpack-94.png" alt="" class="filter-icon">
+                    <span>Bags</span>
+                </button>
                 <button class="filter-btn glass-btn mobile-filter" data-category="all" aria-label="Show All Products">
-                    <i class="fas fa-border-all"></i>
+                    <img src="icons/icons8-select-all-64.png" alt="" class="filter-icon">
                     <span>All</span>
                 </button>
             </div>
         </div>
     </div>
 
-<div class="container" id="product-container">
-        
-</div>
+    <!-- Main content: sidebar + product grid -->
+    <div class="store-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-filters">
+                <button class="filter-btn sidebar-filter" data-category="all" aria-label="Show All Products">
+                    <img src="icons/icons8-select-all-64.png" alt="" class="filter-icon">
+                    <span>All</span>
+                </button>
+                <button class="filter-btn sidebar-filter" data-category="hoodies" aria-label="Filter Hoodies">
+                    <img src="icons/icons8-hoodie-100.png" alt="" class="filter-icon">
+                    <span>Hoodies</span>
+                </button>
+                <button class="filter-btn sidebar-filter" data-category="tshirts" aria-label="Filter T-Shirts">
+                    <img src="icons/icons8-tshirt-64.png" alt="" class="filter-icon">
+                    <span>T-Shirts</span>
+                </button>
+                <button class="filter-btn sidebar-filter" data-category="pants" aria-label="Filter Pants">
+                    <img src="icons/icons8-pants-64.png" alt="" class="filter-icon">
+                    <span>Pants</span>
+                </button>
+                <button class="filter-btn sidebar-filter" data-category="jackets" aria-label="Filter Jackets">
+                    <img src="icons/icons8-jacket-100.png" alt="" class="filter-icon">
+                    <span>Jackets</span>
+                </button>
+                <button class="filter-btn sidebar-filter" data-category="shoes" aria-label="Filter Shoes">
+                    <img src="icons/icons8-shoes-100.png" alt="" class="filter-icon">
+                    <span>Shoes</span>
+                </button>
+                <button class="filter-btn sidebar-filter" data-category="bags" aria-label="Filter Bags">
+                    <img src="icons/icons8-backpack-94.png" alt="" class="filter-icon">
+                    <span>Bags</span>
+                </button>
+            </div>
+        </aside>
+
+        <div class="container" id="product-container">
+        </div>
+    </div>
     
     <footer>
         <p>&copy; 2026. Created by METALBEARD. BIG things coming.</p>
