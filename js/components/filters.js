@@ -1,20 +1,22 @@
 // Handles product filtering logic
-import { products } from '../data/products.js';
 import { renderProducts } from './productRenderer.js';
+import { setupAddToCartButtons } from '../ui/cart.js';
 
 let currentFilter = 'all';
+let allProducts = [];
 
 export function filterProducts(category) {
     currentFilter = category;
 
     let filteredProducts;
     if (category === 'all') {
-        filteredProducts = products;
+        filteredProducts = allProducts;
     } else {
-        filteredProducts = products.filter(product => product.category === category);
+        filteredProducts = allProducts.filter(product => product.category === category);
     }
 
     renderProducts(filteredProducts);
+    setupAddToCartButtons();
     updateActiveButton(category);
     closeMobileMenu();
 }
@@ -37,7 +39,9 @@ function closeMobileMenu() {
     }
 }
 
-export function initializeFilters() {
+export function initializeFilters(products) {
+    allProducts = products;
+
     const filterButtons = document.querySelectorAll('.filter-btn');
 
     filterButtons.forEach(button => {

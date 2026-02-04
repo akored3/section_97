@@ -3,25 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Store</title>
+    <title>SECTION-97 | Premium Streetwear - Supreme, Corteiz, Balenciaga</title>
+    <meta name="description" content="Shop premium streetwear at SECTION-97. Featuring exclusive drops from Supreme, Corteiz, and Balenciaga NBA collection. Stay Metal.">
+    <meta name="keywords" content="streetwear, Supreme, Corteiz, Balenciaga, hoodies, sneakers, urban fashion">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="SECTION-97 | Premium Streetwear">
+    <meta property="og:description" content="Shop premium streetwear. Exclusive drops from Supreme, Corteiz, and Balenciaga NBA collection.">
+    <meta property="og:image" content="images/og-image.jpg">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel ="stylesheet" href="style.css">
     </head>
 <body>
-    <!-- <header>
-        <h1>Store</h1>
-    </header> -->
-
-    <div class="hero-section">
+    <header class="hero-section">
         <button class="moon-btn" id="theme-toggle" aria-label="Toggle dark mode">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
             </svg>
         </button>
         <div class="hero-content">
-            <h2 class="hero-title">SECTION-97<span class="cursor">_</span></h2>
+            <h1 class="hero-title">SECTION-97<span class="cursor">_</span></h1>
             <p class="hero-subtitle">Stay Metal</p>
         </div>
         <button class="cart-btn" aria-label="Shopping cart">
@@ -30,6 +35,7 @@
                 <circle cx="20" cy="21" r="1"></circle>
                 <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
             </svg>
+            <span class="cart-badge" id="cart-badge">0</span>
         </button>
         <button class="hamburger-btn" id="hamburger-toggle" aria-label="Toggle menu">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -38,7 +44,7 @@
                 <line x1="3" y1="18" x2="21" y2="18"></line>
             </svg>
         </button>
-    </div>
+    </header>
 
     <!-- Hamburger menu for mobile -->
     <div class="mobile-menu" id="mobile-menu">
@@ -83,9 +89,9 @@
     </div>
 
     <!-- Main content: sidebar + product grid -->
-    <div class="store-layout">
+    <main class="store-layout">
         <aside class="sidebar" id="sidebar">
-            <div class="sidebar-filters">
+            <nav class="sidebar-filters" aria-label="Product filters">
                 <button class="filter-btn sidebar-filter" data-category="all" aria-label="Show All Products">
                     <img src="icons/icons8-select-all-64.png" alt="" class="filter-icon">
                     <span>All</span>
@@ -114,13 +120,13 @@
                     <img src="icons/icons8-backpack-94.png" alt="" class="filter-icon">
                     <span>Bags</span>
                 </button>
-            </div>
+            </nav>
         </aside>
 
-        <div class="container" id="product-container">
-        </div>
-    </div>
-    
+        <section class="container" id="product-container" aria-label="Product catalog">
+        </section>
+    </main>
+
     <footer>
         <p>&copy; 2026. Created by METALBEARD. BIG things coming.</p>
     </footer>

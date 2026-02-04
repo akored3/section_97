@@ -1,85 +1,16 @@
-// Product data - will be moved to products.json later
-export const products = [
-    // ===== SUPREME =====
-    { id: 1, name: 'Red Supreme Hoodie', price: 1300, imageSrc: 'images/red_supreme_hoodie1.jpeg', category: 'hoodies' },
-    { id: 2, name: 'Black Supreme Hoodie', price: 1300, imageSrc: 'images/black_supreme_hoodie2.jpeg', category: 'hoodies' },
-    { id: 3, name: 'Blue Supreme Hoodie', price: 1300, imageSrc: 'images/blue_supreme_hoodie5.jpeg', category: 'hoodies' },
-    { id: 4, name: 'Supreme Hoodie', price: 1300, imageSrc: 'images/supreme_hoodie6.jpeg', category: 'hoodies' },
-    { id: 5, name: 'Brown Supreme Hoodie', price: 1300, imageSrc: 'images/brown_supreme_hoodie8.jpeg', category: 'hoodies' },
-    { id: 6, name: 'Blue Supreme Hoodie', price: 1300, imageSrc: 'images/blue_supreme_hoodie13.jpeg', category: 'hoodies' },
-    { id: 7, name: 'Supreme Triple Hoodie', price: 1100, imageSrc: 'images/supreme_triple_hoodie10.jpeg', category: 'hoodies' },
-    { id: 8, name: 'Black Supreme Jacket', price: 1800, imageSrc: 'images/black_supreme_jacket3.jpeg', category: 'hoodies' },
-    { id: 9, name: 'Supreme Skull Shirt', price: 900, imageSrc: 'images/supreme_skull_shirt4.jpeg', category: 'tshirts' },
-    { id: 10, name: 'Brown Supreme Shirt', price: 900, imageSrc: 'images/brown_supreme_shirt7.jpeg', category: 'tshirts' },
-    { id: 11, name: 'Supreme Triple Shirts', price: 1100, imageSrc: 'images/supreme_triple_shirts9.jpeg', category: 'tshirts' },
-    { id: 12, name: 'Red Supreme Shirt', price: 900, imageSrc: 'images/red_supreme_shirt_front_38.jpeg', category: 'tshirts' },
-    { id: 13, name: 'Green Supreme Shirt', price: 900, imageSrc: 'images/green_supreme_shirt_front39.jpeg', category: 'tshirts' },
-    { id: 14, name: 'Black Supreme Shirt', price: 900, imageSrc: 'images/black_supreme_shirt_front40.jpeg', category: 'tshirts' },
-    { id: 15, name: 'Black Supreme Pants', price: 1400, imageSrc: 'images/black_supreme_pants1.jpeg', category: 'pants' },
-    { id: 16, name: 'Supreme Shorts', price: 1000, imageSrc: 'images/supreme_shorts11.jpeg', category: 'pants' },
-    { id: 17, name: 'Supreme Board', price: 1400, imageSrc: 'images/supreme_board12.jpeg', category: 'other' },
-    { id: 18, name: 'Supreme Caps', price: 550, imageSrc: 'images/supreme_caps1.jpeg', category: 'other' },
+// Fetches product data from JSON file
+export async function fetchProducts() {
+    try {
+        const response = await fetch('./js/data/products.json');
 
-    // ===== CORTEIZ =====
-    { id: 19, name: 'Green Corteiz Hoodie', price: 1200, imageSrc: 'images/green_corteiz_hoodie16.jpeg', category: 'hoodies' },
-    { id: 20, name: 'White Corteiz Hoodie', price: 1200, imageSrc: 'images/white_corteiz_hoodie17.jpeg', category: 'hoodies' },
-    { id: 21, name: 'White Corteiz Hoodie', price: 1200, imageSrc: 'images/white_corteiz_hoodie22.jpeg', category: 'hoodies' },
-    { id: 22, name: 'Black Corteiz Hoodie', price: 1200, imageSrc: 'images/black_corteiz_hoodie24.jpeg', category: 'hoodies' },
-    { id: 23, name: 'Black Corteiz Jacket', price: 2200, imageSrc: 'images/black_corteiz_jacket23.jpeg', category: 'hoodies' },
-    { id: 24, name: 'Corteiz Denim Jacket', price: 2200, imageSrc: 'images/corteiz_denim_jacket19.jpeg', category: 'hoodies' },
-    { id: 25, name: 'White Corteiz Shirt', price: 900, imageSrc: 'images/white_corteiz_shirt20.jpeg', category: 'tshirts' },
-    { id: 26, name: 'Green Corteiz Pants', price: 1500, imageSrc: 'images/green_corteiz_pants14.jpeg', category: 'pants' },
-    { id: 27, name: 'Corteiz Denim Pants', price: 1500, imageSrc: 'images/corteiz_denim_pants15.jpeg', category: 'pants' },
-    { id: 28, name: 'White Corteiz Pants', price: 1300, imageSrc: 'images/white_corteiz_pants18.jpeg', category: 'pants' },
-    { id: 29, name: 'Black Corteiz Pants', price: 1300, imageSrc: 'images/black_corteiz_pants21.jpeg', category: 'pants' },
+        if (!response.ok) {
+            throw new Error(`Failed to load products: ${response.status}`);
+        }
 
-    // ===== BALENCIAGA x NBA =====
-    { id: 30, name: 'Black Balenciaga NBA Jersey', price: 1500, imageSrc: 'images/black_balenciaga_nba_jersey25.jpeg', category: 'tshirts' },
-    { id: 31, name: 'Black Balenciaga NBA Shoe', price: 1800, imageSrc: 'images/black_balenciaga_nba_shoe26.jpeg', category: 'shoes' },
-    { id: 32, name: 'Red Balenciaga NBA Jacket', price: 2500, imageSrc: 'images/red_balenciaga_nba_jacket27.jpeg', category: 'jackets' },
-    { id: 33, name: 'White Balenciaga NBA Jacket', price: 2500, imageSrc: 'images/white_balenciaga_nba_jacket28.jpeg', category: 'jackets' },
-    { id: 34, name: 'Balenciaga NBA Slides', price: 800, imageSrc: 'images/balenciaga_nba_slides_shoe29.jpeg', category: 'shoes' },
-    { id: 35, name: 'Balenciaga NBA Backpack', price: 2000, imageSrc: 'images/balenciaga_nba_backpack30.jpeg', category: 'bags' },
-    { id: 36, name: 'Blue Balenciaga NBA Shirt', price: 1500, imageSrc: 'images/blue_balenciaga_nba_shirt31.jpeg', category: 'tshirts' },
-    { id: 37, name: 'Balenciaga NBA Jacket', price: 2500, imageSrc: 'images/balenciaga_nba_jacket_32.jpeg', category: 'jackets' },
-
-    // ===== STUSSY =====
-    { id: 38, name: 'Green Stussy Hoodie', price: 1100, imageSrc: 'images/green_stussy_hoodie33.jpeg', category: 'hoodies' },
-    { id: 39, name: 'Black Stussy Hoodie', price: 1100, imageSrc: 'images/black_stussy_hoodie34.jpeg', category: 'hoodies' },
-    { id: 40, name: 'Black & Blue Stussy Sweatshirt', price: 1000, imageSrc: 'images/black_and_blue_stussy_sweatshirt35.jpeg', category: 'hoodies' },
-    { id: 41, name: 'Brown Stussy Sweatshirt', price: 1000, imageSrc: 'images/brown_stussy_sweatshirt37.jpeg', category: 'hoodies' },
-    { id: 42, name: 'Brown Stussy Pants', price: 1200, imageSrc: 'images/brown_stussy_pants36.jpeg', category: 'pants' },
-
-    // ===== NIKE =====
-    { id: 43, name: 'Green Nike Shirt', price: 800, imageSrc: 'images/green_nike_shirt41.jpeg', category: 'tshirts' },
-    { id: 44, name: 'Black Nike Shirt', price: 800, imageSrc: 'images/black_nike_shirt42.jpeg', category: 'tshirts' },
-    { id: 45, name: 'White Nike Shirt', price: 800, imageSrc: 'images/white_nike_shirt42.jpeg', category: 'tshirts' },
-
-    // ===== NIKE x CARHARTT =====
-    { id: 46, name: 'Grey Nike x Carhartt Jacket', price: 1600, imageSrc: 'images/grey_nikeXcarhatt_front43.jpeg', category: 'hoodies' },
-
-    // ===== AIMÉ LEON DORE =====
-    { id: 47, name: 'Brown Aimé Leon Dore Sweatshirt', price: 1400, imageSrc: 'images/brown_aimeleonedon_sweatshirt44.jpeg', category: 'jackets' },
-    { id: 48, name: 'Aimé Leon Dore Pants', price: 1300, imageSrc: 'images/aimeleonedon_pants48.jpeg', category: 'pants' },
-
-    // ===== YARD SALE =====
-    { id: 49, name: 'Yard Sale Vest', price: 900, imageSrc: 'images/yard_sale_vest45.jpeg', category: 'hoodies' },
-    { id: 50, name: 'White Yard Sale Hoodie', price: 1000, imageSrc: 'images/white_yardsale_hoodie46.jpeg', category: 'hoodies' },
-    { id: 51, name: 'Black Yard Sale Hoodie', price: 1000, imageSrc: 'images/black_yardsale_hoodie47.jpeg', category: 'hoodies' },
-    { id: 52, name: 'Checkered Yard Sale Hoodie', price: 1100, imageSrc: 'images/checkered_yardsale_hooodie51.jpeg', category: 'hoodies' },
-    { id: 53, name: 'Blue Denim Yard Sale Hoodie', price: 1100, imageSrc: 'images/blue_denim_yardsale_hoodie54.jpeg', category: 'hoodies' },
-    { id: 54, name: 'Purple Yard Sale Hoodie', price: 1000, imageSrc: 'images/purple_yardsale_hoodie55.jpeg', category: 'hoodies' },
-    { id: 55, name: 'Beige Yard Sale Hoodie', price: 1000, imageSrc: 'images/beige_yardsale_hoodie56.jpeg', category: 'hoodies' },
-    { id: 56, name: 'Purple Yard Sale Hoodie', price: 1000, imageSrc: 'images/purple_yardsale_hoodie58.jpeg', category: 'hoodies' },
-    { id: 57, name: 'Checkered Yard Sale Hoodie', price: 1100, imageSrc: 'images/checkered_yardsale_hoodie63.jpeg', category: 'hoodies' },
-    { id: 58, name: 'Blue Yard Sale Hoodie', price: 1000, imageSrc: 'images/blue_yardsale_hoodie64.jpeg', category: 'hoodies' },
-    { id: 59, name: 'Yard Sale Shirt', price: 750, imageSrc: 'images/yardsale_shirt49.jpeg', category: 'tshirts' },
-    { id: 60, name: 'Red Yard Sale Shirt', price: 750, imageSrc: 'images/red_yardsale_shirt52.jpeg', category: 'tshirts' },
-    { id: 61, name: 'Black Yard Sale Shirt', price: 750, imageSrc: 'images/black_yardsale_shirt53.jpeg', category: 'tshirts' },
-    { id: 62, name: 'White Yard Sale Shirt', price: 750, imageSrc: 'images/white_yardsale_shirt59.jpeg', category: 'tshirts' },
-    { id: 63, name: 'Black Yard Sale Shirt', price: 750, imageSrc: 'images/black_yardsale_shirt60.jpeg', category: 'tshirts' },
-    { id: 64, name: 'Grey Yard Sale Shirt', price: 750, imageSrc: 'images/grey_yardsale_shirt61.jpeg', category: 'tshirts' },
-    { id: 65, name: 'Black Yard Sale Shirt', price: 750, imageSrc: 'images/black_yardsale_shirt62.jpeg', category: 'tshirts' },
-    { id: 66, name: 'Yard Sale Bag', price: 600, imageSrc: 'images/yardsale_bag50.jpeg', category: 'bags' },
-    { id: 67, name: 'Brown Yard Sale Cargo Pants', price: 1100, imageSrc: 'images/brown_yardsale_cargo_pants57.jpeg', category: 'pants' },
-];
+        const products = await response.json();
+        return products;
+    } catch (error) {
+        console.error('Error fetching products:', error);
+        return [];
+    }
+}
