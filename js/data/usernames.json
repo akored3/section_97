@@ -1,0 +1,41 @@
+{
+  "description": "Word pools for auto-generating usernames at signup",
+  "format": "[firstWord][secondWord] e.g. NeonViper, GhostRider",
+  "totalCombinations": 22500,
+
+  "firstWords": [
+    "Shadow", "Ghost", "Neon", "Cyber", "Void", "Frost", "Iron", "Dark", "Crimson", "Silent",
+    "Rogue", "Savage", "Velvet", "Phantom", "Steel", "Midnight", "Electric", "Toxic", "Frozen", "Hollow",
+    "Chrome", "Obsidian", "Scarlet", "Ashen", "Golden", "Silver", "Onyx", "Emerald", "Violet", "Azure",
+    "Rapid", "Swift", "Blazing", "Cold", "Brutal", "Vicious", "Feral", "Wild", "Primal", "Raw",
+    "Urban", "Street", "Concrete", "Gutter", "Alley", "Metro", "Underground", "Downtown", "Uptown", "Central",
+    "Quantum", "Digital", "Binary", "Analog", "Static", "Glitch", "Pixel", "Vector", "Hyper", "Ultra",
+    "Lone", "Solo", "Lost", "Fallen", "Broken", "Shattered", "Cracked", "Torn", "Bent", "Twisted",
+    "Noble", "Royal", "Ancient", "Elder", "Prime", "Alpha", "Apex", "Omega", "Delta", "Zero",
+    "Lazy", "Hazy", "Crazy", "Dizzy", "Fuzzy", "Rusty", "Dusty", "Misty", "Crispy", "Spicy",
+    "Slick", "Sick", "Quick", "Thick", "Brick", "Trick", "Click", "Flick", "Stick", "Kick",
+    "Lucky", "Plucky", "Gritty", "Witty", "Pretty", "Petty", "Heavy", "Ready", "Steady", "Deadly",
+    "Cosmic", "Atomic", "Sonic", "Chronic", "Iconic", "Ironic", "Bionic", "Demonic", "Harmonic", "Tectonic",
+    "Drip", "Hype", "Fresh", "Clean", "Mean", "Keen", "Lean", "Green", "Scene", "Dream",
+    "Rare", "Bare", "Fair", "Square", "Spare", "Glare", "Stare", "Flare", "Scare", "Snare",
+    "Bright", "Light", "Night", "Tight", "Right", "Flight", "Slight", "Knight", "Might", "Sight"
+  ],
+
+  "secondWords": [
+    "Wolf", "Viper", "Hawk", "Panther", "Cobra", "Raven", "Tiger", "Dragon", "Serpent", "Phoenix",
+    "Blade", "Fang", "Claw", "Edge", "Spike", "Thorn", "Dagger", "Saber", "Katana", "Rapier",
+    "Storm", "Thunder", "Blaze", "Flame", "Frost", "Ember", "Spark", "Flash", "Bolt", "Surge",
+    "Rider", "Walker", "Runner", "Hunter", "Stalker", "Seeker", "Drifter", "Wanderer", "Ranger", "Striker",
+    "Rebel", "Outlaw", "Bandit", "Thief", "Rogue", "Vandal", "Raider", "Pirate", "Maverick", "Nomad",
+    "Ghost", "Phantom", "Specter", "Wraith", "Shade", "Spirit", "Soul", "Reaper", "Demon", "Angel",
+    "Pulse", "Wave", "Flow", "Drift", "Shift", "Glide", "Slide", "Sweep", "Rush", "Dash",
+    "Crown", "Throne", "Scepter", "Shield", "Armor", "Helm", "Gauntlet", "Fortress", "Castle", "Tower",
+    "Venom", "Toxin", "Plague", "Virus", "Acid", "Poison", "Hazard", "Threat", "Menace", "Doom",
+    "Cipher", "Code", "Data", "Signal", "Proxy", "Node", "Grid", "Core", "Link", "Sync",
+    "Saint", "Sinner", "Prophet", "Priest", "Bishop", "Pope", "King", "Queen", "Prince", "Duke",
+    "Street", "Block", "Corner", "Avenue", "Lane", "Road", "Path", "Trail", "Track", "Route",
+    "Hound", "Jackal", "Hyena", "Fox", "Lynx", "Bear", "Lion", "Leopard", "Jaguar", "Cheetah",
+    "Skull", "Bone", "Spine", "Rib", "Knuckle", "Fist", "Palm", "Grip", "Clutch", "Grasp",
+    "Sky", "Cloud", "Star", "Moon", "Sun", "Comet", "Meteor", "Nova", "Nebula", "Void"
+  ]
+}
