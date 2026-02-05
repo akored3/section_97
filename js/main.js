@@ -10,43 +10,73 @@ import { getCurrentUser, onAuthStateChange, signOut } from './auth/auth.js';
 // Track if user is logged in
 let isLoggedIn = false;
 
-// Update auth button based on login state
+// Update auth button based on login state (desktop + mobile)
 async function updateAuthButton() {
     const authText = document.getElementById('auth-text');
     const authBtn = document.getElementById('auth-btn');
-
-    if (!authText || !authBtn) return;
+    const mobileLoginBtn = document.getElementById('mobile-login-btn');
+    const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
 
     const user = await getCurrentUser();
     isLoggedIn = !!user;
 
-    if (user) {
-        authText.textContent = user.username || 'Account';
-        authBtn.title = `Logged in as ${user.username}`;
-    } else {
-        authText.textContent = 'Login';
-        authBtn.title = 'Login or Sign up';
+    // Desktop auth button
+    if (authText && authBtn) {
+        if (user) {
+            authText.textContent = user.username || 'Account';
+            authBtn.title = `Logged in as ${user.username}`;
+        } else {
+            authText.textContent = 'Login';
+            authBtn.title = 'Login or Sign up';
+        }
+    }
+
+    // Mobile auth section
+    const mobileUserInfo = document.getElementById('mobile-user-info');
+    const mobileUsername = document.getElementById('mobile-username');
+
+    if (mobileLoginBtn && mobileLogoutBtn) {
+        if (user) {
+            mobileLoginBtn.style.display = 'none';
+            if (mobileUserInfo) mobileUserInfo.style.display = 'flex';
+            if (mobileUsername) mobileUsername.textContent = user.username || 'Account';
+            mobileLogoutBtn.style.display = 'flex';
+        } else {
+            mobileLoginBtn.style.display = 'flex';
+            if (mobileUserInfo) mobileUserInfo.style.display = 'none';
+            mobileLogoutBtn.style.display = 'none';
+        }
     }
 }
 
-// Initialize auth dropdown behavior
+// Initialize auth dropdown behavior (desktop + mobile)
 function initializeAuthDropdown() {
     const authBtn = document.getElementById('auth-btn');
     const dropdown = document.getElementById('auth-dropdown');
     const logoutBtn = document.getElementById('logout-btn');
+    const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
 
-    if (!authBtn || !dropdown) return;
+    // Desktop dropdown
+    if (authBtn && dropdown) {
+        // Toggle dropdown on click (if logged in) or redirect (if not)
+        authBtn.addEventListener('click', () => {
+            if (isLoggedIn) {
+                dropdown.classList.toggle('active');
+            } else {
+                window.location.href = 'auth.html';
+            }
+        });
 
-    // Toggle dropdown on click (if logged in) or redirect (if not)
-    authBtn.addEventListener('click', () => {
-        if (isLoggedIn) {
-            dropdown.classList.toggle('active');
-        } else {
-            window.location.href = 'auth.html';
-        }
-    });
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.auth-wrapper')) {
+                dropdown.classList.remove('active');
+            }
+        });
+    }
 
-    // Handle logout
+    // Desktop logout handler
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async () => {
             const result = await signOut();
@@ -58,12 +88,17 @@ function initializeAuthDropdown() {
         });
     }
 
-    // Close dropdown when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.auth-wrapper')) {
-            dropdown.classList.remove('active');
-        }
-    });
+    // Mobile logout handler
+    if (mobileLogoutBtn) {
+        mobileLogoutBtn.addEventListener('click', async () => {
+            const result = await signOut();
+            if (result.success) {
+                if (mobileMenu) mobileMenu.classList.remove('active');
+                await handleAuthChange(null);
+                updateAuthButton();
+            }
+        });
+    }
 }
 
 // Initialize everything when DOM is ready

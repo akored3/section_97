@@ -74,6 +74,31 @@
                     <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>
             </button>
+            <!-- Mobile Auth Section -->
+            <div class="mobile-auth-section" id="mobile-auth-section">
+                <a href="auth.html" class="mobile-auth-btn" id="mobile-login-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>Login / Sign up</span>
+                </a>
+                <div class="mobile-user-info" id="mobile-user-info" style="display: none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span id="mobile-username">Account</span>
+                </div>
+                <button class="mobile-logout-btn" id="mobile-logout-btn" style="display: none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    Log out
+                </button>
+            </div>
             <div class="mobile-filter-buttons">
                 <button class="filter-btn glass-btn mobile-filter" data-category="hoodies" aria-label="Filter Hoodies">
                     <img src="icons/icons8-hoodie-100.png" alt="" class="filter-icon">
@@ -147,7 +172,18 @@
     </main>
 
     <footer>
-        <p>&copy; 2026. Created by METALBEARD. BIG things coming.</p>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <span class="footer-logo">SECTION-97</span>
+                <span class="footer-tagline">STAY METAL_</span>
+            </div>
+            <div class="footer-links">
+                <a href="#" class="footer-link">INSTAGRAM</a>
+                <a href="#" class="footer-link">TWITTER</a>
+                <a href="#" class="footer-link">DISCORD</a>
+            </div>
+            <p class="footer-copy">&copy; 2026 METALBEARD. Stay tuned, big things coming.</p>
+        </div>
     </footer>
 
     <!-- Cart Drawer -->
