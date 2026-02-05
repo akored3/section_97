@@ -24,6 +24,8 @@ function loadLocalCart() {
         } catch (e) {
             cart = [];
         }
+    } else {
+        cart = [];
     }
 }
 

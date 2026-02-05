@@ -4,7 +4,7 @@ import { renderProducts, showSkeletons } from './components/productRenderer.js';
 import { initializeFilters } from './components/filters.js';
 import { initializeTheme } from './ui/theme.js';
 import { initializeMenu } from './ui/menu.js';
-import { initializeCart, setupAddToCartButtons, openCartDrawer, setupCartDrawer } from './ui/cart.js';
+import { initializeCart, setupAddToCartButtons, openCartDrawer, setupCartDrawer, handleAuthChange } from './ui/cart.js';
 import { getCurrentUser, onAuthStateChange, signOut } from './auth/auth.js';
 
 // Track if user is logged in
@@ -52,6 +52,7 @@ function initializeAuthDropdown() {
             const result = await signOut();
             if (result.success) {
                 dropdown.classList.remove('active');
+                await handleAuthChange(null);
                 updateAuthButton();
             }
         });
