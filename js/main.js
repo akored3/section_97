@@ -1,7 +1,7 @@
 // Main entry point - coordinates all modules
 import { fetchProducts } from './data/products.js';
 import { renderProducts, showSkeletons } from './components/productRenderer.js';
-import { initializeFilters } from './components/filters.js';
+import { initializeFilters, initializeSearch } from './components/filters.js';
 import { initializeTheme } from './ui/theme.js';
 import { initializeMenu } from './ui/menu.js';
 import { initializeCart, setupAddToCartButtons, openCartDrawer, setupCartDrawer, handleAuthChange } from './ui/cart.js';
@@ -136,6 +136,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Initialize all components
     initializeFilters(products);
+    initializeSearch();
     initializeTheme();
     initializeMenu();
 
