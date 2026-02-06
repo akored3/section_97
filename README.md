@@ -15,6 +15,8 @@ A cyberpunk-inspired streetwear e-commerce store featuring premium brands like S
 - **Fully Responsive** — Mobile-first design with hamburger menu and full-width cart drawer on small screens
 - **Glassmorphism UI** — Modern glass-effect cards, buttons, and overlays
 - **Modular Architecture** — Clean ES6 module structure with single-responsibility files
+- **Security Hardened** — XSS escaping, Content Security Policy, Subresource Integrity on CDN scripts
+- **Resilient Cart** — Price calculations with parseFloat, pulse feedback animations, Escape-to-close
 
 ## Tech Stack
 
@@ -162,6 +164,13 @@ The cart drawer slides in from the right with a liquid glass effect (backdrop-fi
 - **Colors:** Dark backgrounds with vibrant neon green accents
 - **UI:** Glassmorphism, liquid glass effects, smooth animations, minimal clutter
 
+## Security
+
+- **XSS Prevention** — All dynamic data is escaped via `escapeHtml()` before insertion into `innerHTML`
+- **Content Security Policy** — `<meta>` CSP tags on both pages restrict script sources, API connections, and frame embedding
+- **Subresource Integrity** — Supabase CDN script pinned to v2.95.2 with SHA-384 integrity hash
+- **Row Level Security** — Supabase RLS policies ensure users can only access their own cart data
+
 ## Roadmap
 
 - [x] Product grid with filtering
@@ -173,9 +182,11 @@ The cart drawer slides in from the right with a liquid glass effect (backdrop-fi
 - [x] Cart drawer with liquid glass effect
 - [x] Skeleton loading states
 - [x] SEO meta tags
+- [x] Search functionality
+- [x] Security hardening (XSS, CSP, SRI)
+- [x] Cart UX improvements (feedback, keyboard shortcuts, price fixes)
 - [ ] Product detail pages
 - [ ] Checkout flow
-- [ ] Search functionality
 - [ ] Product image gallery/zoom
 - [ ] Order history
 
