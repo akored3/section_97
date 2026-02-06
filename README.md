@@ -10,7 +10,7 @@ A cyberpunk-inspired streetwear e-commerce store featuring premium brands like S
 - **Product Filtering** — Filter by hoodies, t-shirts, pants, jackets, or view all
 - **Shopping Cart** — Hybrid Supabase + localStorage persistence with slide-out drawer
 - **Liquid Glass Cart Drawer** — Glassmorphism slide-from-right drawer that adapts to dark/light themes
-- **Authentication** — Signup with auto-generated usernames, login, logout via Supabase Auth
+- **Authentication** — Signup with auto-generated usernames, login, logout via Supabase Auth with immersive cyberpunk auth page featuring dual dynamic backgrounds, parallax effects, animated gradient borders, film grain, and floating particles
 - **Skeleton Loading** — Immediate loading indicators appear on page load for better perceived performance
 - **Lazy Loading Images** — Progressive image loading with IntersectionObserver reduces initial page load by ~70%
 - **Fully Responsive** — Mobile-first design with hamburger menu and full-width cart drawer on small screens
@@ -188,6 +188,7 @@ The cart drawer slides in from the right with a liquid glass effect (backdrop-fi
 - [x] Cart UX improvements (feedback, keyboard shortcuts, price fixes)
 - [x] Perceived performance optimization (instant skeleton loading)
 - [x] Lazy loading images with IntersectionObserver
+- [x] Cyberpunk auth page enhancement (dual backgrounds, parallax, particles, animated borders)
 - [ ] Product detail pages
 - [ ] Checkout flow
 - [ ] Product image gallery/zoom
