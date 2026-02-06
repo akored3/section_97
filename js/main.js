@@ -6,6 +6,7 @@ import { initializeTheme } from './ui/theme.js';
 import { initializeMenu } from './ui/menu.js';
 import { initializeCart, setupAddToCartButtons, openCartDrawer, setupCartDrawer, handleAuthChange } from './ui/cart.js';
 import { getCurrentUser, onAuthStateChange, signOut } from './auth/auth.js';
+import { initializeLazyLoading } from './ui/lazyLoad.js';
 
 // Track if user is logged in
 let isLoggedIn = false;
@@ -130,6 +131,9 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Replace skeletons with real products
     renderProducts(products);
+
+    // Initialize lazy loading for product images
+    initializeLazyLoading();
 
     // Set up cart buttons after products render
     setupAddToCartButtons();

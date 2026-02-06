@@ -11,23 +11,21 @@ export function showSkeletons(count = 8) {
     const productContainer = document.getElementById("product-container");
     if (!productContainer) return;
 
-    let html = "";
-    for (let i = 0; i < count; i++) {
-        html += `
-            <div class="product-card skeleton-card">
-                <div class="product-image skeleton-image"></div>
-                <div class="product-footer">
-                    <div class="product-info">
-                        <div class="skeleton-title"></div>
-                        <div class="skeleton-price"></div>
-                    </div>
-                    <div class="product-actions">
-                        <div class="skeleton-button"></div>
-                    </div>
+    const html = Array.from({ length: count }, () => `
+        <div class="product-card skeleton-card">
+            <div class="product-image skeleton-image"></div>
+            <div class="product-footer">
+                <div class="product-info">
+                    <div class="skeleton-title"></div>
+                    <div class="skeleton-price"></div>
+                </div>
+                <div class="product-actions">
+                    <div class="skeleton-button"></div>
                 </div>
             </div>
-        `;
-    }
+        </div>
+    `).join('');
+
     productContainer.innerHTML = html;
 }
 
@@ -39,10 +37,7 @@ export function renderProducts(productsToRender) {
         return;
     }
 
-    let html = "";
-
-    for (let i = 0; i < productsToRender.length; i++) {
-        const product = productsToRender[i];
+    const html = productsToRender.map((product, index) => {
         const hasBackImage = product.imageBack && product.imageBack !== null;
 
         const safeName = escapeHtml(product.name);
@@ -52,11 +47,18 @@ export function renderProducts(productsToRender) {
         const safeBack = hasBackImage ? escapeHtml(product.imageBack) : '';
         const formattedPrice = Number(product.price).toLocaleString();
 
-        html += `
+        // First 6 products load immediately (above the fold), rest are lazy loaded
+        const isAboveFold = index < 6;
+        const imgClass = isAboveFold ? 'product loaded' : 'product lazy-load';
+        const imgSrc = isAboveFold ? safeImage : 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"%3E%3C/svg%3E';
+        const dataSrc = isAboveFold ? '' : `data-src="${safeImage}"`;
+
+        return `
             <div class="product-card">
                 <div class="product-image ${hasBackImage ? 'has-gallery' : ''}">
-                    <img src="${safeImage}"
-                         class="product"
+                    <img src="${imgSrc}"
+                         ${dataSrc}
+                         class="${imgClass}"
                          alt="${safeName}"
                          loading="lazy"
                          data-front="${safeImage}"
@@ -102,7 +104,7 @@ export function renderProducts(productsToRender) {
                 </div>
             </div>
         `;
-    }
+    }).join('');
 
     productContainer.innerHTML = html;
 

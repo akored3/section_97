@@ -1,6 +1,7 @@
 // Handles product filtering and search logic
 import { renderProducts } from './productRenderer.js';
 import { setupAddToCartButtons } from '../ui/cart.js';
+import { initializeLazyLoading } from '../ui/lazyLoad.js';
 
 let currentFilter = 'all';
 let currentSearchTerm = '';
@@ -30,6 +31,7 @@ function applyFilters() {
         renderNoResults();
     } else {
         renderProducts(filteredProducts);
+        initializeLazyLoading(); // Re-observe images after re-render
         setupAddToCartButtons();
     }
 }
