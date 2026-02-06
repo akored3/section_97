@@ -1,5 +1,6 @@
 // Shopping cart with Supabase + localStorage hybrid
 import { supabase } from '../config/supabase.js';
+import { escapeHtml } from '../components/productRenderer.js';
 
 let cart = [];
 let currentUserId = null;
@@ -201,7 +202,20 @@ function showAddedFeedback() {
     const badge = document.getElementById('cart-badge');
     if (badge) {
         badge.classList.add('pulse');
-        setTimeout(() => badge.classList.remove('pulse'), 300);
+        setTimeout(() => badge.classList.remove('pulse'), 600);
+    }
+
+    // Brief button text change on the most recently clicked add-to-cart button
+    const activeBtn = document.activeElement?.closest('.add-to-cart-btn') ||
+                      document.querySelector('.add-to-cart-btn:focus');
+    if (activeBtn) {
+        const originalHTML = activeBtn.innerHTML;
+        activeBtn.innerHTML = '<span style="font-size:0.75rem;">ADDED!</span>';
+        activeBtn.disabled = true;
+        setTimeout(() => {
+            activeBtn.innerHTML = originalHTML;
+            activeBtn.disabled = false;
+        }, 1000);
     }
 }
 
@@ -278,7 +292,7 @@ export function getCart() {
 // Get cart total
 export function getCartTotal() {
     return cart.reduce((sum, item) => {
-        return sum + (parseInt(item.price) * (item.quantity || 1));
+        return sum + (parseFloat(item.price) * (item.quantity || 1));
     }, 0);
 }
 
@@ -422,23 +436,28 @@ function renderCartDrawer() {
 
     if (footer) footer.style.display = 'block';
 
-    itemsContainer.innerHTML = cart.map(item => `
-        <div class="cart-drawer-item" data-id="${item.id}">
-            <img class="cart-drawer-item-img" src="${item.image}" alt="${item.name}">
+    itemsContainer.innerHTML = cart.map(item => {
+        const safeId = escapeHtml(item.id);
+        const safeName = escapeHtml(item.name);
+        const safeImage = escapeHtml(item.image);
+        const formattedPrice = parseFloat(item.price).toLocaleString();
+        return `
+        <div class="cart-drawer-item" data-id="${safeId}">
+            <img class="cart-drawer-item-img" src="${safeImage}" alt="${safeName}">
             <div class="cart-drawer-item-details">
-                <span class="cart-drawer-item-name">${item.name}</span>
-                <span class="cart-drawer-item-price">$${parseInt(item.price).toLocaleString()}</span>
+                <span class="cart-drawer-item-name">${safeName}</span>
+                <span class="cart-drawer-item-price">$${formattedPrice}</span>
                 <div class="cart-drawer-item-actions">
                     <div class="cart-drawer-qty">
-                        <button class="cart-qty-minus" data-id="${item.id}">-</button>
+                        <button class="cart-qty-minus" data-id="${safeId}">-</button>
                         <span>${item.quantity || 1}</span>
-                        <button class="cart-qty-plus" data-id="${item.id}">+</button>
+                        <button class="cart-qty-plus" data-id="${safeId}">+</button>
                     </div>
-                    <button class="cart-drawer-remove" data-id="${item.id}">Remove</button>
+                    <button class="cart-drawer-remove" data-id="${safeId}">Remove</button>
                 </div>
             </div>
-        </div>
-    `).join('');
+        </div>`;
+    }).join('');
 
     if (totalEl) {
         totalEl.textContent = `$${getCartTotal().toLocaleString()}`;
@@ -495,7 +514,26 @@ export function closeCartDrawer() {
 export function setupCartDrawer() {
     const closeBtn = document.getElementById('cart-drawer-close');
     const overlay = document.getElementById('cart-overlay');
+    const checkoutBtn = document.querySelector('.cart-drawer-checkout');
 
     if (closeBtn) closeBtn.addEventListener('click', closeCartDrawer);
     if (overlay) overlay.addEventListener('click', closeCartDrawer);
+
+    // Close cart drawer on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            const drawer = document.getElementById('cart-drawer');
+            if (drawer?.classList.contains('active')) {
+                closeCartDrawer();
+            }
+        }
+    });
+
+    // Checkout placeholder
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', () => {
+            checkoutBtn.textContent = 'COMING SOON';
+            setTimeout(() => { checkoutBtn.textContent = 'CHECKOUT'; }, 2000);
+        });
+    }
 }

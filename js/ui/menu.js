@@ -5,23 +5,35 @@ export function initializeMenu() {
     const mobileMenu = document.getElementById('mobile-menu');
     const closeMenuBtn = document.getElementById('close-menu');
 
+    function openMenu() {
+        mobileMenu.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeMenu() {
+        mobileMenu.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
     if (hamburgerToggle && mobileMenu) {
         hamburgerToggle.addEventListener('click', function() {
-            mobileMenu.classList.toggle('active');
+            if (mobileMenu.classList.contains('active')) {
+                closeMenu();
+            } else {
+                openMenu();
+            }
         });
     }
 
     if (closeMenuBtn && mobileMenu) {
-        closeMenuBtn.addEventListener('click', function() {
-            mobileMenu.classList.remove('active');
-        });
+        closeMenuBtn.addEventListener('click', closeMenu);
     }
 
     // Close menu when clicking outside
     if (mobileMenu) {
         mobileMenu.addEventListener('click', function(e) {
             if (e.target === mobileMenu) {
-                mobileMenu.classList.remove('active');
+                closeMenu();
             }
         });
     }

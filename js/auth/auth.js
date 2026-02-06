@@ -151,23 +151,28 @@ export async function signOut() {
 
 // Get current user
 export async function getCurrentUser() {
-    const { data: { user } } = await supabase.auth.getUser();
+    try {
+        const { data: { user } } = await supabase.auth.getUser();
 
-    if (!user) return null;
+        if (!user) return null;
 
-    // Get their profile
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select('username, avatar_url')
-        .eq('id', user.id)
-        .single();
+        // Get their profile
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('username, avatar_url')
+            .eq('id', user.id)
+            .single();
 
-    return {
-        id: user.id,
-        email: user.email,
-        username: profile?.username,
-        avatar: profile?.avatar_url
-    };
+        return {
+            id: user.id,
+            email: user.email,
+            username: profile?.username,
+            avatar: profile?.avatar_url
+        };
+    } catch (e) {
+        console.warn('Failed to get current user:', e);
+        return null;
+    }
 }
 
 // Listen for auth state changes

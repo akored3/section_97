@@ -32,7 +32,7 @@ export function initializeTheme() {
     if (!themeToggle) return;
 
     // Check for saved theme or default to light
-    const currentTheme = localStorage.getItem('theme') || 'light';
+    const currentTheme = localStorage.getItem('theme') || 'dark';
     document.documentElement.setAttribute('data-theme', currentTheme);
     updateThemeIcon(currentTheme);
 

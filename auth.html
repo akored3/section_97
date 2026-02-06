@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co; img-src 'self' data: https:; frame-ancestors 'none';">
     <link rel="stylesheet" href="style.css">
 
     <style>
@@ -280,7 +281,7 @@
 <body>
     <script>
         // Apply saved theme immediately to prevent flash
-        const savedTheme = localStorage.getItem('theme') || 'light';
+        const savedTheme = localStorage.getItem('theme') || 'dark';
         document.documentElement.setAttribute('data-theme', savedTheme);
 
         // Theme toggle functionality
@@ -386,7 +387,7 @@
     </div>
 
     <!-- Supabase Client Library -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.95.2/dist/umd/supabase.min.js" integrity="sha384-O3Y0txdelyzhAPieX5MdbO1gTZ6zC6OPZWkeMpKKWrLqkDY+aR7MIcVR5oxNfmo3" crossorigin="anonymous"></script>
     <script type="module">
         import { signIn, signUp, getCurrentUser } from './js/auth/auth.js';
 

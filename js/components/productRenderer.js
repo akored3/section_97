@@ -1,5 +1,12 @@
 // Handles rendering products to the DOM
 
+// Escape HTML to prevent XSS from dynamic data
+export function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = String(str);
+    return div.innerHTML;
+}
+
 export function showSkeletons(count = 8) {
     const productContainer = document.getElementById("product-container");
     if (!productContainer) return;
@@ -38,16 +45,24 @@ export function renderProducts(productsToRender) {
         const product = productsToRender[i];
         const hasBackImage = product.imageBack && product.imageBack !== null;
 
+        const safeName = escapeHtml(product.name);
+        const safePrice = escapeHtml(product.price);
+        const safeId = escapeHtml(product.id);
+        const safeImage = escapeHtml(product.imageSrc);
+        const safeBack = hasBackImage ? escapeHtml(product.imageBack) : '';
+        const formattedPrice = Number(product.price).toLocaleString();
+
         html += `
             <div class="product-card">
                 <div class="product-image ${hasBackImage ? 'has-gallery' : ''}">
-                    <img src="${product.imageSrc}"
+                    <img src="${safeImage}"
                          class="product"
-                         alt="${product.name}"
+                         alt="${safeName}"
                          loading="lazy"
-                         data-front="${product.imageSrc}"
-                         ${hasBackImage ? `data-back="${product.imageBack}"` : ''}
-                         data-current="front">
+                         data-front="${safeImage}"
+                         ${hasBackImage ? `data-back="${safeBack}"` : ''}
+                         data-current="front"
+                         onerror="this.onerror=null;this.src='images/placeholder.png';">
                     ${hasBackImage ? `
                         <button class="gallery-arrow gallery-prev" aria-label="Previous image">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
@@ -67,15 +82,15 @@ export function renderProducts(productsToRender) {
                 </div>
                 <div class="product-footer">
                     <div class="product-info">
-                        <h3>${product.name}</h3>
-                        <p>$${product.price}</p>
+                        <h3>${safeName}</h3>
+                        <p>$${formattedPrice}</p>
                     </div>
                     <div class="product-actions">
                         <button type="button" class="add-to-cart-btn"
-                            data-id="${product.id}"
-                            data-name="${product.name}"
-                            data-price="${product.price}"
-                            data-image="${product.imageSrc}">
+                            data-id="${safeId}"
+                            data-name="${safeName}"
+                            data-price="${safePrice}"
+                            data-image="${safeImage}">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
                                 <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
                                 <line x1="3" y1="6" x2="21" y2="6"></line>

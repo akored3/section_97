@@ -160,12 +160,13 @@ export function initializeSearch() {
         });
     }
 
-    // Close search when clicking outside
+    // Collapse search UI when clicking outside (preserves search term)
     document.addEventListener('click', (e) => {
         if (searchContainer?.classList.contains('expanded')) {
             const isClickInside = e.target.closest('.search-wrapper');
             if (!isClickInside) {
-                searchClose?.click();
+                searchContainer.classList.remove('expanded');
+                searchToggle?.classList.remove('hidden');
             }
         }
     });
