@@ -103,6 +103,9 @@ function initializeAuthDropdown() {
 
 // Initialize everything when DOM is ready
 document.addEventListener('DOMContentLoaded', async function() {
+    // Show skeleton cards immediately for better UX
+    showSkeletons(8);
+
     // Initialize cart (must await to properly sync with Supabase)
     await initializeCart();
 
@@ -121,9 +124,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     onAuthStateChange(() => {
         updateAuthButton();
     });
-
-    // Show skeleton cards while loading
-    showSkeletons(8);
 
     // Fetch products from JSON (simulates API call)
     const products = await fetchProducts();
