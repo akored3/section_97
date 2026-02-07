@@ -114,6 +114,19 @@ export function renderProducts(productsToRender) {
 
     // Initialize gallery arrows
     initGalleryArrows();
+    initCardNavigation();
+}
+
+function initCardNavigation() {
+    const cards = document.querySelectorAll('.product-card');
+    cards.forEach(card => {
+        card.style.cursor = 'pointer';
+        card.addEventListener('click', (e) => {
+            if (e.target.closest('.add-to-cart-btn') || e.target.closest('.gallery-arrow')) return;
+            const id = card.querySelector('.add-to-cart-btn')?.dataset.id;
+            if (id) window.location.href = `product.html?id=${id}`;
+        });
+    });
 }
 
 function initGalleryArrows() {

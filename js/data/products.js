@@ -37,3 +37,30 @@ export async function fetchProducts() {
         return [];
     }
 }
+
+// Fetch a single product by ID
+export async function fetchProductById(id) {
+    try {
+        const { data, error } = await supabase
+            .from('products')
+            .select('*')
+            .eq('id', id)
+            .single();
+
+        if (error) throw error;
+
+        return {
+            id: data.id,
+            name: data.name,
+            price: data.price,
+            imageSrc: data.image_front,
+            imageBack: data.image_back,
+            category: data.category,
+            brand: data.brand,
+            stock: data.stock
+        };
+    } catch (error) {
+        console.error('Error fetching product:', error);
+        return null;
+    }
+}

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SECTION-97 | Product Details</title>
+    <meta name="description" content="Shop premium streetwear at SECTION-97. Exclusive drops from Supreme, Corteiz, and Balenciaga NBA collection.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co; img-src 'self' data: https:; frame-ancestors 'none';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <script>
+        // Apply saved theme immediately to prevent flash
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+
+    <div class="pdp-container">
+        <!-- Theme toggle -->
+        <button id="theme-toggle" class="pdp-theme-toggle" aria-label="Toggle dark mode">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+        </button>
+
+        <!-- Back to store -->
+        <a href="store.html" class="pdp-back-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to Store
+        </a>
+
+        <!-- Loading skeleton -->
+        <div id="pdp-skeleton" class="pdp-skeleton">
+            <div class="pdp-skeleton-gallery"></div>
+            <div class="pdp-skeleton-info">
+                <div class="pdp-skeleton-brand"></div>
+                <div class="pdp-skeleton-title"></div>
+                <div class="pdp-skeleton-price"></div>
+                <div class="pdp-skeleton-desc"></div>
+                <div class="pdp-skeleton-desc short"></div>
+                <div class="pdp-skeleton-sizes"></div>
+                <div class="pdp-skeleton-btn"></div>
+            </div>
+        </div>
+
+        <!-- Product content (shown after load) -->
+        <div id="pdp-content" class="pdp-content" style="display:none;">
+            <div class="pdp-gallery">
+                <img id="pdp-main-image" class="pdp-main-image" src="" alt="">
+                <div id="pdp-thumbnails" class="pdp-thumbnails"></div>
+            </div>
+            <div class="pdp-info">
+                <span id="pdp-brand" class="pdp-brand"></span>
+                <h1 id="pdp-name" class="pdp-name"></h1>
+                <p id="pdp-price" class="pdp-price"></p>
+                <p id="pdp-description" class="pdp-description"></p>
+
+                <div class="pdp-size-section">
+                    <span class="pdp-size-label">SIZE</span>
+                    <div id="pdp-sizes" class="pdp-sizes"></div>
+                </div>
+
+                <div id="pdp-stock" class="pdp-stock-info"></div>
+
+                <button id="pdp-add-to-cart" class="pdp-add-btn" disabled>
+                    SELECT A SIZE
+                </button>
+            </div>
+        </div>
+
+        <!-- Error state -->
+        <div id="pdp-error" class="pdp-error" style="display:none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="64" height="64">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M15 9l-6 6M9 9l6 6"/>
+            </svg>
+            <h2>Product not found</h2>
+            <p>This item may have been removed or the link is incorrect.</p>
+            <a href="store.html" class="pdp-error-link">Back to Store</a>
+        </div>
+    </div>
+
+    <!-- Cart drawer (same structure as store.html) -->
+    <div class="cart-overlay" id="cart-overlay"></div>
+    <aside class="cart-drawer" id="cart-drawer">
+        <div class="cart-drawer-header">
+            <h2>YOUR CART</h2>
+            <button id="cart-drawer-close" aria-label="Close cart">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                    <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+        <div id="cart-drawer-items" class="cart-drawer-items"></div>
+        <div id="cart-drawer-footer" class="cart-drawer-footer" style="display:none;">
+            <div class="cart-drawer-subtotal">
+                <span>Subtotal</span>
+                <span id="cart-drawer-total">$0</span>
+            </div>
+            <button class="cart-drawer-checkout">CHECKOUT</button>
+        </div>
+    </aside>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.95.2/dist/umd/supabase.min.js" integrity="sha384-O3Y0txdelyzhAPieX5MdbO1gTZ6zC6OPZWkeMpKKWrLqkDY+aR7MIcVR5oxNfmo3" crossorigin="anonymous"></script>
+    <script type="module" src="js/ui/productPage.js"></script>
+</body>
+</html>
