@@ -1,15 +1,31 @@
 // Authentication module for SECTION-97
 import { supabase } from '../config/supabase.js';
 
+// Substrings to reject in generated usernames (case-insensitive check)
+const BLOCKED_PATTERNS = [
+    'ass', 'cum', 'fag', 'nig', 'rape', 'slut', 'tit', 'wtf', 'dick', 'cock',
+    'pussy', 'shit', 'fuck', 'cunt', 'bitch', 'whore', 'nazi', 'porn', 'anal'
+];
+
+function isOffensive(username) {
+    const lower = username.toLowerCase();
+    return BLOCKED_PATTERNS.some(p => lower.includes(p));
+}
+
 // Generate a unique username from word pools
 async function generateUsername() {
     const response = await fetch('./js/data/usernames.json');
     const data = await response.json();
 
-    const first = data.firstWords[Math.floor(Math.random() * data.firstWords.length)];
-    const second = data.secondWords[Math.floor(Math.random() * data.secondWords.length)];
+    for (let i = 0; i < 5; i++) {
+        const first = data.firstWords[Math.floor(Math.random() * data.firstWords.length)];
+        const second = data.secondWords[Math.floor(Math.random() * data.secondWords.length)];
+        const name = first + second;
+        if (!isOffensive(name)) return name;
+    }
 
-    return first + second;
+    // If somehow all 5 attempts were offensive, use a safe fallback
+    return 'User' + Date.now().toString(36);
 }
 
 // Wait for profile row to be created by database trigger
