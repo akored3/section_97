@@ -160,9 +160,8 @@ export async function addToCart(product) {
     if (currentUserId && useSupabase) {
         // Logged in with Supabase: add to database
         try {
-            // Try to increment existing or insert new
+            // Try to increment existing or insert new (auth.uid() handles user identity server-side)
             const { error } = await supabase.rpc('increment_cart_quantity', {
-                p_user_id: currentUserId,
                 p_product_id: parseInt(product.id)
             });
 
