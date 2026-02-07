@@ -43,12 +43,15 @@ export function renderProducts(productsToRender) {
         const safeName = escapeHtml(product.name);
         const safePrice = escapeHtml(product.price);
         const safeId = escapeHtml(product.id);
+        const safeStock = escapeHtml(product.stock ?? '');
         const safeImage = escapeHtml(product.imageSrc);
         const safeBack = hasBackImage ? escapeHtml(product.imageBack) : '';
         const formattedPrice = Number(product.price).toLocaleString();
 
-        // First 6 products load immediately (above the fold), rest are lazy loaded
-        const isAboveFold = index < 6;
+        // Load visible products immediately, rest are lazy loaded
+        const cardsPerRow = window.innerWidth < 768 ? 2 : (window.innerWidth < 992 ? 2 : 3);
+        const aboveFoldCount = cardsPerRow * 2; // ~2 rows worth
+        const isAboveFold = index < aboveFoldCount;
         const imgClass = isAboveFold ? 'product loaded' : 'product lazy-load';
         const imgSrc = isAboveFold ? safeImage : 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"%3E%3C/svg%3E';
         const dataSrc = isAboveFold ? '' : `data-src="${safeImage}"`;
@@ -92,7 +95,8 @@ export function renderProducts(productsToRender) {
                             data-id="${safeId}"
                             data-name="${safeName}"
                             data-price="${safePrice}"
-                            data-image="${safeImage}">
+                            data-image="${safeImage}"
+                            data-stock="${safeStock}">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
                                 <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
                                 <line x1="3" y1="6" x2="21" y2="6"></line>

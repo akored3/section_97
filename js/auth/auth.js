@@ -54,9 +54,25 @@ async function getUniqueUsername() {
         attempts++;
     }
 
-    // Fallback: add random numbers if all attempts fail
-    const fallback = await generateUsername();
-    return fallback + Math.floor(Math.random() * 9999);
+    // Fallback: add random suffix and verify uniqueness
+    for (let i = 0; i < 5; i++) {
+        const base = await generateUsername();
+        const array = new Uint32Array(1);
+        crypto.getRandomValues(array);
+        const suffix = array[0] % 99999;
+        const fallback = base + suffix;
+
+        const { data } = await supabase
+            .from('profiles')
+            .select('username')
+            .eq('username', fallback)
+            .single();
+
+        if (!data) return fallback;
+    }
+
+    // Last resort: timestamp-based (practically unique)
+    return 'User' + Date.now().toString(36);
 }
 
 // Sign up a new user
