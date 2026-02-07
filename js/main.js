@@ -102,6 +102,29 @@ function initializeAuthDropdown() {
     }
 }
 
+// Session idle timeout - logs out after 30 minutes of inactivity
+function initializeIdleTimeout() {
+    const IDLE_LIMIT = 30 * 60 * 1000; // 30 minutes
+    let idleTimer;
+
+    function resetTimer() {
+        clearTimeout(idleTimer);
+        idleTimer = setTimeout(async () => {
+            if (isLoggedIn) {
+                await signOut();
+                await handleAuthChange(null);
+                window.location.href = 'auth.html';
+            }
+        }, IDLE_LIMIT);
+    }
+
+    ['click', 'keydown', 'mousemove', 'touchstart'].forEach(event => {
+        document.addEventListener(event, resetTimer, { passive: true });
+    });
+
+    resetTimer();
+}
+
 // Safe wrapper - logs error but doesn't kill the page
 async function safeInit(name, fn) {
     try {
@@ -146,6 +169,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     });
     await safeInit('Theme', () => initializeTheme());
     await safeInit('Menu', () => initializeMenu());
+    await safeInit('IdleTimeout', () => initializeIdleTimeout());
 
     console.log('SECTION-97 initialized ✓');
 });
