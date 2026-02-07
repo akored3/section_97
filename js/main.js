@@ -102,47 +102,50 @@ function initializeAuthDropdown() {
     }
 }
 
+// Safe wrapper - logs error but doesn't kill the page
+async function safeInit(name, fn) {
+    try {
+        await fn();
+    } catch (e) {
+        console.error(`[${name}] failed to initialize:`, e);
+    }
+}
+
 // Initialize everything when DOM is ready
 document.addEventListener('DOMContentLoaded', async function() {
     // Show skeleton cards immediately for better UX
     showSkeletons(8);
 
-    // Initialize cart (must await to properly sync with Supabase)
-    await initializeCart();
-
-    // Set up cart drawer
-    setupCartDrawer();
-    const cartBtn = document.querySelector('.cart-btn');
-    if (cartBtn) cartBtn.addEventListener('click', openCartDrawer);
-
-    // Check auth state and update button
-    updateAuthButton();
-
-    // Initialize auth dropdown
-    initializeAuthDropdown();
-
-    // Listen for auth changes
-    onAuthStateChange(() => {
-        updateAuthButton();
+    // Cart and auth are critical - initialize first
+    await safeInit('Cart', async () => {
+        await initializeCart();
+        setupCartDrawer();
+        const cartBtn = document.querySelector('.cart-btn');
+        if (cartBtn) cartBtn.addEventListener('click', openCartDrawer);
     });
 
-    // Fetch products from JSON (simulates API call)
-    const products = await fetchProducts();
+    await safeInit('Auth', async () => {
+        updateAuthButton();
+        initializeAuthDropdown();
+        onAuthStateChange(() => updateAuthButton());
+    });
 
-    // Replace skeletons with real products
-    renderProducts(products);
+    // Products - core content
+    let products = [];
+    await safeInit('Products', async () => {
+        products = await fetchProducts();
+        renderProducts(products);
+        initializeLazyLoading();
+        setupAddToCartButtons();
+    });
 
-    // Initialize lazy loading for product images
-    initializeLazyLoading();
-
-    // Set up cart buttons after products render
-    setupAddToCartButtons();
-
-    // Initialize all components
-    initializeFilters(products);
-    initializeSearch();
-    initializeTheme();
-    initializeMenu();
+    // UI features - non-critical
+    await safeInit('Filters', () => {
+        initializeFilters(products);
+        initializeSearch();
+    });
+    await safeInit('Theme', () => initializeTheme());
+    await safeInit('Menu', () => initializeMenu());
 
     console.log('SECTION-97 initialized ✓');
 });

@@ -9,10 +9,14 @@ let useSupabase = false; // Flag to track if Supabase cart is available
 // Clear old localStorage cart data (one-time migration to Supabase)
 const CART_VERSION = 'v2-supabase';
 function migrateOldCartData() {
-    const version = localStorage.getItem('section97-cart-version');
-    if (version !== CART_VERSION) {
-        localStorage.removeItem('section97-cart');
-        localStorage.setItem('section97-cart-version', CART_VERSION);
+    try {
+        const version = localStorage.getItem('section97-cart-version');
+        if (version !== CART_VERSION) {
+            localStorage.removeItem('section97-cart');
+            localStorage.setItem('section97-cart-version', CART_VERSION);
+        }
+    } catch (e) {
+        // Storage unavailable
     }
 }
 
@@ -32,12 +36,20 @@ function loadLocalCart() {
 
 // Save cart to localStorage
 function saveLocalCart() {
-    localStorage.setItem('section97-cart', JSON.stringify(cart));
+    try {
+        localStorage.setItem('section97-cart', JSON.stringify(cart));
+    } catch (e) {
+        // Storage full or unavailable (Safari private mode)
+    }
 }
 
 // Clear local cart
 function clearLocalCart() {
-    localStorage.removeItem('section97-cart');
+    try {
+        localStorage.removeItem('section97-cart');
+    } catch (e) {
+        // Storage unavailable
+    }
 }
 
 // Check if cart_items table exists and is accessible
@@ -248,9 +260,15 @@ export async function removeFromCart(productId) {
 }
 
 // Update item quantity
+const MAX_QUANTITY = 99;
+
 export async function updateQuantity(productId, quantity) {
     if (quantity < 1) {
         return removeFromCart(productId);
+    }
+
+    if (quantity > MAX_QUANTITY) {
+        quantity = MAX_QUANTITY;
     }
 
     if (currentUserId && useSupabase) {

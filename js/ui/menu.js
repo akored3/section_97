@@ -37,4 +37,11 @@ export function initializeMenu() {
             }
         });
     }
+
+    // Close menu on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && mobileMenu?.classList.contains('active')) {
+            closeMenu();
+        }
+    });
 }
