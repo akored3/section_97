@@ -53,11 +53,13 @@ export function filterProducts(category) {
     applyFilters();
     updateActiveButton(category);
     closeMobileMenu();
+    updateURL();
 }
 
 export function searchProducts(term) {
     currentSearchTerm = term.trim();
     applyFilters();
+    updateURL();
 }
 
 function updateActiveButton(category) {
@@ -78,6 +80,22 @@ function closeMobileMenu() {
     }
 }
 
+// Sync filter state to URL for shareable links
+function updateURL() {
+    const url = new URL(window.location);
+    if (currentFilter && currentFilter !== 'all') {
+        url.searchParams.set('category', currentFilter);
+    } else {
+        url.searchParams.delete('category');
+    }
+    if (currentSearchTerm) {
+        url.searchParams.set('q', currentSearchTerm);
+    } else {
+        url.searchParams.delete('q');
+    }
+    window.history.replaceState({}, '', url);
+}
+
 export function initializeFilters(products) {
     allProducts = products;
 
@@ -90,10 +108,30 @@ export function initializeFilters(products) {
         });
     });
 
-    // Set 'All' button as active on load
-    const allBtn = document.querySelector('[data-category="all"]');
-    if (allBtn) {
-        allBtn.classList.add('active');
+    // Restore filter state from URL params
+    const params = new URLSearchParams(window.location.search);
+    const urlCategory = params.get('category');
+    const urlSearch = params.get('q');
+
+    if (urlCategory) {
+        currentFilter = urlCategory;
+        updateActiveButton(urlCategory);
+    } else {
+        const allBtn = document.querySelector('[data-category="all"]');
+        if (allBtn) allBtn.classList.add('active');
+    }
+
+    if (urlSearch) {
+        currentSearchTerm = urlSearch;
+        const searchInput = document.getElementById('search-input');
+        const mobileSearchInput = document.getElementById('mobile-search-input');
+        if (searchInput) searchInput.value = urlSearch;
+        if (mobileSearchInput) mobileSearchInput.value = urlSearch;
+    }
+
+    // Apply if URL had any filters
+    if (urlCategory || urlSearch) {
+        applyFilters();
     }
 }
 
