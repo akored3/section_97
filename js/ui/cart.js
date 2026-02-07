@@ -341,6 +341,17 @@ export function setupAddToCartButtons() {
     const buttons = document.querySelectorAll('.add-to-cart-btn');
     buttons.forEach(button => {
         button.addEventListener('click', function() {
+            const stock = parseInt(this.dataset.stock);
+            if (!isNaN(stock)) {
+                const existing = cart.find(i => i.id === String(this.dataset.id));
+                const currentQty = existing ? (existing.quantity || 1) : 0;
+                if (currentQty >= stock) {
+                    this.textContent = 'OUT OF STOCK';
+                    setTimeout(() => { this.innerHTML = originalButtonHTML(this); }, 1500);
+                    return;
+                }
+            }
+
             const product = {
                 id: this.dataset.id,
                 name: this.dataset.name,
@@ -350,6 +361,16 @@ export function setupAddToCartButtons() {
             addToCart(product);
         });
     });
+}
+
+// Rebuild default button HTML for reset after stock warning
+function originalButtonHTML() {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+            ADD TO BAG`;
 }
 
 // Handle auth state changes
@@ -422,7 +443,7 @@ export async function initializeCart() {
     });
 
     console.log('Cart initialized:', {
-        userId: currentUserId,
+        loggedIn: !!currentUserId,
         useSupabase,
         itemCount: cart.length
     });
