@@ -38,12 +38,15 @@ export async function fetchProducts() {
     }
 }
 
-// Fetch a single product by ID
+// Fetch a single product by ID (includes per-size stock from product_sizes)
 export async function fetchProductById(id) {
     try {
         const { data, error } = await supabase
             .from('products')
-            .select('*')
+            .select(`
+                *,
+                product_sizes (size, stock)
+            `)
             .eq('id', id)
             .single();
 
@@ -57,7 +60,11 @@ export async function fetchProductById(id) {
             imageBack: data.image_back,
             category: data.category,
             brand: data.brand,
-            stock: data.stock
+            stock: data.stock,
+            sizes: (data.product_sizes || []).map(s => ({
+                size: s.size,
+                stock: s.stock
+            }))
         };
     } catch (error) {
         console.error('Error fetching product:', error);

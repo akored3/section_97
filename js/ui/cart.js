@@ -76,6 +76,7 @@ async function loadSupabaseCart() {
             .select(`
                 id,
                 quantity,
+                size,
                 product_id,
                 products (
                     id,
@@ -97,6 +98,8 @@ async function loadSupabaseCart() {
             price: item.products.price,
             image: item.products.image_front,
             quantity: item.quantity,
+            size: item.size,
+            cartKey: item.size ? `${item.products.id}-${item.size}` : String(item.products.id),
             cartItemId: item.id
         }));
     } catch (e) {
@@ -120,9 +123,10 @@ async function mergeLocalCartToSupabase() {
                 .upsert({
                     user_id: currentUserId,
                     product_id: parseInt(item.id),
+                    size: item.size || null,
                     quantity: item.quantity || 1
                 }, {
-                    onConflict: 'user_id,product_id'
+                    onConflict: 'user_id,product_id,size'
                 });
 
             if (error) {
@@ -162,7 +166,8 @@ export async function addToCart(product) {
         try {
             // Try to increment existing or insert new (auth.uid() handles user identity server-side)
             const { error } = await supabase.rpc('increment_cart_quantity', {
-                p_product_id: parseInt(product.id)
+                p_product_id: parseInt(product.id),
+                p_size: product.size || null
             });
 
             if (error) {
@@ -172,9 +177,10 @@ export async function addToCart(product) {
                     .upsert({
                         user_id: currentUserId,
                         product_id: parseInt(product.id),
+                        size: product.size || null,
                         quantity: 1
                     }, {
-                        onConflict: 'user_id,product_id'
+                        onConflict: 'user_id,product_id,size'
                     });
             }
 
@@ -197,13 +203,14 @@ export async function addToCart(product) {
     renderCartDrawer();
 }
 
-// Add to local cart helper
+// Add to local cart helper (dedup by id + size composite key)
 function addToLocalCart(product) {
-    const existing = cart.find(item => item.id === String(product.id));
+    const cartKey = product.size ? `${product.id}-${product.size}` : String(product.id);
+    const existing = cart.find(item => (item.cartKey || item.id) === cartKey);
     if (existing) {
         existing.quantity = (existing.quantity || 1) + 1;
     } else {
-        cart.push({ ...product, id: String(product.id), quantity: 1 });
+        cart.push({ ...product, id: String(product.id), cartKey, quantity: 1 });
     }
     saveLocalCart();
 }
@@ -230,15 +237,29 @@ function showAddedFeedback() {
     }
 }
 
-// Remove item from cart
-export async function removeFromCart(productId) {
+// Remove item from cart (matches by cartKey for size-aware items, falls back to id)
+export async function removeFromCart(cartKey) {
+    const item = cart.find(i => (i.cartKey || i.id) === cartKey);
+    if (!item) return;
+
     if (currentUserId && useSupabase) {
         try {
-            await supabase
-                .from('cart_items')
-                .delete()
-                .eq('user_id', currentUserId)
-                .eq('product_id', parseInt(productId));
+            if (item.cartItemId) {
+                await supabase
+                    .from('cart_items')
+                    .delete()
+                    .eq('id', item.cartItemId);
+            } else {
+                // Fallback: delete by product_id + size
+                let query = supabase
+                    .from('cart_items')
+                    .delete()
+                    .eq('user_id', currentUserId)
+                    .eq('product_id', parseInt(item.id));
+                if (item.size) query = query.eq('size', item.size);
+                else query = query.is('size', null);
+                await query;
+            }
 
             const supabaseCart = await loadSupabaseCart();
             if (supabaseCart) {
@@ -246,11 +267,11 @@ export async function removeFromCart(productId) {
             }
         } catch (e) {
             console.warn('Supabase remove failed:', e);
-            cart = cart.filter(item => item.id !== String(productId));
+            cart = cart.filter(i => (i.cartKey || i.id) !== cartKey);
             saveLocalCart();
         }
     } else {
-        cart = cart.filter(item => item.id !== String(productId));
+        cart = cart.filter(i => (i.cartKey || i.id) !== cartKey);
         saveLocalCart();
     }
 
@@ -258,43 +279,50 @@ export async function removeFromCart(productId) {
     renderCartDrawer();
 }
 
-// Update item quantity
+// Update item quantity (matches by cartKey for size-aware items)
 const MAX_QUANTITY = 99;
 
-export async function updateQuantity(productId, quantity) {
+export async function updateQuantity(cartKey, quantity) {
     if (quantity < 1) {
-        return removeFromCart(productId);
+        return removeFromCart(cartKey);
     }
 
     if (quantity > MAX_QUANTITY) {
         quantity = MAX_QUANTITY;
     }
 
+    const item = cart.find(i => (i.cartKey || i.id) === cartKey);
+    if (!item) return;
+
     if (currentUserId && useSupabase) {
         try {
-            await supabase
-                .from('cart_items')
-                .update({ quantity })
-                .eq('user_id', currentUserId)
-                .eq('product_id', parseInt(productId));
+            if (item.cartItemId) {
+                await supabase
+                    .from('cart_items')
+                    .update({ quantity })
+                    .eq('id', item.cartItemId);
+            } else {
+                let query = supabase
+                    .from('cart_items')
+                    .update({ quantity })
+                    .eq('user_id', currentUserId)
+                    .eq('product_id', parseInt(item.id));
+                if (item.size) query = query.eq('size', item.size);
+                else query = query.is('size', null);
+                await query;
+            }
 
             const supabaseCart = await loadSupabaseCart();
             if (supabaseCart) {
                 cart = supabaseCart;
             }
         } catch (e) {
-            const item = cart.find(i => i.id === String(productId));
-            if (item) {
-                item.quantity = quantity;
-                saveLocalCart();
-            }
-        }
-    } else {
-        const item = cart.find(i => i.id === String(productId));
-        if (item) {
             item.quantity = quantity;
             saveLocalCart();
         }
+    } else {
+        item.quantity = quantity;
+        saveLocalCart();
     }
 
     updateBadge();
@@ -475,23 +503,24 @@ function renderCartDrawer() {
     if (footer) footer.style.display = 'block';
 
     itemsContainer.innerHTML = cart.map(item => {
-        const safeId = escapeHtml(item.id);
+        const safeKey = escapeHtml(item.cartKey || item.id);
         const safeName = escapeHtml(item.name);
         const safeImage = escapeHtml(item.image);
         const formattedPrice = parseFloat(item.price).toLocaleString();
         return `
-        <div class="cart-drawer-item" data-id="${safeId}">
+        <div class="cart-drawer-item" data-cart-key="${safeKey}">
             <img class="cart-drawer-item-img" src="${safeImage}" alt="${safeName}">
             <div class="cart-drawer-item-details">
                 <span class="cart-drawer-item-name">${safeName}</span>
+                ${item.size ? `<span class="cart-drawer-item-size">Size: ${escapeHtml(item.size)}</span>` : ''}
                 <span class="cart-drawer-item-price">$${formattedPrice}</span>
                 <div class="cart-drawer-item-actions">
                     <div class="cart-drawer-qty">
-                        <button class="cart-qty-minus" data-id="${safeId}">-</button>
+                        <button class="cart-qty-minus" data-cart-key="${safeKey}">-</button>
                         <span>${item.quantity || 1}</span>
-                        <button class="cart-qty-plus" data-id="${safeId}">+</button>
+                        <button class="cart-qty-plus" data-cart-key="${safeKey}">+</button>
                     </div>
-                    <button class="cart-drawer-remove" data-id="${safeId}">Remove</button>
+                    <button class="cart-drawer-remove" data-cart-key="${safeKey}">Remove</button>
                 </div>
             </div>
         </div>`;
@@ -501,26 +530,26 @@ function renderCartDrawer() {
         totalEl.textContent = `$${getCartTotal().toLocaleString()}`;
     }
 
-    // Attach event listeners
+    // Attach event listeners (use cartKey for size-aware matching)
     itemsContainer.querySelectorAll('.cart-qty-minus').forEach(btn => {
         btn.addEventListener('click', () => {
-            const id = btn.dataset.id;
-            const item = cart.find(i => i.id === id);
-            if (item) updateQuantity(id, (item.quantity || 1) - 1);
+            const key = btn.dataset.cartKey;
+            const item = cart.find(i => (i.cartKey || i.id) === key);
+            if (item) updateQuantity(key, (item.quantity || 1) - 1);
         });
     });
 
     itemsContainer.querySelectorAll('.cart-qty-plus').forEach(btn => {
         btn.addEventListener('click', () => {
-            const id = btn.dataset.id;
-            const item = cart.find(i => i.id === id);
-            if (item) updateQuantity(id, (item.quantity || 1) + 1);
+            const key = btn.dataset.cartKey;
+            const item = cart.find(i => (i.cartKey || i.id) === key);
+            if (item) updateQuantity(key, (item.quantity || 1) + 1);
         });
     });
 
     itemsContainer.querySelectorAll('.cart-drawer-remove').forEach(btn => {
         btn.addEventListener('click', () => {
-            removeFromCart(btn.dataset.id);
+            removeFromCart(btn.dataset.cartKey);
         });
     });
 }
