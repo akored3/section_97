@@ -128,9 +128,11 @@ function renderProduct(product) {
         addBtn.textContent = 'SOLD OUT';
     }
 
-    // Show content, hide skeleton
+    // Show content, hide skeleton, trigger entrance animation
     document.getElementById('pdp-skeleton').style.display = 'none';
-    document.getElementById('pdp-content').style.display = 'grid';
+    const content = document.getElementById('pdp-content');
+    content.style.display = 'grid';
+    content.classList.add('pdp-enter');
 }
 
 // Add to cart handler (includes size, await, stock validation)
