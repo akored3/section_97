@@ -1988,16 +1988,27 @@
 
 .pdp-brand {
     font-family: 'Poppins', sans-serif;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 2px;
     color: var(--accent);
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border: 1px solid rgba(0, 255, 0, 0.3);
+    border-radius: 4px;
+    background: rgba(0, 255, 0, 0.06);
+    width: fit-content;
+}
+
+[data-theme="light"] .pdp-brand {
+    border-color: rgba(0, 200, 0, 0.3);
+    background: rgba(0, 200, 0, 0.08);
 }
 
 .pdp-name {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 2rem;
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
     font-weight: 700;
     color: var(--text-primary);
     line-height: 1.2;
@@ -2071,9 +2082,13 @@
 
 .pdp-size-chip.active {
     border-color: var(--accent);
-    background: rgba(0, 255, 0, 0.1);
-    color: var(--accent);
-    box-shadow: 0 0 12px rgba(0, 255, 0, 0.15);
+    background: var(--accent);
+    color: #000;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+}
+
+[data-theme="light"] .pdp-size-chip.active {
+    box-shadow: 0 0 12px rgba(0, 200, 0, 0.25);
 }
 
 .pdp-size-chip:focus-visible {
@@ -2125,6 +2140,29 @@
     letter-spacing: 1.5px;
     cursor: pointer;
     transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.pdp-add-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 45%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.15) 55%, transparent 100%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.pdp-add-btn:hover:not(:disabled)::after {
+    animation: pdp-shimmer-sweep 0.6s ease-out;
+}
+
+@keyframes pdp-shimmer-sweep {
+    0% { left: -100%; }
+    100% { left: 100%; }
 }
 
 .pdp-add-btn:hover:not(:disabled) {
@@ -2182,6 +2220,39 @@
     color: #000;
 }
 
+/* Entrance animations */
+@keyframes pdp-fade-in-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.pdp-content.pdp-enter .pdp-gallery {
+    animation: pdp-fade-in-up 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.pdp-content.pdp-enter .pdp-info {
+    animation: pdp-fade-in-up 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.1s both;
+}
+
+/* Ambient glow behind product image */
+.pdp-gallery::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70%;
+    height: 70%;
+    background: radial-gradient(circle, rgba(0, 255, 0, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: -1;
+    filter: blur(40px);
+}
+
+[data-theme="light"] .pdp-gallery::before {
+    background: radial-gradient(circle, rgba(0, 200, 0, 0.06) 0%, transparent 70%);
+}
+
 /* Responsive: stack on mobile */
 @media (max-width: 768px) {
     .pdp-container {
@@ -2202,10 +2273,6 @@
         position: static;
     }
 
-    .pdp-name {
-        font-size: 1.5rem;
-    }
-
     .pdp-price {
         font-size: 1.25rem;
     }
@@ -2213,5 +2280,16 @@
     .pdp-thumb {
         width: 60px;
         height: 60px;
+    }
+}
+
+/* Accessibility: disable animations for reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+    .pdp-content.pdp-enter .pdp-gallery,
+    .pdp-content.pdp-enter .pdp-info {
+        animation: none;
+    }
+    .pdp-add-btn:hover:not(:disabled)::after {
+        animation: none;
     }
 }
