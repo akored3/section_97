@@ -26,6 +26,23 @@
         // Apply saved theme immediately to prevent flash
         const savedTheme = localStorage.getItem('theme') || 'dark';
         document.documentElement.setAttribute('data-theme', savedTheme);
+
+        // Cache auth state to prevent "Login" flash on page load
+        const cachedUser = localStorage.getItem('section97-username');
+        if (cachedUser) {
+            document.addEventListener('DOMContentLoaded', () => {
+                const authText = document.getElementById('auth-text');
+                if (authText) authText.textContent = cachedUser;
+                const mobileLogin = document.getElementById('mobile-login-btn');
+                const mobileUserInfo = document.getElementById('mobile-user-info');
+                const mobileUsername = document.getElementById('mobile-username');
+                const mobileLogout = document.getElementById('mobile-logout-btn');
+                if (mobileLogin) mobileLogin.style.display = 'none';
+                if (mobileUserInfo) mobileUserInfo.style.display = 'flex';
+                if (mobileUsername) mobileUsername.textContent = cachedUser;
+                if (mobileLogout) mobileLogout.style.display = 'flex';
+            });
+        }
     </script>
     <header class="hero-section">
         <button class="moon-btn" id="theme-toggle" aria-label="Toggle dark mode">
