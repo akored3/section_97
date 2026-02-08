@@ -21,6 +21,15 @@ async function updateAuthButton() {
     const user = await getCurrentUser();
     isLoggedIn = !!user;
 
+    // Cache username in localStorage to prevent flash on next page load
+    try {
+        if (user && user.username) {
+            localStorage.setItem('section97-username', user.username);
+        } else {
+            localStorage.removeItem('section97-username');
+        }
+    } catch (e) { /* storage unavailable */ }
+
     // Desktop auth button
     if (authText && authBtn) {
         if (user) {
