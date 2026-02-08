@@ -16,8 +16,9 @@ A cyberpunk-inspired streetwear e-commerce store featuring premium brands like S
 - **Fully Responsive** — Mobile-first design with hamburger menu and full-width cart drawer on small screens
 - **Glassmorphism UI** — Modern glass-effect cards, buttons, and overlays
 - **Modular Architecture** — Clean ES6 module structure with single-responsibility files
+- **Product Detail Pages** — Per-product pages with image gallery, per-size stock from database, stock validation, and staggered entrance animations
 - **Security Hardened** — XSS escaping, Content Security Policy, Subresource Integrity on CDN scripts
-- **Resilient Cart** — Price calculations with parseFloat, pulse feedback animations, Escape-to-close
+- **Resilient Cart** — Size-aware deduplication, per-size stock validation, price calculations with parseFloat, pulse feedback animations, Escape-to-close
 
 ## Tech Stack
 
@@ -33,6 +34,7 @@ A cyberpunk-inspired streetwear e-commerce store featuring premium brands like S
 ```
 new_web/
 ├── store.html                       # Main store page with product grid
+├── product.html                     # Product detail page (PDP)
 ├── auth.html                        # Login/signup page
 ├── style.css                        # All styling (dark/light themes, glassmorphism)
 ├── js/
@@ -42,7 +44,7 @@ new_web/
 │   ├── auth/
 │   │   └── auth.js                  # Authentication (signup, login, logout)
 │   ├── data/
-│   │   ├── products.js              # Product data with Supabase fallback
+│   │   ├── products.js              # Product data + single product fetch with sizes
 │   │   └── usernames.json           # Word pools for username generation
 │   ├── components/
 │   │   ├── productRenderer.js       # Displays products + skeleton loading
@@ -50,7 +52,9 @@ new_web/
 │   └── ui/
 │       ├── theme.js                 # Dark/light mode toggle
 │       ├── menu.js                  # Mobile hamburger menu
-│       └── cart.js                  # Shopping cart + drawer (Supabase + localStorage)
+│       ├── cart.js                  # Shopping cart + drawer (Supabase + localStorage)
+│       ├── productPage.js           # Product detail page logic (sizes, stock, add to cart)
+│       └── lazyLoad.js              # Lazy loading with IntersectionObserver
 ├── supabase_migration.sql           # Products table + seed data
 ├── supabase_cart_migration.sql      # Cart table + RLS policies
 ├── images/                          # Product images
@@ -132,14 +136,24 @@ The cart drawer slides in from the right with a liquid glass effect (backdrop-fi
 | brand | VARCHAR | Supreme, Corteiz, Balenciaga, Stussy, Nike, etc. |
 | stock | INTEGER | Available quantity |
 
+### `product_sizes` table
+| Column | Type | Description |
+|--------|------|-------------|
+| id | SERIAL | Primary key |
+| product_id | INTEGER | References products |
+| size | VARCHAR | Size label (S, M, L, XL, ONE SIZE, etc.) |
+| stock | INTEGER | Per-size stock count |
+| UNIQUE | | (product_id, size) prevents duplicates |
+
 ### `cart_items` table
 | Column | Type | Description |
 |--------|------|-------------|
 | id | SERIAL | Primary key |
 | user_id | UUID | References auth.users |
 | product_id | INTEGER | References products |
+| size | VARCHAR | Selected size (nullable) |
 | quantity | INTEGER | Item count |
-| UNIQUE | | (user_id, product_id) prevents duplicates |
+| UNIQUE | | (user_id, product_id, size) prevents duplicates |
 
 ### `profiles` table
 | Column | Type | Description |
@@ -189,9 +203,8 @@ The cart drawer slides in from the right with a liquid glass effect (backdrop-fi
 - [x] Perceived performance optimization (instant skeleton loading)
 - [x] Lazy loading images with IntersectionObserver
 - [x] Cyberpunk auth page enhancement (dual backgrounds, parallax, particles, animated borders)
-- [ ] Product detail pages
+- [x] Product detail pages with per-size stock, image gallery, entrance animations
 - [ ] Checkout flow
-- [ ] Product image gallery/zoom
 - [ ] Order history
 
 ## Author
