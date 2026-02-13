@@ -44,16 +44,19 @@ async function updateAuthButton() {
     // Mobile auth section
     const mobileUserInfo = document.getElementById('mobile-user-info');
     const mobileUsername = document.getElementById('mobile-username');
+    const mobileProfileBtn = document.getElementById('mobile-profile-btn');
 
     if (mobileLoginBtn && mobileLogoutBtn) {
         if (user) {
             mobileLoginBtn.style.display = 'none';
             if (mobileUserInfo) mobileUserInfo.style.display = 'flex';
             if (mobileUsername) mobileUsername.textContent = user.username || 'Account';
+            if (mobileProfileBtn) mobileProfileBtn.style.display = 'flex';
             mobileLogoutBtn.style.display = 'flex';
         } else {
             mobileLoginBtn.style.display = 'flex';
             if (mobileUserInfo) mobileUserInfo.style.display = 'none';
+            if (mobileProfileBtn) mobileProfileBtn.style.display = 'none';
             mobileLogoutBtn.style.display = 'none';
         }
     }

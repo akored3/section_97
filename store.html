@@ -40,6 +40,8 @@
                 if (mobileLogin) mobileLogin.style.display = 'none';
                 if (mobileUserInfo) mobileUserInfo.style.display = 'flex';
                 if (mobileUsername) mobileUsername.textContent = cachedUser;
+                const mobileProfile = document.getElementById('mobile-profile-btn');
+                if (mobileProfile) mobileProfile.style.display = 'flex';
                 if (mobileLogout) mobileLogout.style.display = 'flex';
             });
         }
@@ -84,6 +86,13 @@
                 <span id="auth-text">Login</span>
             </button>
             <div class="auth-dropdown" id="auth-dropdown">
+                <a href="profile.html" class="dropdown-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Profile
+                </a>
                 <button class="dropdown-item" id="logout-btn">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
                         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
@@ -146,6 +155,13 @@
                     </svg>
                     <span id="mobile-username">Account</span>
                 </div>
+                <a href="profile.html" class="mobile-auth-btn" id="mobile-profile-btn" style="display: none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>Profile</span>
+                </a>
                 <button class="mobile-logout-btn" id="mobile-logout-btn" style="display: none;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
                         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>

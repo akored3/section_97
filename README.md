@@ -19,6 +19,7 @@ A cyberpunk-inspired streetwear e-commerce store featuring premium brands like S
 - **Product Detail Pages** — Per-product pages with image gallery, per-size stock from database, stock validation, and staggered entrance animations
 - **Security Hardened** — XSS escaping, Content Security Policy, Subresource Integrity on CDN scripts
 - **Resilient Cart** — Size-aware deduplication, per-size stock validation, price calculations with parseFloat, pulse feedback animations, Escape-to-close
+- **User Profile Page** — Avatar upload to Supabase Storage, stats dashboard (total spent, order count, member since), order history with item details, skeleton loading, entrance animations
 
 ## Tech Stack
 
@@ -35,6 +36,7 @@ A cyberpunk-inspired streetwear e-commerce store featuring premium brands like S
 new_web/
 ├── store.html                       # Main store page with product grid
 ├── product.html                     # Product detail page (PDP)
+├── profile.html                     # User profile page
 ├── auth.html                        # Login/signup page
 ├── style.css                        # All styling (dark/light themes, glassmorphism)
 ├── js/
@@ -54,9 +56,11 @@ new_web/
 │       ├── menu.js                  # Mobile hamburger menu
 │       ├── cart.js                  # Shopping cart + drawer (Supabase + localStorage)
 │       ├── productPage.js           # Product detail page logic (sizes, stock, add to cart)
+│       ├── profilePage.js           # Profile page logic (avatar, stats, orders)
 │       └── lazyLoad.js              # Lazy loading with IntersectionObserver
 ├── supabase_migration.sql           # Products table + seed data
 ├── supabase_cart_migration.sql      # Cart table + RLS policies
+├── supabase_orders_migration.sql    # Orders + order_items tables + RLS
 ├── images/                          # Product images
 └── favicon.ico
 ```
@@ -75,7 +79,9 @@ cd section_97
 1. Create a project at [supabase.com](https://supabase.com)
 2. Run `supabase_migration.sql` in the SQL Editor (creates products table + seed data)
 3. Run `supabase_cart_migration.sql` in the SQL Editor (creates cart table + RLS policies)
-4. Create a `js/config/supabase.js` file with your project URL and anon key:
+4. Run `supabase_orders_migration.sql` in the SQL Editor (creates orders + order_items tables + RLS)
+5. Create an `avatars` storage bucket (public) with policies for authenticated upload/update/delete
+6. Create a `js/config/supabase.js` file with your project URL and anon key:
 
 ```javascript
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
@@ -162,6 +168,27 @@ The cart drawer slides in from the right with a liquid glass effect (backdrop-fi
 | username | VARCHAR | Auto-generated unique username |
 | avatar_url | VARCHAR | Profile image (optional) |
 
+### `orders` table
+| Column | Type | Description |
+|--------|------|-------------|
+| id | UUID | Primary key (auto-generated) |
+| user_id | UUID | References auth.users |
+| total | DECIMAL(10,2) | Order total |
+| status | VARCHAR(20) | Order status (default: 'completed') |
+| created_at | TIMESTAMPTZ | Order timestamp |
+
+### `order_items` table
+| Column | Type | Description |
+|--------|------|-------------|
+| id | UUID | Primary key (auto-generated) |
+| order_id | UUID | References orders |
+| product_id | INTEGER | Product reference |
+| product_name | VARCHAR | Snapshot of product name |
+| product_image | VARCHAR | Snapshot of product image |
+| size | VARCHAR | Selected size |
+| quantity | INTEGER | Item count |
+| price | DECIMAL(10,2) | Item price at time of purchase |
+
 ## Product Categories
 
 - **Supreme** — Hoodies, jackets, shirts, pants, shorts, caps, skateboards
@@ -184,7 +211,8 @@ The cart drawer slides in from the right with a liquid glass effect (backdrop-fi
 - **XSS Prevention** — All dynamic data is escaped via `escapeHtml()` before insertion into `innerHTML`
 - **Content Security Policy** — `<meta>` CSP tags on both pages restrict script sources, API connections, and frame embedding
 - **Subresource Integrity** — Supabase CDN script pinned to v2.95.2 with SHA-384 integrity hash
-- **Row Level Security** — Supabase RLS policies ensure users can only access their own cart data
+- **Row Level Security** — Supabase RLS policies ensure users can only access their own cart and order data
+- **Storage Policies** — Avatar uploads restricted to user's own folder via Supabase Storage policies
 
 ## Roadmap
 
@@ -204,8 +232,9 @@ The cart drawer slides in from the right with a liquid glass effect (backdrop-fi
 - [x] Lazy loading images with IntersectionObserver
 - [x] Cyberpunk auth page enhancement (dual backgrounds, parallax, particles, animated borders)
 - [x] Product detail pages with per-size stock, image gallery, entrance animations
+- [x] User profile page with avatar upload, stats, and order history
 - [ ] Checkout flow
-- [ ] Order history
+- [ ] Order history (populated once checkout flow is built)
 
 ## Author
 
