@@ -159,48 +159,38 @@ function updateBadge() {
     }
 }
 
-// Add item to cart
+// Add item to cart (optimistic: updates UI instantly, syncs to Supabase in background)
 export async function addToCart(product) {
+    // Optimistic local update first — instant UI
+    addToLocalCart(product);
+    updateBadge();
+    showAddedFeedback();
+    renderCartDrawer();
+
     if (currentUserId && useSupabase) {
-        // Logged in with Supabase: add to database
+        // Sync to Supabase in background (no reload)
         try {
-            // Try to increment existing or insert new (auth.uid() handles user identity server-side)
             const { error } = await supabase.rpc('increment_cart_quantity', {
                 p_product_id: parseInt(product.id),
                 p_size: product.size || null
             });
 
             if (error) {
-                // Fallback: try direct upsert
                 await supabase
                     .from('cart_items')
                     .upsert({
                         user_id: currentUserId,
                         product_id: parseInt(product.id),
                         size: product.size || null,
-                        quantity: 1
+                        quantity: cart.find(i => i.id === String(product.id) && i.size === (product.size || undefined))?.quantity || 1
                     }, {
                         onConflict: 'user_id,product_id,size'
                     });
             }
-
-            // Reload cart from database
-            const supabaseCart = await loadSupabaseCart();
-            if (supabaseCart) {
-                cart = supabaseCart;
-            }
         } catch (e) {
-            console.warn('Supabase add failed, using localStorage:', e);
-            addToLocalCart(product);
+            console.warn('Supabase add failed (local cart is still current):', e);
         }
-    } else {
-        // Guest or Supabase unavailable: use localStorage
-        addToLocalCart(product);
     }
-
-    updateBadge();
-    showAddedFeedback();
-    renderCartDrawer();
 }
 
 // Add to local cart helper (dedup by id + size composite key)
@@ -237,10 +227,16 @@ function showAddedFeedback() {
     }
 }
 
-// Remove item from cart (matches by cartKey for size-aware items, falls back to id)
+// Remove item from cart (optimistic: updates UI instantly, syncs to Supabase in background)
 export async function removeFromCart(cartKey) {
     const item = cart.find(i => (i.cartKey || i.id) === cartKey);
     if (!item) return;
+
+    // Optimistic local removal first — instant UI
+    cart = cart.filter(i => (i.cartKey || i.id) !== cartKey);
+    saveLocalCart();
+    updateBadge();
+    renderCartDrawer();
 
     if (currentUserId && useSupabase) {
         try {
@@ -250,7 +246,6 @@ export async function removeFromCart(cartKey) {
                     .delete()
                     .eq('id', item.cartItemId);
             } else {
-                // Fallback: delete by product_id + size
                 let query = supabase
                     .from('cart_items')
                     .delete()
@@ -260,28 +255,16 @@ export async function removeFromCart(cartKey) {
                 else query = query.is('size', null);
                 await query;
             }
-
-            const supabaseCart = await loadSupabaseCart();
-            if (supabaseCart) {
-                cart = supabaseCart;
-            }
         } catch (e) {
-            console.warn('Supabase remove failed:', e);
-            cart = cart.filter(i => (i.cartKey || i.id) !== cartKey);
-            saveLocalCart();
+            console.warn('Supabase remove failed (local cart is still current):', e);
         }
-    } else {
-        cart = cart.filter(i => (i.cartKey || i.id) !== cartKey);
-        saveLocalCart();
     }
-
-    updateBadge();
-    renderCartDrawer();
 }
 
 // Update item quantity (matches by cartKey for size-aware items)
 const MAX_QUANTITY = 99;
 
+// Update item quantity (optimistic: updates UI instantly, syncs to Supabase in background)
 export async function updateQuantity(cartKey, quantity) {
     if (quantity < 1) {
         return removeFromCart(cartKey);
@@ -294,6 +277,12 @@ export async function updateQuantity(cartKey, quantity) {
     const item = cart.find(i => (i.cartKey || i.id) === cartKey);
     if (!item) return;
 
+    // Optimistic local update first — instant UI
+    item.quantity = quantity;
+    saveLocalCart();
+    updateBadge();
+    renderCartDrawer();
+
     if (currentUserId && useSupabase) {
         try {
             if (item.cartItemId) {
@@ -311,22 +300,10 @@ export async function updateQuantity(cartKey, quantity) {
                 else query = query.is('size', null);
                 await query;
             }
-
-            const supabaseCart = await loadSupabaseCart();
-            if (supabaseCart) {
-                cart = supabaseCart;
-            }
         } catch (e) {
-            item.quantity = quantity;
-            saveLocalCart();
+            console.warn('Supabase quantity update failed (local cart is still current):', e);
         }
-    } else {
-        item.quantity = quantity;
-        saveLocalCart();
     }
-
-    updateBadge();
-    renderCartDrawer();
 }
 
 // Get all cart items
