@@ -168,25 +168,22 @@ export async function addToCart(product) {
     renderCartDrawer();
 
     if (currentUserId && useSupabase) {
-        // Sync to Supabase in background (no reload)
-        try {
-            const { error } = await supabase.rpc('increment_cart_quantity', {
-                p_product_id: parseInt(product.id),
-                p_size: product.size || null
-            });
+        // Read the quantity we just set locally (using same cartKey logic as addToLocalCart)
+        const cartKey = product.size ? `${product.id}-${product.size}` : String(product.id);
+        const localItem = cart.find(i => (i.cartKey || i.id) === cartKey);
+        const qty = localItem?.quantity || 1;
 
-            if (error) {
-                await supabase
-                    .from('cart_items')
-                    .upsert({
-                        user_id: currentUserId,
-                        product_id: parseInt(product.id),
-                        size: product.size || null,
-                        quantity: cart.find(i => i.id === String(product.id) && i.size === (product.size || undefined))?.quantity || 1
-                    }, {
-                        onConflict: 'user_id,product_id,size'
-                    });
-            }
+        try {
+            await supabase
+                .from('cart_items')
+                .upsert({
+                    user_id: currentUserId,
+                    product_id: parseInt(product.id),
+                    size: product.size || null,
+                    quantity: qty
+                }, {
+                    onConflict: 'user_id,product_id,size'
+                });
         } catch (e) {
             console.warn('Supabase add failed (local cart is still current):', e);
         }
