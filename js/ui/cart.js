@@ -212,19 +212,6 @@ function showAddedFeedback() {
         badge.classList.add('pulse');
         setTimeout(() => badge.classList.remove('pulse'), 600);
     }
-
-    // Brief button text change on the most recently clicked add-to-cart button
-    const activeBtn = document.activeElement?.closest('.add-to-cart-btn') ||
-                      document.querySelector('.add-to-cart-btn:focus');
-    if (activeBtn) {
-        const originalHTML = activeBtn.innerHTML;
-        activeBtn.innerHTML = '<span style="font-size:0.75rem;">ADDED!</span>';
-        activeBtn.disabled = true;
-        setTimeout(() => {
-            activeBtn.innerHTML = originalHTML;
-            activeBtn.disabled = false;
-        }, 1000);
-    }
 }
 
 // Remove item from cart (optimistic: updates UI instantly, syncs to Supabase in background)
