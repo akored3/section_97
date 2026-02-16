@@ -6,6 +6,7 @@ import { escapeHtml } from '../components/productRenderer.js';
 let cart = [];
 let currentUserId = null;
 let useSupabase = false;
+let hasGuestActivity = false; // true only if items were added while logged out (this session)
 
 const STORAGE_KEY = 'section97-cart';
 
@@ -155,6 +156,9 @@ export function addToCart(product) {
         renderDrawer();
     }
 
+    // Track guest activity for merge-on-login
+    if (!currentUserId) hasGuestActivity = true;
+
     // Supabase background sync
     if (currentUserId && useSupabase) {
         const item = cart.find(i => i.cartKey === key);
@@ -287,30 +291,31 @@ async function loadFromSupabase() {
 
 export async function handleAuthChange(userId) {
     if (userId) {
-        // Login: merge guest cart into server cart
+        // Skip if already loaded for this user
+        if (currentUserId === userId) return;
+
         currentUserId = userId;
         useSupabase = true;
 
-        const guestCart = [...cart];
         const serverCart = await loadFromSupabase() || [];
 
-        // Merge: server is base, guest items stack on top
-        const merged = [...serverCart];
-        for (const guest of guestCart) {
-            const match = merged.find(m => m.cartKey === guest.cartKey);
-            if (match) {
-                match.quantity += guest.quantity;
-            } else {
-                merged.push(guest);
+        if (hasGuestActivity && cart.length > 0) {
+            // Guest added items this session, then logged in — merge
+            const guestCart = [...cart];
+            const merged = [...serverCart];
+            for (const guest of guestCart) {
+                const match = merged.find(m => m.cartKey === guest.cartKey);
+                if (match) {
+                    match.quantity += guest.quantity;
+                } else {
+                    merged.push(guest);
+                }
             }
-        }
 
-        cart = merged;
-        saveLocal();
-        updateBadge();
+            cart = merged;
+            hasGuestActivity = false;
 
-        // Push merged state to Supabase (replace all)
-        if (guestCart.length > 0 && cart.length > 0) {
+            // Push merged state to Supabase (replace all)
             try {
                 await supabase.from('cart_items').delete().eq('user_id', userId);
                 await supabase.from('cart_items').insert(
@@ -324,11 +329,18 @@ export async function handleAuthChange(userId) {
             } catch (e) {
                 console.warn('Failed to sync merged cart:', e);
             }
+        } else {
+            // Normal page load: server is source of truth
+            cart = serverCart;
         }
+
+        saveLocal();
+        updateBadge();
     } else {
         // Logout: keep local cart, stop syncing
         currentUserId = null;
         useSupabase = false;
+        hasGuestActivity = false;
         updateBadge();
     }
 }

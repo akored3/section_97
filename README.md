@@ -20,11 +20,12 @@ A cyberpunk-inspired streetwear e-commerce store featuring premium brands like S
 - **Security Hardened** — XSS escaping, Content Security Policy, Subresource Integrity on CDN scripts
 - **Resilient Cart** — Clean rebuild with event delegation, in-place DOM updates, animated item removal, size-aware deduplication via composite keys, optimistic UI (local-first with background Supabase sync), liquid glass drawer with iridescent edge glow and staggered item animations
 - **User Profile Page** — Avatar upload to Supabase Storage, stats dashboard (total spent, order count, member since), order history with item details, skeleton loading, entrance animations
+- **M3 Design Token System** — Centralized CSS custom properties inspired by Material Design 3: shape scale (7 levels), elevation shadows (5 levels), motion curves (standard/emphasized/spring), state layer opacities, typography ramp (display→label), and semantic color tokens that resolve per-theme
 
 ## Tech Stack
 
 - **HTML5** — Semantic markup
-- **CSS3** — Custom properties, gradients, animations, `backdrop-filter` glassmorphism
+- **CSS3** — Custom properties, M3-inspired design tokens, gradients, animations, `backdrop-filter` glassmorphism
 - **JavaScript (ES6+)** — Modules, async/await, modern syntax
 - **Supabase** — Authentication, PostgreSQL database, Row Level Security, cart persistence
 - **Font Awesome** — Icon library
