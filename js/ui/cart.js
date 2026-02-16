@@ -1,567 +1,409 @@
-// Shopping cart with Supabase + localStorage hybrid
+// Shopping cart — Supabase sync with localStorage fallback, optimistic UI
 import { supabase } from '../config/supabase.js';
 import { escapeHtml } from '../components/productRenderer.js';
 
+// ─── State ───────────────────────────────────────
 let cart = [];
 let currentUserId = null;
-let useSupabase = false; // Flag to track if Supabase cart is available
+let useSupabase = false;
 
-// Clear old localStorage cart data (one-time migration to Supabase)
-const CART_VERSION = 'v2-supabase';
-function migrateOldCartData() {
+const STORAGE_KEY = 'section97-cart';
+
+// ─── Helpers ─────────────────────────────────────
+
+// Composite key for size-aware dedup: "42-M" or "7-none"
+function makeKey(id, size) {
+    return `${id}-${size || 'none'}`;
+}
+
+function saveLocal() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cart)); }
+    catch (e) { /* storage full or unavailable */ }
+}
+
+function loadLocal() {
     try {
-        const version = localStorage.getItem('section97-cart-version');
-        if (version !== CART_VERSION) {
-            localStorage.removeItem('section97-cart');
-            localStorage.setItem('section97-cart-version', CART_VERSION);
-        }
-    } catch (e) {
-        // Storage unavailable
-    }
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : [];
+    } catch (e) { return []; }
 }
 
-// Load cart from localStorage
-function loadLocalCart() {
-    const saved = localStorage.getItem('section97-cart');
-    if (saved) {
-        try {
-            cart = JSON.parse(saved);
-        } catch (e) {
-            cart = [];
-        }
-    } else {
-        cart = [];
-    }
+// Supabase null-safe size filter
+function withSize(query, size) {
+    return size ? query.eq('size', size) : query.is('size', null);
 }
 
-// Save cart to localStorage
-function saveLocalCart() {
-    try {
-        localStorage.setItem('section97-cart', JSON.stringify(cart));
-    } catch (e) {
-        // Storage full or unavailable (Safari private mode)
-    }
-}
+// ─── Badge ───────────────────────────────────────
 
-// Clear local cart
-function clearLocalCart() {
-    try {
-        localStorage.removeItem('section97-cart');
-    } catch (e) {
-        // Storage unavailable
-    }
-}
-
-// Check if cart_items table exists and is accessible
-async function checkSupabaseCart() {
-    try {
-        const { error } = await supabase
-            .from('cart_items')
-            .select('id')
-            .limit(1);
-
-        return !error;
-    } catch {
-        return false;
-    }
-}
-
-// Load cart from Supabase
-async function loadSupabaseCart() {
-    if (!currentUserId) return [];
-
-    try {
-        const { data, error } = await supabase
-            .from('cart_items')
-            .select(`
-                id,
-                quantity,
-                size,
-                product_id,
-                products (
-                    id,
-                    name,
-                    price,
-                    image_front
-                )
-            `)
-            .eq('user_id', currentUserId);
-
-        if (error) {
-            console.warn('Supabase cart unavailable:', error.message);
-            return null; // Return null to indicate failure
-        }
-
-        return data.map(item => ({
-            id: String(item.products.id),
-            name: item.products.name,
-            price: item.products.price,
-            image: item.products.image_front,
-            quantity: item.quantity,
-            size: item.size,
-            cartKey: item.size ? `${item.products.id}-${item.size}` : String(item.products.id),
-            cartItemId: item.id
-        }));
-    } catch (e) {
-        console.warn('Failed to load Supabase cart:', e);
-        return null;
-    }
-}
-
-// Merge localStorage cart into Supabase on login
-async function mergeLocalCartToSupabase() {
-    const localCart = JSON.parse(localStorage.getItem('section97-cart') || '[]');
-
-    if (localCart.length === 0 || !currentUserId) return true;
-
-    let allSucceeded = true;
-
-    for (const item of localCart) {
-        try {
-            const { error } = await supabase
-                .from('cart_items')
-                .upsert({
-                    user_id: currentUserId,
-                    product_id: parseInt(item.id),
-                    size: item.size || null,
-                    quantity: item.quantity || 1
-                }, {
-                    onConflict: 'user_id,product_id,size'
-                });
-
-            if (error) {
-                console.warn('Error merging cart item:', error.message);
-                allSucceeded = false;
-            }
-        } catch (e) {
-            allSucceeded = false;
-        }
-    }
-
-    if (allSucceeded) {
-        clearLocalCart();
-    }
-
-    return allSucceeded;
-}
-
-// Update the badge count in the UI
 function updateBadge() {
-    const badge = document.getElementById('cart-badge');
-    if (!badge) return;
-
-    const count = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
-    if (count > 0) {
+    const count = cart.reduce((sum, i) => sum + i.quantity, 0);
+    document.querySelectorAll('#cart-badge').forEach(badge => {
         badge.textContent = count;
-        badge.style.display = 'flex';
-    } else {
-        badge.style.display = 'none';
-    }
-}
-
-// Add item to cart (optimistic: updates UI instantly, syncs to Supabase in background)
-export async function addToCart(product) {
-    // Optimistic local update first — instant UI
-    addToLocalCart(product);
-    updateBadge();
-    showAddedFeedback();
-    renderCartDrawer();
-
-    if (currentUserId && useSupabase) {
-        // Read the quantity we just set locally (using same cartKey logic as addToLocalCart)
-        const cartKey = product.size ? `${product.id}-${product.size}` : String(product.id);
-        const localItem = cart.find(i => (i.cartKey || i.id) === cartKey);
-        const qty = localItem?.quantity || 1;
-
-        try {
-            await supabase
-                .from('cart_items')
-                .upsert({
-                    user_id: currentUserId,
-                    product_id: parseInt(product.id),
-                    size: product.size || null,
-                    quantity: qty
-                }, {
-                    onConflict: 'user_id,product_id,size'
-                });
-        } catch (e) {
-            console.warn('Supabase add failed (local cart is still current):', e);
-        }
-    }
-}
-
-// Add to local cart helper (dedup by id + size composite key)
-function addToLocalCart(product) {
-    const cartKey = product.size ? `${product.id}-${product.size}` : String(product.id);
-    const existing = cart.find(item => (item.cartKey || item.id) === cartKey);
-    if (existing) {
-        existing.quantity = (existing.quantity || 1) + 1;
-    } else {
-        cart.push({ ...product, id: String(product.id), cartKey, quantity: 1 });
-    }
-    saveLocalCart();
-}
-
-// Show visual feedback when item added
-function showAddedFeedback() {
-    const badge = document.getElementById('cart-badge');
-    if (badge) {
-        badge.classList.add('pulse');
-        setTimeout(() => badge.classList.remove('pulse'), 600);
-    }
-}
-
-// Remove item from cart (optimistic: updates UI instantly, syncs to Supabase in background)
-export async function removeFromCart(cartKey) {
-    const item = cart.find(i => (i.cartKey || i.id) === cartKey);
-    if (!item) return;
-
-    // Optimistic local removal first — instant UI
-    cart = cart.filter(i => (i.cartKey || i.id) !== cartKey);
-    saveLocalCart();
-    updateBadge();
-    renderCartDrawer();
-
-    if (currentUserId && useSupabase) {
-        try {
-            if (item.cartItemId) {
-                await supabase
-                    .from('cart_items')
-                    .delete()
-                    .eq('id', item.cartItemId);
-            } else {
-                let query = supabase
-                    .from('cart_items')
-                    .delete()
-                    .eq('user_id', currentUserId)
-                    .eq('product_id', parseInt(item.id));
-                if (item.size) query = query.eq('size', item.size);
-                else query = query.is('size', null);
-                await query;
-            }
-        } catch (e) {
-            console.warn('Supabase remove failed (local cart is still current):', e);
-        }
-    }
-}
-
-// Update item quantity (matches by cartKey for size-aware items)
-const MAX_QUANTITY = 99;
-
-// Update item quantity (optimistic: updates UI instantly, syncs to Supabase in background)
-export async function updateQuantity(cartKey, quantity) {
-    if (quantity < 1) {
-        return removeFromCart(cartKey);
-    }
-
-    if (quantity > MAX_QUANTITY) {
-        quantity = MAX_QUANTITY;
-    }
-
-    const item = cart.find(i => (i.cartKey || i.id) === cartKey);
-    if (!item) return;
-
-    // Optimistic local update first — instant UI
-    item.quantity = quantity;
-    saveLocalCart();
-    updateBadge();
-    renderCartDrawer();
-
-    if (currentUserId && useSupabase) {
-        try {
-            if (item.cartItemId) {
-                await supabase
-                    .from('cart_items')
-                    .update({ quantity })
-                    .eq('id', item.cartItemId);
-            } else {
-                let query = supabase
-                    .from('cart_items')
-                    .update({ quantity })
-                    .eq('user_id', currentUserId)
-                    .eq('product_id', parseInt(item.id));
-                if (item.size) query = query.eq('size', item.size);
-                else query = query.is('size', null);
-                await query;
-            }
-        } catch (e) {
-            console.warn('Supabase quantity update failed (local cart is still current):', e);
-        }
-    }
-}
-
-// Get all cart items
-export function getCart() {
-    return cart;
-}
-
-// Get cart total
-export function getCartTotal() {
-    return cart.reduce((sum, item) => {
-        return sum + (parseFloat(item.price) * (item.quantity || 1));
-    }, 0);
-}
-
-// Get cart count
-export function getCartCount() {
-    return cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
-}
-
-// Clear entire cart
-export async function clearCart() {
-    if (currentUserId && useSupabase) {
-        try {
-            await supabase
-                .from('cart_items')
-                .delete()
-                .eq('user_id', currentUserId);
-        } catch (e) {
-            console.warn('Failed to clear Supabase cart:', e);
-        }
-    }
-
-    cart = [];
-    clearLocalCart();
-    updateBadge();
-}
-
-// Set up click listeners on ADD TO BAG buttons
-export function setupAddToCartButtons() {
-    const buttons = document.querySelectorAll('.add-to-cart-btn');
-    buttons.forEach(button => {
-        button.addEventListener('click', function() {
-            const stock = parseInt(this.dataset.stock);
-            if (!isNaN(stock)) {
-                const existing = cart.find(i => i.id === String(this.dataset.id));
-                const currentQty = existing ? (existing.quantity || 1) : 0;
-                if (currentQty >= stock) {
-                    this.textContent = 'OUT OF STOCK';
-                    setTimeout(() => { this.innerHTML = originalButtonHTML(this); }, 1500);
-                    return;
-                }
-            }
-
-            const product = {
-                id: this.dataset.id,
-                name: this.dataset.name,
-                price: this.dataset.price,
-                image: this.dataset.image
-            };
-            addToCart(product);
-        });
+        badge.style.display = count > 0 ? 'flex' : 'none';
+        badge.classList.remove('pulse');
+        void badge.offsetWidth;
+        if (count > 0) badge.classList.add('pulse');
     });
 }
 
-// Rebuild default button HTML for reset after stock warning
-function originalButtonHTML() {
-    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
-                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                <line x1="3" y1="6" x2="21" y2="6"></line>
-                <path d="M16 10a4 4 0 0 1-8 0"></path>
-            </svg>
-            ADD TO BAG`;
-}
+// ─── Drawer Render ───────────────────────────────
 
-// Handle auth state changes
-export async function handleAuthChange(userId) {
-    const wasLoggedIn = !!currentUserId;
-    currentUserId = userId;
-
-    if (userId && !wasLoggedIn) {
-        // Just logged in
-        useSupabase = await checkSupabaseCart();
-
-        if (useSupabase) {
-            await mergeLocalCartToSupabase();
-            const supabaseCart = await loadSupabaseCart();
-            if (supabaseCart) {
-                cart = supabaseCart;
-            }
-        }
-        // If Supabase unavailable, keep using localStorage (already loaded)
-
-    } else if (!userId && wasLoggedIn) {
-        // Just logged out: reset to localStorage
-        useSupabase = false;
-        loadLocalCart();
-
-    } else if (userId) {
-        // Already logged in, refresh from Supabase
-        if (useSupabase) {
-            const supabaseCart = await loadSupabaseCart();
-            if (supabaseCart) {
-                cart = supabaseCart;
-            }
-        }
-    }
-
-    updateBadge();
-}
-
-// Initialize cart - call this on page load
-export async function initializeCart() {
-    // Clear old cart data from before Supabase migration
-    migrateOldCartData();
-
-    // Always load localStorage first as fallback
-    loadLocalCart();
-
-    // Check if user is logged in
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (user) {
-        currentUserId = user.id;
-
-        // Check if Supabase cart is available
-        useSupabase = await checkSupabaseCart();
-
-        if (useSupabase) {
-            const supabaseCart = await loadSupabaseCart();
-            if (supabaseCart !== null) {
-                cart = supabaseCart;
-            }
-            // If null (error), keep localStorage cart
-        }
-    }
-
-    updateBadge();
-
-    // Listen for auth changes
-    supabase.auth.onAuthStateChange(async (event, session) => {
-        await handleAuthChange(session?.user?.id || null);
-    });
-
-    console.log('Cart initialized:', {
-        loggedIn: !!currentUserId,
-        useSupabase,
-        itemCount: cart.length
-    });
-}
-
-// ===== CART DRAWER =====
-
-// Render cart items into the drawer
-function renderCartDrawer() {
-    const itemsContainer = document.getElementById('cart-drawer-items');
-    const totalEl = document.getElementById('cart-drawer-total');
+function renderDrawer() {
+    const container = document.getElementById('cart-drawer-items');
     const footer = document.getElementById('cart-drawer-footer');
-    if (!itemsContainer) return;
+    const totalEl = document.getElementById('cart-drawer-total');
+    if (!container) return;
 
     if (cart.length === 0) {
-        itemsContainer.innerHTML = `
+        container.innerHTML = `
             <div class="cart-drawer-empty">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48">
-                    <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
-                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <path d="M16 10a4 4 0 0 1-8 0"/>
                 </svg>
-                <p>Nothing here yet.</p>
-                <span style="font-size: 0.8rem; opacity: 0.6;">Go cop something.</span>
+                <p>Your cart is empty</p>
             </div>`;
         if (footer) footer.style.display = 'none';
         return;
     }
 
-    if (footer) footer.style.display = 'block';
-
-    itemsContainer.innerHTML = cart.map(item => {
-        const safeKey = escapeHtml(item.cartKey || item.id);
-        const safeName = escapeHtml(item.name);
-        const safeImage = escapeHtml(item.image);
-        const formattedPrice = parseFloat(item.price).toLocaleString();
-        return `
-        <div class="cart-drawer-item" data-cart-key="${safeKey}">
-            <img class="cart-drawer-item-img" src="${safeImage}" alt="${safeName}">
+    container.innerHTML = cart.map((item, i) => `
+        <div class="cart-drawer-item" data-key="${escapeHtml(item.cartKey)}" style="animation-delay:${i * 50}ms">
+            <img class="cart-drawer-item-img" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}"
+                 onerror="this.style.display='none'">
             <div class="cart-drawer-item-details">
-                <span class="cart-drawer-item-name">${safeName}</span>
-                ${item.size ? `<span class="cart-drawer-item-size">Size: ${escapeHtml(item.size)}</span>` : ''}
-                <span class="cart-drawer-item-price">$${formattedPrice}</span>
+                <div class="cart-drawer-item-name">${escapeHtml(item.name)}</div>
+                ${item.size ? `<div class="cart-drawer-item-size">Size ${escapeHtml(item.size)}</div>` : ''}
+                <div class="cart-drawer-item-price">$${(item.price * item.quantity).toLocaleString('en-US', { minimumFractionDigits: 2 })}</div>
                 <div class="cart-drawer-item-actions">
                     <div class="cart-drawer-qty">
-                        <button class="cart-qty-minus" data-cart-key="${safeKey}">-</button>
-                        <span>${item.quantity || 1}</span>
-                        <button class="cart-qty-plus" data-cart-key="${safeKey}">+</button>
+                        <button data-action="dec" data-key="${escapeHtml(item.cartKey)}">−</button>
+                        <span>${item.quantity}</span>
+                        <button data-action="inc" data-key="${escapeHtml(item.cartKey)}">+</button>
                     </div>
-                    <button class="cart-drawer-remove" data-cart-key="${safeKey}">Remove</button>
+                    <button class="cart-drawer-remove" data-action="remove" data-key="${escapeHtml(item.cartKey)}">Remove</button>
                 </div>
             </div>
-        </div>`;
-    }).join('');
+        </div>
+    `).join('');
 
-    if (totalEl) {
-        totalEl.textContent = `$${getCartTotal().toLocaleString()}`;
-    }
-
-    // Attach event listeners (use cartKey for size-aware matching)
-    itemsContainer.querySelectorAll('.cart-qty-minus').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const key = btn.dataset.cartKey;
-            const item = cart.find(i => (i.cartKey || i.id) === key);
-            if (item) updateQuantity(key, (item.quantity || 1) - 1);
-        });
-    });
-
-    itemsContainer.querySelectorAll('.cart-qty-plus').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const key = btn.dataset.cartKey;
-            const item = cart.find(i => (i.cartKey || i.id) === key);
-            if (item) updateQuantity(key, (item.quantity || 1) + 1);
-        });
-    });
-
-    itemsContainer.querySelectorAll('.cart-drawer-remove').forEach(btn => {
-        btn.addEventListener('click', () => {
-            removeFromCart(btn.dataset.cartKey);
-        });
-    });
+    const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
+    if (footer) footer.style.display = '';
+    if (totalEl) totalEl.textContent = `$${total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
-// Open drawer
-export function openCartDrawer() {
-    const drawer = document.getElementById('cart-drawer');
-    const overlay = document.getElementById('cart-overlay');
-    if (!drawer) return;
+// In-place update for quantity changes (avoids re-rendering + re-animating all items)
+function updateItemInPlace(key, qty) {
+    const el = document.querySelector(`.cart-drawer-item[data-key="${CSS.escape(key)}"]`);
+    if (!el) return false;
 
-    renderCartDrawer();
-    drawer.classList.add('active');
-    if (overlay) overlay.classList.add('active');
+    const item = cart.find(i => i.cartKey === key);
+    if (!item) return false;
+
+    const qtySpan = el.querySelector('.cart-drawer-qty span');
+    if (qtySpan) qtySpan.textContent = qty;
+
+    const priceEl = el.querySelector('.cart-drawer-item-price');
+    if (priceEl) priceEl.textContent = `$${(item.price * qty).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+
+    const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
+    const totalEl = document.getElementById('cart-drawer-total');
+    if (totalEl) totalEl.textContent = `$${total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+    return true;
+}
+
+// ─── Drawer Open / Close ─────────────────────────
+
+export function openCartDrawer() {
+    renderDrawer();
+    document.getElementById('cart-drawer')?.classList.add('active');
+    document.getElementById('cart-overlay')?.classList.add('active');
     document.body.style.overflow = 'hidden';
 }
 
-// Close drawer
 export function closeCartDrawer() {
-    const drawer = document.getElementById('cart-drawer');
-    const overlay = document.getElementById('cart-overlay');
-    if (!drawer) return;
-
-    drawer.classList.remove('active');
-    if (overlay) overlay.classList.remove('active');
+    document.getElementById('cart-drawer')?.classList.remove('active');
+    document.getElementById('cart-overlay')?.classList.remove('active');
     document.body.style.overflow = '';
 }
 
-// Set up drawer close listeners
-export function setupCartDrawer() {
-    const closeBtn = document.getElementById('cart-drawer-close');
-    const overlay = document.getElementById('cart-overlay');
-    const checkoutBtn = document.querySelector('.cart-drawer-checkout');
+// ─── Cart Operations ─────────────────────────────
 
-    if (closeBtn) closeBtn.addEventListener('click', closeCartDrawer);
-    if (overlay) overlay.addEventListener('click', closeCartDrawer);
+export function addToCart(product) {
+    const key = makeKey(product.id, product.size);
+    const existing = cart.find(i => i.cartKey === key);
 
-    // Close cart drawer on Escape key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            const drawer = document.getElementById('cart-drawer');
-            if (drawer?.classList.contains('active')) {
-                closeCartDrawer();
+    if (existing) {
+        existing.quantity += 1;
+        saveLocal();
+        updateBadge();
+        if (!updateItemInPlace(key, existing.quantity)) renderDrawer();
+    } else {
+        cart.push({
+            id: String(product.id),
+            name: product.name,
+            price: parseFloat(product.price),
+            image: product.image,
+            size: product.size || null,
+            quantity: 1,
+            cartKey: key
+        });
+        saveLocal();
+        updateBadge();
+        renderDrawer();
+    }
+
+    // Supabase background sync
+    if (currentUserId && useSupabase) {
+        const item = cart.find(i => i.cartKey === key);
+        syncUpsert(item);
+    }
+}
+
+export function removeFromCart(key) {
+    const item = cart.find(i => i.cartKey === key);
+    if (!item) return;
+
+    const el = document.querySelector(`.cart-drawer-item[data-key="${CSS.escape(key)}"]`);
+    let removed = false;
+
+    const doRemove = () => {
+        if (removed) return;
+        removed = true;
+        cart = cart.filter(i => i.cartKey !== key);
+        saveLocal();
+        updateBadge();
+        renderDrawer();
+    };
+
+    if (el) {
+        el.classList.add('removing');
+        el.addEventListener('animationend', doRemove, { once: true });
+        setTimeout(doRemove, 350); // fallback
+    } else {
+        doRemove();
+    }
+
+    // Supabase background sync
+    if (currentUserId && useSupabase) syncDelete(item);
+}
+
+export function updateQuantity(key, qty) {
+    if (qty < 1) return removeFromCart(key);
+
+    const item = cart.find(i => i.cartKey === key);
+    if (!item) return;
+
+    item.quantity = qty;
+    saveLocal();
+    updateBadge();
+
+    // In-place DOM update (no re-animation flicker)
+    if (!updateItemInPlace(key, qty)) renderDrawer();
+
+    if (currentUserId && useSupabase) syncUpdate(item);
+}
+
+// ─── Supabase Sync (fire-and-forget) ─────────────
+
+async function syncUpsert(item) {
+    try {
+        let q = supabase.from('cart_items')
+            .select('id, quantity')
+            .eq('user_id', currentUserId)
+            .eq('product_id', parseInt(item.id));
+        q = withSize(q, item.size);
+        const { data } = await q.maybeSingle();
+
+        if (data) {
+            await supabase.from('cart_items')
+                .update({ quantity: item.quantity })
+                .eq('id', data.id);
+        } else {
+            await supabase.from('cart_items').insert({
+                user_id: currentUserId,
+                product_id: parseInt(item.id),
+                size: item.size || null,
+                quantity: item.quantity
+            });
+        }
+    } catch (e) {
+        console.warn('Cart sync (upsert) failed:', e);
+    }
+}
+
+async function syncDelete(item) {
+    try {
+        let q = supabase.from('cart_items')
+            .delete()
+            .eq('user_id', currentUserId)
+            .eq('product_id', parseInt(item.id));
+        await withSize(q, item.size);
+    } catch (e) {
+        console.warn('Cart sync (delete) failed:', e);
+    }
+}
+
+async function syncUpdate(item) {
+    try {
+        let q = supabase.from('cart_items')
+            .update({ quantity: item.quantity })
+            .eq('user_id', currentUserId)
+            .eq('product_id', parseInt(item.id));
+        await withSize(q, item.size);
+    } catch (e) {
+        console.warn('Cart sync (update) failed:', e);
+    }
+}
+
+// Load full cart from Supabase (joined with products table)
+async function loadFromSupabase() {
+    try {
+        const { data, error } = await supabase
+            .from('cart_items')
+            .select('product_id, size, quantity, products (name, price, image_front)')
+            .eq('user_id', currentUserId);
+
+        if (error) throw error;
+
+        return (data || []).map(row => ({
+            id: String(row.product_id),
+            name: row.products?.name || 'Unknown',
+            price: parseFloat(row.products?.price || 0),
+            image: row.products?.image_front || '',
+            size: row.size || null,
+            quantity: row.quantity,
+            cartKey: makeKey(row.product_id, row.size)
+        }));
+    } catch (e) {
+        console.warn('Failed to load cart from Supabase:', e);
+        return null;
+    }
+}
+
+// ─── Auth State Handling ─────────────────────────
+
+export async function handleAuthChange(userId) {
+    if (userId) {
+        // Login: merge guest cart into server cart
+        currentUserId = userId;
+        useSupabase = true;
+
+        const guestCart = [...cart];
+        const serverCart = await loadFromSupabase() || [];
+
+        // Merge: server is base, guest items stack on top
+        const merged = [...serverCart];
+        for (const guest of guestCart) {
+            const match = merged.find(m => m.cartKey === guest.cartKey);
+            if (match) {
+                match.quantity += guest.quantity;
+            } else {
+                merged.push(guest);
             }
         }
+
+        cart = merged;
+        saveLocal();
+        updateBadge();
+
+        // Push merged state to Supabase (replace all)
+        if (guestCart.length > 0 && cart.length > 0) {
+            try {
+                await supabase.from('cart_items').delete().eq('user_id', userId);
+                await supabase.from('cart_items').insert(
+                    cart.map(item => ({
+                        user_id: userId,
+                        product_id: parseInt(item.id),
+                        size: item.size || null,
+                        quantity: item.quantity
+                    }))
+                );
+            } catch (e) {
+                console.warn('Failed to sync merged cart:', e);
+            }
+        }
+    } else {
+        // Logout: keep local cart, stop syncing
+        currentUserId = null;
+        useSupabase = false;
+        updateBadge();
+    }
+}
+
+// ─── Store Page: Add-to-Cart Buttons ─────────────
+
+export function setupAddToCartButtons() {
+    document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            addToCart({
+                id: btn.dataset.id,
+                name: btn.dataset.name,
+                price: btn.dataset.price,
+                image: btn.dataset.image,
+                size: null
+            });
+        });
+    });
+}
+
+// ─── Setup Cart Drawer ───────────────────────────
+
+export function setupCartDrawer() {
+    // Close button
+    document.getElementById('cart-drawer-close')?.addEventListener('click', closeCartDrawer);
+
+    // Overlay click to close
+    document.getElementById('cart-overlay')?.addEventListener('click', closeCartDrawer);
+
+    // Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeCartDrawer();
     });
 
-    // Checkout placeholder
-    if (checkoutBtn) {
-        checkoutBtn.addEventListener('click', () => {
-            checkoutBtn.textContent = 'COMING SOON';
-            setTimeout(() => { checkoutBtn.textContent = 'CHECKOUT'; }, 2000);
+    // Cart buttons open drawer
+    document.querySelectorAll('.cart-btn, .pdp-cart-btn, #pdp-cart-toggle').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openCartDrawer();
         });
-    }
+    });
+
+    // Event delegation for drawer item actions (qty +/-, remove)
+    document.getElementById('cart-drawer-items')?.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-action]');
+        if (!btn) return;
+
+        const key = btn.dataset.key;
+        const action = btn.dataset.action;
+        const item = cart.find(i => i.cartKey === key);
+        if (!item) return;
+
+        if (action === 'inc') updateQuantity(key, item.quantity + 1);
+        else if (action === 'dec') updateQuantity(key, item.quantity - 1);
+        else if (action === 'remove') removeFromCart(key);
+    });
+}
+
+// ─── Initialize ──────────────────────────────────
+
+export async function initializeCart() {
+    cart = loadLocal();
+    updateBadge();
+}
+
+// ─── Public Getters ──────────────────────────────
+
+export function getCart() { return cart; }
+export function getCartCount() { return cart.reduce((s, i) => s + i.quantity, 0); }
+export function getCartTotal() { return cart.reduce((s, i) => s + i.price * i.quantity, 0); }
+
+export function clearCart() {
+    cart = [];
+    saveLocal();
+    updateBadge();
+    renderDrawer();
 }

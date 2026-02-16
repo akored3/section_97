@@ -1,8 +1,8 @@
 // Product details page — handles fetch, render, sizes, descriptions, and cart
 import { fetchProductById } from '../data/products.js';
-import { addToCart, getCart, initializeCart, setupCartDrawer, openCartDrawer } from '../ui/cart.js';
 import { initializeTheme } from '../ui/theme.js';
 import { escapeHtml } from '../components/productRenderer.js';
+import { initializeCart, setupCartDrawer, addToCart, openCartDrawer } from './cart.js';
 
 let selectedSize = null;
 let selectedSizeStock = null;
@@ -135,76 +135,41 @@ function renderProduct(product) {
     content.classList.add('pdp-enter');
 }
 
-// Add to cart handler (includes size, await, stock validation)
+// Setup PDP add-to-cart button
 function setupAddToCart() {
-    const btn = document.getElementById('pdp-add-to-cart');
-    btn.addEventListener('click', async () => {
-        if (!selectedSize || !currentProduct) return;
+    const addBtn = document.getElementById('pdp-add-to-cart');
+    if (!addBtn) return;
 
-        // Stock validation: check cart qty against per-size stock
-        const cart = getCart();
-        const cartKey = `${currentProduct.id}-${selectedSize}`;
-        const existing = cart.find(i => (i.cartKey || i.id) === cartKey);
-        const currentQty = existing ? (existing.quantity || 1) : 0;
-        if (selectedSizeStock && currentQty >= selectedSizeStock) {
-            btn.textContent = 'MAX STOCK REACHED';
-            setTimeout(() => {
-                btn.textContent = `ADD TO BAG — SIZE ${selectedSize}`;
-            }, 1500);
-            return;
-        }
+    addBtn.addEventListener('click', () => {
+        if (!currentProduct || !selectedSize) return;
 
-        btn.disabled = true;
-        btn.textContent = 'ADDING...';
+        addToCart({
+            id: currentProduct.id,
+            name: currentProduct.name,
+            price: currentProduct.price,
+            image: currentProduct.imageSrc,
+            size: selectedSize
+        });
 
-        try {
-            await addToCart({
-                id: currentProduct.id,
-                name: currentProduct.name,
-                price: currentProduct.price,
-                image: currentProduct.imageSrc,
-                size: selectedSize
-            });
-
-            btn.textContent = 'ADDED TO BAG \u2713';
-            openCartDrawer();
-
-            setTimeout(() => {
-                btn.textContent = `ADD TO BAG — SIZE ${selectedSize}`;
-                btn.disabled = false;
-            }, 1500);
-        } catch (e) {
-            btn.textContent = 'FAILED — TRY AGAIN';
-            btn.disabled = false;
-            setTimeout(() => {
-                btn.textContent = `ADD TO BAG — SIZE ${selectedSize}`;
-            }, 1500);
-        }
+        openCartDrawer();
     });
 }
 
 // Initialize page
 document.addEventListener('DOMContentLoaded', async () => {
     initializeTheme();
+    await initializeCart();
     setupCartDrawer();
-    setupAddToCart();
-
-    // Cart toggle button on PDP
-    const cartToggle = document.getElementById('pdp-cart-toggle');
-    if (cartToggle) cartToggle.addEventListener('click', openCartDrawer);
 
     // Validate URL param before fetch
     const id = new URLSearchParams(window.location.search).get('id');
     if (!id || isNaN(parseInt(id)) || parseInt(id) < 1) return showError();
 
-    // Parallel fetch: cart + product data
-    const [_, product] = await Promise.all([
-        initializeCart(),
-        fetchProductById(parseInt(id))
-    ]);
+    const product = await fetchProductById(parseInt(id));
 
     if (!product) return showError();
 
     currentProduct = product;
     renderProduct(product);
+    setupAddToCart();
 });

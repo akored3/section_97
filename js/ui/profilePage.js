@@ -1,9 +1,9 @@
 // Profile page — displays user profile, avatar upload, stats, and order history
 import { getCurrentUser, signOut } from '../auth/auth.js';
 import { supabase } from '../config/supabase.js';
-import { initializeCart, setupCartDrawer, openCartDrawer, handleAuthChange } from './cart.js';
 import { initializeTheme } from './theme.js';
 import { escapeHtml } from '../components/productRenderer.js';
+import { initializeCart, setupCartDrawer } from './cart.js';
 
 // Generate a default avatar SVG with the user's initial
 function generateDefaultAvatar(username) {
@@ -277,7 +277,6 @@ function setupLogout() {
                 localStorage.removeItem('section97-username');
             } catch (e) { /* storage unavailable */ }
 
-            await handleAuthChange(null);
             window.location.href = 'store.html';
         } else {
             btn.disabled = false;
@@ -296,17 +295,10 @@ function setupLogout() {
 // Initialize everything when DOM is ready
 document.addEventListener('DOMContentLoaded', async () => {
     initializeTheme();
+    await initializeCart();
     setupCartDrawer();
 
-    // Cart toggle on profile page
-    const cartToggle = document.getElementById('pdp-cart-toggle');
-    if (cartToggle) cartToggle.addEventListener('click', openCartDrawer);
-
-    // Parallel: initialize cart + get current user
-    const [_, user] = await Promise.all([
-        initializeCart(),
-        getCurrentUser()
-    ]);
+    const user = await getCurrentUser();
 
     // Auth guard: redirect if not logged in
     if (!user) return showError();

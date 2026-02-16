@@ -18,7 +18,7 @@ A cyberpunk-inspired streetwear e-commerce store featuring premium brands like S
 - **Modular Architecture** — Clean ES6 module structure with single-responsibility files
 - **Product Detail Pages** — Per-product pages with image gallery, per-size stock from database, stock validation, and staggered entrance animations
 - **Security Hardened** — XSS escaping, Content Security Policy, Subresource Integrity on CDN scripts
-- **Resilient Cart** — Size-aware deduplication, per-size stock validation, price calculations with parseFloat, pulse feedback animations, Escape-to-close, optimistic UI updates for instant add/remove/quantity changes
+- **Resilient Cart** — Clean rebuild with event delegation, in-place DOM updates, animated item removal, size-aware deduplication via composite keys, optimistic UI (local-first with background Supabase sync), liquid glass drawer with iridescent edge glow and staggered item animations
 - **User Profile Page** — Avatar upload to Supabase Storage, stats dashboard (total spent, order count, member since), order history with item details, skeleton loading, entrance animations
 
 ## Tech Stack
@@ -234,6 +234,7 @@ The cart drawer slides in from the right with a liquid glass effect (backdrop-fi
 - [x] Product detail pages with per-size stock, image gallery, entrance animations
 - [x] User profile page with avatar upload, stats, and order history
 - [x] Cart performance: optimistic UI updates for instant cart operations
+- [x] Cart rewrite: clean rebuild with event delegation, animated removal, liquid glass enhancements
 - [ ] Checkout flow
 - [ ] Order history (populated once checkout flow is built)
 

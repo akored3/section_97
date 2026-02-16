@@ -4,9 +4,9 @@ import { renderProducts, showSkeletons } from './components/productRenderer.js';
 import { initializeFilters, initializeSearch } from './components/filters.js';
 import { initializeTheme } from './ui/theme.js';
 import { initializeMenu } from './ui/menu.js';
-import { initializeCart, setupAddToCartButtons, openCartDrawer, setupCartDrawer, handleAuthChange } from './ui/cart.js';
 import { getCurrentUser, onAuthStateChange, signOut } from './auth/auth.js';
 import { initializeLazyLoading } from './ui/lazyLoad.js';
+import { initializeCart, setupCartDrawer, setupAddToCartButtons, handleAuthChange } from './ui/cart.js';
 
 // Track if user is logged in
 let isLoggedIn = false;
@@ -95,8 +95,8 @@ function initializeAuthDropdown() {
             const result = await signOut();
             if (result.success) {
                 dropdown.classList.remove('active');
-                await handleAuthChange(null);
                 updateAuthButton();
+                handleAuthChange(null);
             }
         });
     }
@@ -107,8 +107,8 @@ function initializeAuthDropdown() {
             const result = await signOut();
             if (result.success) {
                 if (mobileMenu) mobileMenu.classList.remove('active');
-                await handleAuthChange(null);
                 updateAuthButton();
+                handleAuthChange(null);
             }
         });
     }
@@ -124,7 +124,7 @@ function initializeIdleTimeout() {
         idleTimer = setTimeout(async () => {
             if (isLoggedIn) {
                 await signOut();
-                await handleAuthChange(null);
+                handleAuthChange(null);
                 window.location.href = 'auth.html';
             }
         }, IDLE_LIMIT);
@@ -151,18 +151,21 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Show skeleton cards immediately for better UX
     showSkeletons(8);
 
-    // Cart and auth are critical - initialize first
     await safeInit('Cart', async () => {
         await initializeCart();
         setupCartDrawer();
-        const cartBtn = document.querySelector('.cart-btn');
-        if (cartBtn) cartBtn.addEventListener('click', openCartDrawer);
     });
 
     await safeInit('Auth', async () => {
         updateAuthButton();
         initializeAuthDropdown();
-        onAuthStateChange(() => updateAuthButton());
+        onAuthStateChange((event, session) => {
+            updateAuthButton();
+            handleAuthChange(session?.user?.id || null);
+        });
+        // Initial auth-aware cart load
+        const user = await getCurrentUser();
+        if (user) await handleAuthChange(user.id);
     });
 
     // Products - core content

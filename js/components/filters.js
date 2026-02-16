@@ -1,7 +1,7 @@
 // Handles product filtering and search logic
 import { renderProducts } from './productRenderer.js';
-import { setupAddToCartButtons } from '../ui/cart.js';
 import { initializeLazyLoading } from '../ui/lazyLoad.js';
+import { setupAddToCartButtons } from '../ui/cart.js';
 
 let currentFilter = 'all';
 let currentSearchTerm = '';
@@ -32,7 +32,7 @@ function applyFilters() {
     } else {
         renderProducts(filteredProducts);
         initializeLazyLoading(); // Re-observe images after re-render
-        setupAddToCartButtons();
+        setupAddToCartButtons(); // Re-bind cart buttons on new cards
     }
 }
 
