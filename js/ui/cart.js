@@ -63,7 +63,7 @@ function renderDrawer() {
                     <line x1="3" y1="6" x2="21" y2="6"/>
                     <path d="M16 10a4 4 0 0 1-8 0"/>
                 </svg>
-                <p>Your cart is empty</p>
+                <p>Nothing here yet</p>
             </div>`;
         if (footer) footer.style.display = 'none';
         return;

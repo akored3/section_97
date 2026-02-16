@@ -608,8 +608,8 @@
                 </div>
 
             <div class="auth-tabs">
-                <button class="auth-tab active" data-tab="login">LOG IN</button>
-                <button class="auth-tab" data-tab="signup">SIGN UP</button>
+                <button class="auth-tab active" data-tab="login">Log in</button>
+                <button class="auth-tab" data-tab="signup">Sign up</button>
             </div>
 
             <div id="auth-message" class="auth-message"></div>
@@ -624,7 +624,7 @@
                     <label for="login-password">Password</label>
                     <input type="password" id="login-password" required placeholder="Enter your password">
                 </div>
-                <button type="submit" class="auth-submit">LOG IN</button>
+                <button type="submit" class="auth-submit">Log in</button>
             </form>
 
             <!-- Signup Form -->
@@ -641,7 +641,7 @@
                     <label for="signup-confirm">Confirm Password</label>
                     <input type="password" id="signup-confirm" required placeholder="Confirm your password">
                 </div>
-                <button type="submit" class="auth-submit">CREATE ACCOUNT</button>
+                <button type="submit" class="auth-submit">Create account</button>
                 <p style="font-size: 0.8rem; color: #888; text-align: center; margin: 0;">
                     You'll receive a unique username upon signup
                 </p>
@@ -709,7 +709,7 @@
             const submitBtn = loginForm.querySelector('.auth-submit');
 
             submitBtn.disabled = true;
-            submitBtn.textContent = 'LOGGING IN...';
+            submitBtn.textContent = 'Logging in...';
 
             const result = await signIn(email, password);
 
@@ -721,7 +721,7 @@
             } else {
                 showMessage(result.error, 'error');
                 submitBtn.disabled = false;
-                submitBtn.textContent = 'LOG IN';
+                submitBtn.textContent = 'Log in';
             }
         });
 
@@ -736,18 +736,18 @@
 
             // Validate passwords match
             if (password !== confirm) {
-                showMessage('Passwords do not match', 'error');
+                showMessage("Passwords don't match — try again", 'error');
                 return;
             }
 
             submitBtn.disabled = true;
-            submitBtn.textContent = 'CREATING ACCOUNT...';
+            submitBtn.textContent = 'Creating account...';
 
             const result = await signUp(email, password);
 
             if (result.success) {
                 showMessage(result.message + ' Switching to login...', 'success');
-                submitBtn.textContent = 'ACCOUNT CREATED';
+                submitBtn.textContent = 'Account created';
 
                 // Auto-switch to login tab after 2 seconds
                 setTimeout(() => {
@@ -766,7 +766,7 @@
                     // Reset signup form for next time
                     signupForm.reset();
                     submitBtn.disabled = false;
-                    submitBtn.textContent = 'CREATE ACCOUNT';
+                    submitBtn.textContent = 'Create account';
                 }, 2000);
             } else {
                 showMessage(result.error, 'error');

@@ -94,7 +94,7 @@ function renderProduct(product) {
         selectedSize = sizes[0].size;
         selectedSizeStock = sizes[0].stock;
         addBtn.disabled = false;
-        addBtn.textContent = `ADD TO BAG — SIZE ${selectedSize}`;
+        addBtn.textContent = `Add to bag — Size ${selectedSize}`;
     }
 
     // Size selection handlers
@@ -106,7 +106,7 @@ function renderProduct(product) {
             selectedSizeStock = parseInt(chip.dataset.stock);
 
             addBtn.disabled = false;
-            addBtn.textContent = `ADD TO BAG — SIZE ${selectedSize}`;
+            addBtn.textContent = `Add to bag — Size ${selectedSize}`;
 
             // Update stock display for selected size
             stockEl.className = 'pdp-stock-info';
