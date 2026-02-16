@@ -337,11 +337,14 @@ export async function handleAuthChange(userId) {
         saveLocal();
         updateBadge();
     } else {
-        // Logout: keep local cart, stop syncing
+        // Logout: clear cart (items belong to the account, not the browser)
         currentUserId = null;
         useSupabase = false;
         hasGuestActivity = false;
+        cart = [];
+        saveLocal();
         updateBadge();
+        renderDrawer();
     }
 }
 
