@@ -1341,8 +1341,8 @@
             }
         }
 
-        /* Tablet portrait */
-        @media (max-width: 768px) {
+        /* M3 Medium — tablet portrait */
+        @media (max-width: 840px) {
             .hero-title {
                 font-size: 2rem;
                 letter-spacing: 2px;
@@ -1362,8 +1362,8 @@
             }
         }
 
-        /* Mobile */
-        @media (max-width: 576px) {
+        /* M3 Compact — mobile */
+        @media (max-width: 600px) {
             .hero-title {
                 font-size: 1.5rem;
                 letter-spacing: 1px;
@@ -1762,8 +1762,8 @@
             background: var(--surface-1);
             border: none;
             color: var(--text-primary);
-            width: 30px;
-            height: 30px;
+            width: 36px;
+            height: 36px;
             font-size: 1rem;
             cursor: pointer;
             transition: background var(--duration-short) var(--motion-standard);
@@ -1986,7 +1986,8 @@
         }
 
         /* Responsive */
-        @media (max-width: 480px) {
+        /* M3 Compact — full-width cart on mobile */
+        @media (max-width: 600px) {
             .cart-drawer {
                 width: 100%;
             }
@@ -2036,8 +2037,8 @@
     background: var(--bg-secondary);
     border: 1px solid var(--outline);
     color: var(--text-primary);
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
     border-radius: var(--shape-full);
     display: flex;
     align-items: center;
@@ -2469,8 +2470,8 @@
     background: radial-gradient(circle, rgba(0, 200, 0, 0.06) 0%, transparent 70%);
 }
 
-/* Responsive: stack on mobile */
-@media (max-width: 768px) {
+/* M3 Medium — stack PDP on tablets */
+@media (max-width: 840px) {
     .pdp-container {
         padding: 1.25rem;
     }
@@ -3004,8 +3005,8 @@ a.dropdown-item {
     box-shadow: 0 0 20px rgba(255, 60, 60, 0.2);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* M3 Medium — stack profile on tablets */
+@media (max-width: 840px) {
     .profile-header {
         flex-direction: column;
         text-align: center;
