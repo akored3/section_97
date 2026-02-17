@@ -20,6 +20,7 @@
         const savedTheme = localStorage.getItem('theme') || 'dark';
         document.documentElement.setAttribute('data-theme', savedTheme);
     </script>
+    <a href="#profile-content" class="skip-link">Skip to profile</a>
 
     <div class="pdp-container">
         <!-- Top bar: back link + cart + theme toggle -->
@@ -139,7 +140,7 @@
 
     <!-- Cart drawer (same structure as store.html) -->
     <div class="cart-overlay" id="cart-overlay"></div>
-    <aside class="cart-drawer" id="cart-drawer">
+    <aside class="cart-drawer" id="cart-drawer" role="dialog" aria-label="Shopping cart">
         <div class="cart-drawer-header">
             <h2>YOUR CART</h2>
             <button class="cart-drawer-close" id="cart-drawer-close" aria-label="Close cart">

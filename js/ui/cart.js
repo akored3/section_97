@@ -79,9 +79,9 @@ function renderDrawer() {
                 <div class="cart-drawer-item-price">$${(item.price * item.quantity).toLocaleString('en-US', { minimumFractionDigits: 2 })}</div>
                 <div class="cart-drawer-item-actions">
                     <div class="cart-drawer-qty">
-                        <button data-action="dec" data-key="${escapeHtml(item.cartKey)}">−</button>
+                        <button data-action="dec" data-key="${escapeHtml(item.cartKey)}" aria-label="Decrease quantity">−</button>
                         <span>${item.quantity}</span>
-                        <button data-action="inc" data-key="${escapeHtml(item.cartKey)}">+</button>
+                        <button data-action="inc" data-key="${escapeHtml(item.cartKey)}" aria-label="Increase quantity">+</button>
                     </div>
                     <button class="cart-drawer-remove" data-action="remove" data-key="${escapeHtml(item.cartKey)}">Remove</button>
                 </div>
