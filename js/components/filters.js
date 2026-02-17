@@ -103,6 +103,7 @@ export function initializeFilters(products) {
 
     filterButtons.forEach(button => {
         button.addEventListener('click', function() {
+            if (navigator.vibrate) navigator.vibrate(35);
             const category = this.getAttribute('data-category');
             filterProducts(category);
         });
