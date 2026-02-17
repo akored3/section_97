@@ -686,7 +686,7 @@
             align-items: center;
             gap: var(--space-md);
             padding: var(--space-md);
-            border: none;
+            border: 1px solid transparent;
             border-left: 3px solid transparent;
             border-radius: 0 var(--shape-sm) var(--shape-sm) 0;
             cursor: pointer;
@@ -702,35 +702,43 @@
 
         :root[data-theme="dark"] .filter-btn.sidebar-filter {
             color: rgba(255, 255, 255, 0.6);
+            border-color: rgba(255, 255, 255, 0.08);
+            border-left-color: transparent;
         }
 
         :root[data-theme="light"] .filter-btn.sidebar-filter {
             color: #888;
+            border-color: rgba(0, 0, 0, 0.08);
+            border-left-color: transparent;
         }
 
         .filter-btn.sidebar-filter:hover {
             background: rgba(var(--state-layer), var(--state-hover));
             color: var(--accent);
+            border-color: var(--outline-accent);
             border-left-color: var(--outline-accent);
         }
 
         :root[data-theme="light"] .filter-btn.sidebar-filter:hover {
             color: var(--accent-hover);
+            border-color: var(--outline-accent);
             border-left-color: var(--outline-accent);
         }
 
         .filter-btn.sidebar-filter.active {
             background: rgba(var(--state-layer), 0.1);
             color: var(--accent);
+            border-color: var(--accent);
             border-left-color: var(--accent);
-            box-shadow: inset 0 0 15px rgba(var(--state-layer), 0.05), -3px 0 10px var(--glow-accent);
+            box-shadow: 0 0 12px var(--glow-accent), inset 0 0 15px rgba(var(--state-layer), 0.05);
         }
 
         :root[data-theme="light"] .filter-btn.sidebar-filter.active {
             background: rgba(var(--state-layer), 0.1);
             color: var(--accent-hover);
+            border-color: var(--accent-hover);
             border-left-color: var(--accent-hover);
-            box-shadow: inset 0 0 15px rgba(var(--state-layer), 0.05), -3px 0 10px var(--glow-accent);
+            box-shadow: 0 0 12px var(--glow-accent), inset 0 0 15px rgba(var(--state-layer), 0.05);
         }
 
         .filter-icon {
