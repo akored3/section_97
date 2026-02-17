@@ -903,7 +903,14 @@
             color: var(--accent);
             font-family: var(--font-body);
             font-size: 15px;
+            min-width: 0;
             font-weight: 600;
+        }
+
+        .mobile-user-info span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         :root[data-theme="light"] .mobile-user-info {
@@ -1179,6 +1186,7 @@
             flex-direction: column;
             gap: 8px;
             flex: 1;
+            min-width: 0;
             padding-right: 120px;
         }
 
@@ -1187,6 +1195,9 @@
             margin: 0;
             color: var(--text-primary);
             line-height: 1.3;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .product-card p {
@@ -1709,6 +1720,9 @@
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 1px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .cart-drawer-item-price {
@@ -2209,6 +2223,9 @@
     font: var(--text-headline-lg);
     color: var(--text-primary);
     margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .pdp-price {
