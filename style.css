@@ -177,14 +177,6 @@
             50%, 100% { opacity: 0; }
         }
         
-        header {
-            background: #f8f9fa;
-            padding: 20px;
-        }
-        header h1 {
-            font-size: 1.75rem;
-        }
-        
         .hero-section {
             display: flex;
             align-items: center;
@@ -1683,10 +1675,7 @@
             gap: 14px;
             padding: var(--space-md) 0;
             border-bottom: 1px solid var(--outline-variant);
-        }
-
-        :root[data-theme="light"] .cart-drawer-item {
-            border-bottom: 1px solid var(--outline-variant);
+            animation: cart-item-in var(--duration-medium) var(--motion-emphasized) both;
         }
 
         .cart-drawer-item:last-child {
@@ -1754,9 +1743,6 @@
             border: 1px solid var(--outline);
         }
 
-        :root[data-theme="light"] .cart-drawer-qty {
-            border: 1px solid var(--outline);
-        }
 
         .cart-drawer-qty button {
             background: var(--surface-1);
@@ -1917,11 +1903,6 @@
         @keyframes cart-edge-glow {
             0%, 100% { opacity: 0.4; }
             50% { opacity: 1; }
-        }
-
-        /* Item entrance animation */
-        .cart-drawer-item {
-            animation: cart-item-in var(--duration-medium) var(--motion-emphasized) both;
         }
 
         @keyframes cart-item-in {
@@ -2223,7 +2204,7 @@
     width: fit-content;
 }
 
-[data-theme="light"] .pdp-brand {
+:root[data-theme="light"] .pdp-brand {
     border-color: var(--outline-accent);
     background: var(--surface-1);
 }
@@ -2284,12 +2265,12 @@
     transition: all var(--duration-medium) var(--motion-standard);
 }
 
-[data-theme="light"] .pdp-size-chip {
+:root[data-theme="light"] .pdp-size-chip {
     border-color: var(--outline);
 }
 
-[data-theme="light"] .pdp-theme-toggle,
-[data-theme="light"] .pdp-cart-btn {
+:root[data-theme="light"] .pdp-theme-toggle,
+:root[data-theme="light"] .pdp-cart-btn {
     border-color: rgba(0,0,0,0.1);
 }
 
@@ -2305,7 +2286,7 @@
     box-shadow: 0 0 15px var(--glow-accent);
 }
 
-[data-theme="light"] .pdp-size-chip.active {
+:root[data-theme="light"] .pdp-size-chip.active {
     box-shadow: 0 0 12px var(--glow-accent);
 }
 
@@ -2466,7 +2447,7 @@
     filter: blur(40px);
 }
 
-[data-theme="light"] .pdp-gallery::before {
+:root[data-theme="light"] .pdp-gallery::before {
     background: radial-gradient(circle, rgba(0, 200, 0, 0.06) 0%, transparent 70%);
 }
 

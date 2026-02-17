@@ -6,21 +6,17 @@ A cyberpunk-inspired streetwear e-commerce store featuring premium brands like S
 
 ## Features
 
-- **Dark/Light Mode** — Seamless theme switching with localStorage persistence
-- **Product Filtering** — Filter by hoodies, t-shirts, pants, jackets, or view all
-- **Shopping Cart** — Hybrid Supabase + localStorage persistence with slide-out drawer
-- **Liquid Glass Cart Drawer** — Glassmorphism slide-from-right drawer that adapts to dark/light themes
-- **Authentication** — Signup with auto-generated usernames, login, logout via Supabase Auth with immersive cyberpunk auth page featuring dual dynamic backgrounds, parallax effects, animated gradient borders, film grain, and floating particles
-- **Skeleton Loading** — Immediate loading indicators appear on page load for better perceived performance
-- **Lazy Loading Images** — Progressive image loading with IntersectionObserver reduces initial page load by ~70%
-- **Fully Responsive** — Mobile-first design with hamburger menu and full-width cart drawer on small screens
-- **Glassmorphism UI** — Modern glass-effect cards, buttons, and overlays
-- **Modular Architecture** — Clean ES6 module structure with single-responsibility files
-- **Product Detail Pages** — Per-product pages with image gallery, per-size stock from database, stock validation, and staggered entrance animations
-- **Security Hardened** — XSS escaping, Content Security Policy, Subresource Integrity on CDN scripts
-- **Resilient Cart** — Clean rebuild with event delegation, in-place DOM updates, animated item removal, size-aware deduplication via composite keys, optimistic UI (local-first with background Supabase sync), liquid glass drawer with iridescent edge glow and staggered item animations
-- **User Profile Page** — Avatar upload to Supabase Storage, stats dashboard (total spent, order count, member since), order history with item details, skeleton loading, entrance animations
-- **M3 Design Token System** — Centralized CSS custom properties inspired by Material Design 3: shape scale (7 levels), elevation shadows (5 levels), motion curves (standard/emphasized/spring), state layer opacities, typography ramp (display→label), and semantic color tokens that resolve per-theme
+- **Dark/Light Mode** — Theme switching with localStorage persistence
+- **Product Filtering** — Filter by category or search by name/brand
+- **Shopping Cart** — Hybrid Supabase + localStorage persistence, liquid glass slide-out drawer
+- **Authentication** — Signup with auto-generated usernames, immersive cyberpunk auth page
+- **Product Detail Pages** — Image gallery, per-size stock, stock validation, entrance animations
+- **User Profile** — Avatar upload, stats dashboard, order history
+- **Skeleton Loading** — Instant loading indicators for perceived performance
+- **Lazy Loading** — IntersectionObserver-based progressive image loading
+- **Fully Responsive** — M3 adaptive breakpoints (600/840/992px), haptic feedback on mobile
+- **Security Hardened** — XSS escaping, CSP headers, SRI on CDN scripts, RLS policies
+- **M3 Design Tokens** — Centralized CSS custom properties for shape, elevation, motion, typography, and color
 
 ## Tech Stack
 
