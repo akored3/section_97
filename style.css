@@ -751,23 +751,27 @@
             background: rgba(255, 255, 255, 0.4);
         }
 
-        :root[data-theme="dark"] .filter-btn.sidebar-filter:hover {
-            color: var(--accent);
-            border-color: var(--outline-accent);
-            border-left-color: var(--outline-accent);
-            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3),
-                        inset 0 -1px 1px rgba(0, 255, 0, 0.1),
-                        0 1px 4px rgba(0, 0, 0, 0.3),
-                        0 0 12px rgba(0, 255, 0, 0.1);
-            background: rgba(20, 28, 20, 0.8);
+        @media (hover: hover) {
+            :root[data-theme="dark"] .filter-btn.sidebar-filter:hover {
+                color: var(--accent);
+                border-color: var(--outline-accent);
+                border-left-color: var(--outline-accent);
+                box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3),
+                            inset 0 -1px 1px rgba(0, 255, 0, 0.1),
+                            0 1px 4px rgba(0, 0, 0, 0.3),
+                            0 0 12px rgba(0, 255, 0, 0.1);
+                background: rgba(20, 28, 20, 0.8);
+            }
         }
 
-        :root[data-theme="light"] .filter-btn.sidebar-filter:hover {
-            color: var(--accent-hover);
-            border-color: var(--outline-accent);
-            border-left-color: var(--outline-accent);
-            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05),
-                        0 1px 3px rgba(0, 0, 0, 0.06);
+        @media (hover: hover) {
+            :root[data-theme="light"] .filter-btn.sidebar-filter:hover {
+                color: var(--accent-hover);
+                border-color: var(--outline-accent);
+                border-left-color: var(--outline-accent);
+                box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05),
+                            0 1px 3px rgba(0, 0, 0, 0.06);
+            }
         }
 
         .filter-btn.sidebar-filter.active {
