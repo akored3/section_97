@@ -22,6 +22,21 @@
     </script>
     <a href="#profile-content" class="skip-link">Skip to profile</a>
 
+    <!-- SVG noise filter for grain texture -->
+    <svg class="profile-noise-svg" aria-hidden="true">
+        <filter id="profile-grain">
+            <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/>
+            <feColorMatrix type="saturate" values="0"/>
+        </filter>
+    </svg>
+
+    <!-- Aurora background orbs -->
+    <div class="profile-aurora" aria-hidden="true">
+        <div class="profile-aurora-orb profile-aurora-orb--1"></div>
+        <div class="profile-aurora-orb profile-aurora-orb--2"></div>
+        <div class="profile-aurora-orb profile-aurora-orb--3"></div>
+    </div>
+
     <div class="pdp-container pdp-container--transparent">
         <!-- Top bar: back link + cart + theme toggle -->
         <div class="pdp-top-bar">
