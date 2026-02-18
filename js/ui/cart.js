@@ -76,7 +76,7 @@ function renderDrawer() {
             <div class="cart-drawer-item-details">
                 <div class="cart-drawer-item-name">${escapeHtml(item.name)}</div>
                 ${item.size ? `<div class="cart-drawer-item-size">Size ${escapeHtml(item.size)}</div>` : ''}
-                <div class="cart-drawer-item-price">$${(item.price * item.quantity).toLocaleString('en-US', { minimumFractionDigits: 2 })}</div>
+                <div class="cart-drawer-item-price">₦${(item.price * item.quantity).toLocaleString('en-US', { minimumFractionDigits: 2 })}</div>
                 <div class="cart-drawer-item-actions">
                     <div class="cart-drawer-qty">
                         <button data-action="dec" data-key="${escapeHtml(item.cartKey)}" aria-label="Decrease quantity">−</button>
@@ -91,7 +91,7 @@ function renderDrawer() {
 
     const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
     if (footer) footer.style.display = '';
-    if (totalEl) totalEl.textContent = `$${total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    if (totalEl) totalEl.textContent = `₦${total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 // In-place update for quantity changes (avoids re-rendering + re-animating all items)
@@ -106,11 +106,11 @@ function updateItemInPlace(key, qty) {
     if (qtySpan) qtySpan.textContent = qty;
 
     const priceEl = el.querySelector('.cart-drawer-item-price');
-    if (priceEl) priceEl.textContent = `$${(item.price * qty).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+    if (priceEl) priceEl.textContent = `₦${(item.price * qty).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
 
     const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
     const totalEl = document.getElementById('cart-drawer-total');
-    if (totalEl) totalEl.textContent = `$${total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    if (totalEl) totalEl.textContent = `₦${total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
     return true;
 }

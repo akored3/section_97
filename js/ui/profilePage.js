@@ -94,7 +94,7 @@ async function loadOrders(userId) {
         // Update stats
         const totalSpent = (orders || []).reduce((sum, o) => sum + parseFloat(o.total || 0), 0);
         document.getElementById('profile-total-spent').textContent =
-            `$${totalSpent.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            `₦${totalSpent.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
         document.getElementById('profile-order-count').textContent = (orders || []).length;
 
         // Render orders or empty state
@@ -127,7 +127,7 @@ function renderOrders(orders) {
                 <div class="profile-order-header">
                     <span class="profile-order-date">${escapeHtml(date)}</span>
                     <span class="profile-order-status">${escapeHtml(order.status || 'completed')}</span>
-                    <span class="profile-order-total">$${escapeHtml(total)}</span>
+                    <span class="profile-order-total">₦${escapeHtml(total)}</span>
                 </div>
                 <div class="profile-order-items">
                     ${items.map(item => `
@@ -142,7 +142,7 @@ function renderOrders(orders) {
                                     ${item.size ? `Size ${escapeHtml(item.size)} · ` : ''}Qty ${item.quantity}
                                 </div>
                             </div>
-                            <span class="profile-order-item-price">$${parseFloat(item.price || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+                            <span class="profile-order-item-price">₦${parseFloat(item.price || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
                         </div>
                     `).join('')}
                 </div>
@@ -161,10 +161,10 @@ function renderEmptyOrders() {
                 <line x1="3" y1="6" x2="21" y2="6"></line>
                 <path d="M16 10a4 4 0 0 1-8 0"></path>
             </svg>
-            <p>No orders yet</p>
-            <span class="profile-empty-sub">Your purchase history will appear here</span>
+            <p class="profile-empty-title">COLLECTION EMPTY</p>
+            <span class="profile-empty-sub">Your drip history will appear here</span>
             <br>
-            <a href="store.html" class="profile-empty-cta">Browse the Store</a>
+            <a href="store.html" class="profile-empty-cta">Start your collection</a>
         </div>
     `;
 }

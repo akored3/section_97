@@ -88,7 +88,7 @@ export function renderProducts(productsToRender) {
                 <div class="product-footer">
                     <div class="product-info">
                         <h3>${safeName}</h3>
-                        <p>$${formattedPrice}</p>
+                        <p>₦${formattedPrice}</p>
                     </div>
                     <div class="product-actions">
                         <button type="button" class="add-to-cart-btn"

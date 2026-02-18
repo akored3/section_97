@@ -132,7 +132,7 @@ The cart drawer slides in from the right with a liquid glass effect (backdrop-fi
 |--------|------|-------------|
 | id | SERIAL | Primary key |
 | name | VARCHAR | Product name |
-| price | INTEGER | Price in dollars |
+| price | INTEGER | Price in naira (₦) |
 | image_front | VARCHAR | Front image path |
 | image_back | VARCHAR | Back image path (optional) |
 | category | VARCHAR | hoodies, tshirts, pants, jackets, shoes, bags, other |
@@ -234,6 +234,7 @@ The cart drawer slides in from the right with a liquid glass effect (backdrop-fi
 - [x] Cart rewrite: clean rebuild with event delegation, animated removal, liquid glass enhancements
 - [ ] Checkout flow
 - [ ] Order history (populated once checkout flow is built)
+- [ ] Currency localization (i18n) — auto-convert prices based on user locale
 
 ## Author
 

@@ -70,18 +70,18 @@
         }
 
         :root[data-theme="light"] {
-            --bg-primary: #F4F6F8;
-            --bg-secondary: #E8EAED;
-            --text-primary: #2d2d2d;
-            --text-secondary: #555;
-            --accent: #008a00;
-            --accent-hover: #007200;
-            --accent-dim: #006600;
-            --accent-bright: #008a00;
-            --card-bg: rgba(0, 0, 0, 0.05);
+            --bg-primary: #F2F5F0;
+            --bg-secondary: #E6EBE3;
+            --text-primary: #1a1f1a;
+            --text-secondary: #4a5248;
+            --accent: #00a816;
+            --accent-hover: #008c12;
+            --accent-dim: #007a0e;
+            --accent-bright: #00c41a;
+            --card-bg: rgba(255, 255, 255, 0.85);
 
             /* M3 surface tint: primary color at increasing opacity per elevation */
-            --surface-tint: 0, 138, 0;
+            --surface-tint: 0, 168, 22;
             --surface-1: rgba(var(--surface-tint), 0.05);
             --surface-2: rgba(var(--surface-tint), 0.08);
             --surface-3: rgba(var(--surface-tint), 0.11);
@@ -89,17 +89,17 @@
             --surface-5: rgba(var(--surface-tint), 0.14);
 
             /* Outline tokens */
-            --outline: rgba(0, 0, 0, 0.12);
-            --outline-variant: rgba(0, 0, 0, 0.06);
-            --outline-accent: rgba(0, 138, 0, 0.3);
-            --outline-accent-strong: rgba(0, 138, 0, 0.5);
+            --outline: rgba(0, 0, 0, 0.1);
+            --outline-variant: rgba(0, 0, 0, 0.05);
+            --outline-accent: rgba(0, 168, 22, 0.3);
+            --outline-accent-strong: rgba(0, 168, 22, 0.55);
 
             /* State layer color (accent-tinted) */
-            --state-layer: 0, 138, 0;
+            --state-layer: 0, 168, 22;
 
-            /* Glow (reduced in light mode) */
-            --glow-accent: rgba(0, 138, 0, 0.2);
-            --glow-accent-strong: rgba(0, 138, 0, 0.4);
+            /* Glow (visible in light mode now) */
+            --glow-accent: rgba(0, 168, 22, 0.25);
+            --glow-accent-strong: rgba(0, 168, 22, 0.45);
         }
 
         :root[data-theme="dark"] {
@@ -150,7 +150,9 @@
         }
 
         :root[data-theme="light"] body {
-            background: linear-gradient(135deg, #F4F6F8 0%, #E8EAED 100%);
+            background:
+              repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(0, 168, 22, 0.02) 2px, rgba(0, 168, 22, 0.02) 4px),
+              linear-gradient(135deg, #F2F5F0 0%, #E6EBE3 50%, #ECF0E8 100%);
             min-height: 100vh;
         }
 
@@ -169,7 +171,7 @@
         }
 
         :root[data-theme="light"] body::before {
-            opacity: 0.025;
+            opacity: 0.04;
         }
 
         /* ── Focus-visible: keyboard navigation ring ── */
@@ -226,10 +228,12 @@
         }
 
         :root[data-theme="light"] .hero-section {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            color: #0f0f0f;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            background: rgba(242, 245, 240, 0.85);
+            backdrop-filter: blur(12px) saturate(1.3);
+            -webkit-backdrop-filter: blur(12px) saturate(1.3);
+            color: #1a1f1a;
+            border-bottom: 1px solid rgba(0, 168, 22, 0.15);
+            box-shadow: 0 1px 12px rgba(0, 168, 22, 0.06);
         }
         
         .hero-content {
@@ -255,10 +259,11 @@
         }
 
         :root[data-theme="light"] .hero-title {
-            color: #0f0f0f;
+            color: #1a1f1a;
             text-shadow:
-                3px 3px 0px rgba(0, 255, 0, 0.3),
-                -1px -1px 0px rgba(0, 100, 0, 0.1);
+                3px 3px 0px rgba(0, 200, 26, 0.35),
+                -1px -1px 0px rgba(0, 120, 0, 0.15),
+                0 0 20px rgba(0, 168, 22, 0.08);
         }
 
         /* Glitch effect on hover */
@@ -691,8 +696,10 @@
         }
 
         :root[data-theme="light"] .sidebar {
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(10px);
+            background: rgba(236, 240, 232, 0.7);
+            backdrop-filter: blur(12px) saturate(1.2);
+            -webkit-backdrop-filter: blur(12px) saturate(1.2);
+            border-right-color: rgba(0, 168, 22, 0.12);
         }
 
         .sidebar-filters {
@@ -722,43 +729,57 @@
 
         :root[data-theme="dark"] .filter-btn.sidebar-filter {
             color: rgba(255, 255, 255, 0.6);
-            border-color: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.06);
             border-left-color: transparent;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4),
+                        inset 0 -1px 2px rgba(255, 255, 255, 0.05);
+            background: rgba(0, 0, 0, 0.15);
         }
 
         :root[data-theme="light"] .filter-btn.sidebar-filter {
-            color: #888;
-            border-color: rgba(0, 0, 0, 0.08);
+            color: #5a6658;
+            border-color: rgba(0, 168, 22, 0.06);
             border-left-color: transparent;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06),
+                        inset 0 -1px 2px rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.4);
         }
 
         .filter-btn.sidebar-filter:hover {
-            background: rgba(var(--state-layer), var(--state-hover));
             color: var(--accent);
             border-color: var(--outline-accent);
             border-left-color: var(--outline-accent);
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2),
+                        0 1px 3px rgba(var(--state-layer), 0.1);
+            background: rgba(var(--state-layer), var(--state-hover));
         }
 
         :root[data-theme="light"] .filter-btn.sidebar-filter:hover {
             color: var(--accent-hover);
             border-color: var(--outline-accent);
             border-left-color: var(--outline-accent);
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05),
+                        0 1px 3px rgba(0, 0, 0, 0.06);
         }
 
         .filter-btn.sidebar-filter.active {
-            background: rgba(var(--state-layer), 0.1);
             color: var(--accent);
             border-color: var(--accent);
             border-left-color: var(--accent);
-            box-shadow: 0 0 12px var(--glow-accent), inset 0 0 15px rgba(var(--state-layer), 0.05);
+            background: rgba(var(--state-layer), 0.1);
+            box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.5),
+                        inset 0 -1px 2px rgba(255, 255, 255, 0.03),
+                        0 0 10px var(--glow-accent);
         }
 
         :root[data-theme="light"] .filter-btn.sidebar-filter.active {
-            background: rgba(var(--state-layer), 0.1);
             color: var(--accent-hover);
             border-color: var(--accent-hover);
             border-left-color: var(--accent-hover);
-            box-shadow: 0 0 12px var(--glow-accent), inset 0 0 15px rgba(var(--state-layer), 0.05);
+            background: rgba(var(--state-layer), 0.08);
+            box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.12),
+                        inset 0 -1px 2px rgba(255, 255, 255, 0.5),
+                        0 0 10px var(--glow-accent);
         }
 
         .filter-icon {
@@ -1225,7 +1246,10 @@
             line-height: 1.3;
             overflow: hidden;
             text-overflow: ellipsis;
-            white-space: nowrap;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
         }
 
         .product-card p {
@@ -1247,14 +1271,15 @@
 
         :root[data-theme="light"] .product-card {
             background: #ffffff;
-            box-shadow: var(--elevation-1),
-                        0 0 0 1px var(--outline-accent),
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06),
+                        0 0 0 1px rgba(0, 168, 22, 0.12),
                         inset 0 1px 0 rgba(255, 255, 255, 0.9);
         }
 
         :root[data-theme="light"] .product-card:hover {
-            box-shadow: var(--elevation-3),
+            box-shadow: 0 4px 20px rgba(0, 168, 22, 0.12),
                         0 0 0 2px var(--outline-accent-strong),
+                        0 8px 24px rgba(0, 0, 0, 0.08),
                         inset 0 1px 0 rgba(255, 255, 255, 0.9);
         }
 
@@ -1263,17 +1288,17 @@
         }
 
         :root[data-theme="light"] .product-image {
-            background: #f8f8f8;
+            background: #f5f7f4;
         }
 
         :root[data-theme="light"] .product-card button {
-            background: linear-gradient(135deg, var(--accent-hover), var(--accent-dim));
-            box-shadow: 0 0 10px var(--glow-accent), 0 2px 8px rgba(0, 0, 0, 0.15);
+            background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+            box-shadow: 0 0 12px var(--glow-accent), 0 2px 8px rgba(0, 0, 0, 0.12);
         }
 
         :root[data-theme="light"] .product-card button:hover {
-            background: linear-gradient(135deg, var(--accent-bright), var(--accent-hover));
-            box-shadow: 0 0 18px var(--glow-accent-strong), 0 4px 12px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, var(--accent-bright), var(--accent));
+            box-shadow: 0 0 22px var(--glow-accent-strong), 0 4px 16px rgba(0, 0, 0, 0.15);
             color: #fff;
         }
 
@@ -1323,7 +1348,7 @@
         :root[data-theme="light"] .skeleton-title,
         :root[data-theme="light"] .skeleton-price,
         :root[data-theme="light"] .skeleton-button {
-            background: linear-gradient(90deg, #e8e8e8 25%, #f0f0f0 50%, #e8e8e8 75%);
+            background: linear-gradient(90deg, #e6ebe3 25%, #f0f4ed 50%, #e6ebe3 75%);
             background-size: 800px 100%;
             animation: shimmer 1.5s infinite;
         }
@@ -1478,12 +1503,12 @@
         }
 
         :root[data-theme="light"] footer {
-            background: rgba(248, 249, 250, 0.9);
-            color: #666;
+            background: rgba(236, 240, 232, 0.9);
+            color: #4a5248;
         }
 
         :root[data-theme="light"] footer::before {
-            background: linear-gradient(90deg, transparent, var(--accent-hover), transparent);
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
         }
 
         .footer-content {
@@ -1513,7 +1538,7 @@
         }
 
         :root[data-theme="light"] .footer-logo {
-            color: #0f0f0f;
+            color: #1a1f1a;
         }
 
         .footer-tagline {
@@ -1592,7 +1617,7 @@
         }
 
         :root[data-theme="light"] .cart-overlay {
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(26, 31, 26, 0.25);
         }
 
         .cart-overlay.active {
@@ -1624,12 +1649,13 @@
         }
 
         :root[data-theme="light"] .cart-drawer {
-            background: rgba(245, 247, 250, 0.55);
+            background: rgba(242, 245, 240, 0.6);
             backdrop-filter: blur(32px) saturate(1.8);
             -webkit-backdrop-filter: blur(32px) saturate(1.8);
-            border-left: 1px solid rgba(0, 0, 0, 0.06);
+            border-left: 1px solid rgba(0, 168, 22, 0.1);
             box-shadow:
-                -8px 0 40px rgba(0, 0, 0, 0.08),
+                -8px 0 40px rgba(0, 0, 0, 0.06),
+                -2px 0 20px rgba(0, 168, 22, 0.04),
                 inset 1px 0 0 rgba(255, 255, 255, 0.8),
                 inset 0 1px 0 rgba(255, 255, 255, 0.5);
         }
@@ -2624,12 +2650,18 @@ a.dropdown-item {
     align-items: center;
     gap: 1.5rem;
     padding: 2rem;
+    padding-left: calc(2rem + 4px);
     background: var(--bg-secondary);
     border-radius: var(--shape-lg);
     border: 1px solid var(--outline-accent);
+    border-left: 4px solid var(--accent);
     position: relative;
     overflow: hidden;
-    box-shadow: var(--elevation-1);
+    box-shadow: var(--elevation-1), inset 4px 0 15px -6px var(--glow-accent);
+}
+
+.profile-header:hover {
+    animation: glitch 0.3s ease;
 }
 
 .profile-header::before {
@@ -2734,6 +2766,23 @@ a.dropdown-item {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    transition: text-shadow var(--duration-medium) var(--motion-standard);
+}
+
+.profile-username::before {
+    content: '[ ';
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.profile-username::after {
+    content: ' ]';
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.profile-username:hover {
+    text-shadow: 0 0 12px var(--glow-accent);
 }
 
 .profile-email {
@@ -2777,6 +2826,33 @@ a.dropdown-item {
     transition: border-color var(--duration-medium) var(--motion-standard),
                 box-shadow var(--duration-medium) var(--motion-standard);
     box-shadow: var(--elevation-1);
+    position: relative;
+    overflow: hidden;
+}
+
+.profile-stat-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 0;
+    background: linear-gradient(90deg, var(--accent), var(--accent-bright));
+    animation: stat-line-grow var(--duration-long) var(--motion-emphasized) forwards;
+}
+
+.profile-stat-card:nth-child(1)::after { animation-delay: 0.1s; }
+.profile-stat-card:nth-child(2)::after { animation-delay: 0.25s; }
+.profile-stat-card:nth-child(3)::after { animation-delay: 0.4s; }
+
+@keyframes stat-line-grow {
+    to { width: 100%; }
+}
+
+.profile-stat-icon {
+    color: var(--accent);
+    opacity: 0.7;
+    margin-bottom: 0.25rem;
 }
 
 .profile-stat-card:hover {
@@ -2952,10 +3028,12 @@ a.dropdown-item {
 }
 
 .profile-orders-empty p {
-    font-family: var(--font-body);
-    font-size: 0.95rem;
-    margin: 0 0 0.25rem;
-    color: var(--text-secondary);
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    margin: 0 0 0.5rem;
+    color: var(--text-primary);
 }
 
 .profile-orders-empty .profile-empty-sub {
@@ -2966,7 +3044,7 @@ a.dropdown-item {
 .profile-orders-empty .profile-empty-cta {
     display: inline-block;
     margin-top: 1.25rem;
-    padding: 0.6rem 1.5rem;
+    padding: 0.75rem 2rem;
     font-family: var(--font-display);
     font-size: 0.8rem;
     font-weight: 700;
@@ -2974,8 +3052,9 @@ a.dropdown-item {
     text-transform: uppercase;
     text-decoration: none;
     color: var(--on-accent);
-    background: var(--accent);
+    background: linear-gradient(135deg, var(--accent-bright), var(--accent-dim));
     border-radius: var(--shape-sm);
+    box-shadow: 0 0 15px var(--glow-accent);
     transition: all var(--duration-medium) var(--motion-standard);
 }
 
@@ -3063,6 +3142,13 @@ a.dropdown-item {
         animation: none;
     }
     .profile-avatar-error {
+        animation: none;
+    }
+    .profile-stat-card::after {
+        animation: none;
+        width: 100%;
+    }
+    .profile-header:hover {
         animation: none;
     }
 }

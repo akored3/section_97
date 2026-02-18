@@ -64,7 +64,7 @@ function renderProduct(product) {
     // Product info
     document.getElementById('pdp-brand').textContent = product.brand || '';
     document.getElementById('pdp-name').textContent = product.name;
-    document.getElementById('pdp-price').textContent = `$${safePrice}`;
+    document.getElementById('pdp-price').textContent = `₦${safePrice}`;
     document.getElementById('pdp-description').textContent = description;
 
     // Sizes from database
