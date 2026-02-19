@@ -24,8 +24,8 @@ A cyberpunk-inspired streetwear e-commerce store featuring premium brands like S
 - **CSS3** — Custom properties, M3-inspired design tokens, gradients, animations, `backdrop-filter` glassmorphism
 - **JavaScript (ES6+)** — Modules, async/await, modern syntax
 - **Supabase** — Authentication, PostgreSQL database, Row Level Security, cart persistence
-- **Font Awesome** — Icon library
-- **Google Fonts** — Space Grotesk (headers) & Poppins (body)
+- **Custom SVG Icons** — Inline streetwear icon pack (blueprint/technical drawing style, theme-aware via `currentColor`)
+- **Google Fonts** — Orbitron (headings/prices), Share Tech Mono (labels/tags), Rajdhani (body/nav)
 
 ## Project Structure
 
