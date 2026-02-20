@@ -2300,7 +2300,7 @@
 /* Product content */
 .pdp-content {
     display: grid;
-    grid-template-columns: 55% 1fr;
+    grid-template-columns: 1.2fr 1fr;
     gap: 3rem;
     align-items: start;
 }
