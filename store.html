@@ -37,12 +37,12 @@
                 const mobileUserInfo = document.getElementById('mobile-user-info');
                 const mobileUsername = document.getElementById('mobile-username');
                 const mobileLogout = document.getElementById('mobile-logout-btn');
-                if (mobileLogin) mobileLogin.style.display = 'none';
-                if (mobileUserInfo) mobileUserInfo.style.display = 'flex';
+                if (mobileLogin) mobileLogin.classList.add('hidden');
+                if (mobileUserInfo) mobileUserInfo.classList.remove('hidden');
                 if (mobileUsername) mobileUsername.textContent = cachedUser;
                 const mobileProfile = document.getElementById('mobile-profile-btn');
-                if (mobileProfile) mobileProfile.style.display = 'flex';
-                if (mobileLogout) mobileLogout.style.display = 'flex';
+                if (mobileProfile) mobileProfile.classList.remove('hidden');
+                if (mobileLogout) mobileLogout.classList.remove('hidden');
             });
         }
     </script>
@@ -116,7 +116,7 @@
                 <line x1="28" y1="26" x2="48" y2="26" stroke-width="0.9" opacity="0.4"/>
                 <line x1="26" y1="34" x2="46" y2="34" stroke-width="0.9" opacity="0.4"/>
             </svg>
-            <span class="cart-badge" id="cart-badge">0</span>
+            <span class="cart-badge" id="cart-badge" aria-live="polite">0</span>
         </button>
         <button class="hamburger-btn" id="hamburger-toggle" aria-label="Toggle menu">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -157,7 +157,7 @@
                     </svg>
                     <span>Login / Sign up</span>
                 </a>
-                <div class="mobile-user-info" id="mobile-user-info" style="display: none;">
+                <div class="mobile-user-info hidden" id="mobile-user-info">
                     <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
                         <circle cx="32" cy="20" r="12"/>
                         <path d="M8 58C8 44 18 36 32 36C46 36 56 44 56 58"/>
@@ -165,7 +165,7 @@
                     </svg>
                     <span id="mobile-username">Account</span>
                 </div>
-                <a href="profile.html" class="mobile-auth-btn" id="mobile-profile-btn" style="display: none;">
+                <a href="profile.html" class="mobile-auth-btn hidden" id="mobile-profile-btn">
                     <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
                         <circle cx="32" cy="20" r="12"/>
                         <path d="M8 58C8 44 18 36 32 36C46 36 56 44 56 58"/>
@@ -173,7 +173,7 @@
                     </svg>
                     <span>Profile</span>
                 </a>
-                <button class="mobile-logout-btn" id="mobile-logout-btn" style="display: none;">
+                <button class="mobile-logout-btn hidden" id="mobile-logout-btn">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
                         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                         <polyline points="16 17 21 12 16 7"></polyline>

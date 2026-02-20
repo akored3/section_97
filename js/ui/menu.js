@@ -44,4 +44,12 @@ export function initializeMenu() {
             closeMenu();
         }
     });
+
+    // Close menu when a mobile filter button is clicked
+    const mobileFilters = document.querySelectorAll('.mobile-filter');
+    mobileFilters.forEach(btn => {
+        btn.addEventListener('click', () => {
+            setTimeout(closeMenu, 150);
+        });
+    });
 }

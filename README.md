@@ -232,6 +232,7 @@ The cart drawer slides in from the right with a liquid glass effect (backdrop-fi
 - [x] User profile page with avatar upload, stats, and order history
 - [x] Cart performance: optimistic UI updates for instant cart operations
 - [x] Cart rewrite: clean rebuild with event delegation, animated removal, liquid glass enhancements
+- [x] Mobile/UX audit: agent team review with 20+ fixes across accessibility, touch targets, contrast, and responsive layout
 - [ ] Checkout flow
 - [ ] Order history (populated once checkout flow is built)
 - [ ] Currency localization (i18n) — auto-convert prices based on user locale

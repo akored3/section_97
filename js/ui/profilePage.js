@@ -21,16 +21,18 @@ function generateDefaultAvatar(username) {
 
 // Show error state (not logged in)
 function showError() {
-    document.getElementById('profile-skeleton').style.display = 'none';
-    document.getElementById('profile-content').style.display = 'none';
-    document.getElementById('profile-error').style.display = 'flex';
+    document.getElementById('profile-skeleton').classList.add('hidden');
+    document.getElementById('profile-content').classList.add('hidden');
+    const error = document.getElementById('profile-error');
+    error.classList.remove('hidden');
+    error.style.display = 'flex';
 }
 
 // Show profile content with entrance animation
 function showContent() {
-    document.getElementById('profile-skeleton').style.display = 'none';
+    document.getElementById('profile-skeleton').classList.add('hidden');
     const content = document.getElementById('profile-content');
-    content.style.display = 'flex';
+    content.classList.remove('hidden');
     content.classList.add('profile-enter');
 }
 

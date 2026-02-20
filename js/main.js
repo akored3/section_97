@@ -48,16 +48,16 @@ async function updateAuthButton() {
 
     if (mobileLoginBtn && mobileLogoutBtn) {
         if (user) {
-            mobileLoginBtn.style.display = 'none';
-            if (mobileUserInfo) mobileUserInfo.style.display = 'flex';
+            mobileLoginBtn.classList.add('hidden');
+            if (mobileUserInfo) mobileUserInfo.classList.remove('hidden');
             if (mobileUsername) mobileUsername.textContent = user.username || 'Account';
-            if (mobileProfileBtn) mobileProfileBtn.style.display = 'flex';
-            mobileLogoutBtn.style.display = 'flex';
+            if (mobileProfileBtn) mobileProfileBtn.classList.remove('hidden');
+            mobileLogoutBtn.classList.remove('hidden');
         } else {
-            mobileLoginBtn.style.display = 'flex';
-            if (mobileUserInfo) mobileUserInfo.style.display = 'none';
-            if (mobileProfileBtn) mobileProfileBtn.style.display = 'none';
-            mobileLogoutBtn.style.display = 'none';
+            mobileLoginBtn.classList.remove('hidden');
+            if (mobileUserInfo) mobileUserInfo.classList.add('hidden');
+            if (mobileProfileBtn) mobileProfileBtn.classList.add('hidden');
+            mobileLogoutBtn.classList.add('hidden');
         }
     }
 }

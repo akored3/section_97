@@ -65,7 +65,7 @@ function renderDrawer() {
                 </svg>
                 <p>Nothing here yet</p>
             </div>`;
-        if (footer) footer.style.display = 'none';
+        if (footer) footer.classList.add('hidden');
         return;
     }
 
@@ -76,7 +76,7 @@ function renderDrawer() {
             <div class="cart-drawer-item-details">
                 <div class="cart-drawer-item-name">${escapeHtml(item.name)}</div>
                 ${item.size ? `<div class="cart-drawer-item-size">Size ${escapeHtml(item.size)}</div>` : ''}
-                <div class="cart-drawer-item-price">₦${(item.price * item.quantity).toLocaleString('en-US', { minimumFractionDigits: 2 })}</div>
+                <div class="cart-drawer-item-price">₦${(item.price * item.quantity).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                 <div class="cart-drawer-item-actions">
                     <div class="cart-drawer-qty">
                         <button data-action="dec" data-key="${escapeHtml(item.cartKey)}" aria-label="Decrease quantity">−</button>
@@ -90,7 +90,7 @@ function renderDrawer() {
     `).join('');
 
     const total = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
-    if (footer) footer.style.display = '';
+    if (footer) footer.classList.remove('hidden');
     if (totalEl) totalEl.textContent = `₦${total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 

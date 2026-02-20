@@ -22,9 +22,11 @@ function generateDescription(product) {
 }
 
 function showError() {
-    document.getElementById('pdp-skeleton').style.display = 'none';
-    document.getElementById('pdp-content').style.display = 'none';
-    document.getElementById('pdp-error').style.display = 'flex';
+    document.getElementById('pdp-skeleton').classList.add('hidden');
+    document.getElementById('pdp-content').classList.add('hidden');
+    const error = document.getElementById('pdp-error');
+    error.classList.remove('hidden');
+    error.style.display = 'flex';
 }
 
 function renderProduct(product) {
@@ -129,9 +131,9 @@ function renderProduct(product) {
     }
 
     // Show content, hide skeleton, trigger entrance animation
-    document.getElementById('pdp-skeleton').style.display = 'none';
+    document.getElementById('pdp-skeleton').classList.add('hidden');
     const content = document.getElementById('pdp-content');
-    content.style.display = 'grid';
+    content.classList.remove('hidden');
     content.classList.add('pdp-enter');
 }
 

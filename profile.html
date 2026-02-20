@@ -40,7 +40,7 @@
                         <line x1="28" y1="26" x2="48" y2="26" stroke-width="0.9" opacity="0.4"/>
                         <line x1="26" y1="34" x2="46" y2="34" stroke-width="0.9" opacity="0.4"/>
                     </svg>
-                    <span class="cart-badge" id="cart-badge" style="display:none;">0</span>
+                    <span class="cart-badge" id="cart-badge">0</span>
                 </button>
                 <button id="theme-toggle" class="pdp-theme-toggle" aria-label="Toggle dark mode">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
@@ -71,7 +71,7 @@
         </div>
 
         <!-- Profile content (shown after load) -->
-        <div id="profile-content" class="profile-content" style="display:none;">
+        <div id="profile-content" class="profile-content hidden">
 
             <!-- Profile header: avatar + username + email -->
             <section class="profile-header">
@@ -144,7 +144,7 @@
         </div>
 
         <!-- Error state (not logged in) -->
-        <div id="profile-error" class="pdp-error" style="display:none;">
+        <div id="profile-error" class="pdp-error hidden">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="64" height="64">
                 <circle cx="12" cy="12" r="10"/>
                 <path d="M15 9l-6 6M9 9l6 6"/>
@@ -167,7 +167,7 @@
             </button>
         </div>
         <div id="cart-drawer-items" class="cart-drawer-items"></div>
-        <div id="cart-drawer-footer" class="cart-drawer-footer" style="display:none;">
+        <div id="cart-drawer-footer" class="cart-drawer-footer hidden">
             <div class="cart-drawer-total">
                 <span>Subtotal</span>
                 <span id="cart-drawer-total">$0</span>
