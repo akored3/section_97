@@ -4156,17 +4156,31 @@ a.dropdown-item {
     display: inline-flex;
     align-items: center;
     gap: var(--space-sm);
-    color: var(--text-secondary);
+    color: var(--text-primary);
     text-decoration: none;
     margin-bottom: var(--space-lg);
     font-family: var(--font-mono);
     font-size: 0.75rem;
+    font-weight: 700;
     letter-spacing: 1px;
-    transition: color var(--duration-medium) var(--motion-standard);
+    padding: var(--space-xs) var(--space-md);
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: var(--shape-xs);
+    transition: color var(--duration-medium) var(--motion-standard),
+                background var(--duration-medium) var(--motion-standard);
 }
 
 .back-link:hover {
     color: var(--accent);
+    background: rgba(0, 0, 0, 0.7);
+}
+
+:root[data-theme="light"] .back-link {
+    background: rgba(255, 255, 255, 0.7);
+}
+
+:root[data-theme="light"] .back-link:hover {
+    background: rgba(255, 255, 255, 0.9);
 }
 
 /* Theme toggle */
