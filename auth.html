@@ -20,12 +20,11 @@
         const savedTheme = localStorage.getItem('theme') || 'dark';
         document.documentElement.setAttribute('data-theme', savedTheme);
 
-        // Theme toggle functionality
         document.addEventListener('DOMContentLoaded', () => {
+            // Theme toggle
             const themeToggle = document.getElementById('theme-toggle');
             const svg = themeToggle.querySelector('svg');
 
-            // Set correct icon on load
             function updateIcon(theme) {
                 if (theme === 'dark') {
                     svg.innerHTML = `
@@ -61,24 +60,19 @@
             authContainer.addEventListener('mousemove', (e) => {
                 const { clientX, clientY } = e;
                 const { innerWidth, innerHeight } = window;
-
-                // Calculate movement with increased sensitivity for more dramatic effect
                 const moveX = ((clientX / innerWidth) - 0.5) * 80;
                 const moveY = ((clientY / innerHeight) - 0.5) * 80;
-
                 authBg.style.transform = `translate(${moveX}px, ${moveY}px) scale(1)`;
             });
 
-            // Reset on mouse leave
             authContainer.addEventListener('mouseleave', () => {
                 authBg.style.transform = 'translate(0, 0) scale(1)';
             });
         });
     </script>
-    <!-- Dynamic backgrounds with parallax -->
+
+    <!-- Background images with parallax -->
     <div id="auth-bg" class="auth-bg"></div>
-    <div class="film-grain"></div>
-    <div class="vignette"></div>
 
     <!-- Floating particles -->
     <div class="particles">
@@ -110,56 +104,109 @@
         </a>
 
         <div class="auth-card">
+            <!-- Corner brackets -->
+            <div class="hud-bracket hud-bracket-tl"></div>
+            <div class="hud-bracket hud-bracket-tr"></div>
+            <div class="hud-bracket hud-bracket-bl"></div>
+            <div class="hud-bracket hud-bracket-br"></div>
+
             <div class="auth-card-inner">
+                <!-- Scanlines overlay -->
+                <div class="auth-scanlines"></div>
+                <!-- Scan beam -->
+                <div class="auth-scan-beam"></div>
+
+                <!-- System status bar -->
+                <div class="auth-status-bar">
+                    <span class="status-indicator">
+                        <span class="status-dot"></span>
+                        SYS.AUTH v2.6
+                    </span>
+                    <span>SECURE_CONN</span>
+                </div>
+
+                <!-- Logo with glitch -->
                 <div class="auth-logo">
-                    <h1>SECTION-97<span class="cursor">_</span></h1>
+                    <h1>SECTION-97<span class="cursor">|</span></h1>
                     <p>Join the community</p>
                 </div>
 
-            <div class="auth-tabs">
-                <button class="auth-tab active" data-tab="login">Log in</button>
-                <button class="auth-tab" data-tab="signup">Sign up</button>
+                <!-- Tabs -->
+                <div class="auth-tabs">
+                    <button class="auth-tab active" data-tab="login">LOG IN</button>
+                    <button class="auth-tab" data-tab="signup">SIGN UP</button>
+                </div>
+
+                <div id="auth-message" class="auth-message" role="alert" aria-live="polite"></div>
+
+                <!-- Login Form -->
+                <form id="login-form" class="auth-form">
+                    <div class="form-group">
+                        <div class="form-label-row">
+                            <label for="login-email">EMAIL</label>
+                            <span class="field-code">FLD_01</span>
+                        </div>
+                        <input type="email" id="login-email" required placeholder="your@email.com">
+                    </div>
+                    <div class="form-group">
+                        <div class="form-label-row">
+                            <label for="login-password">PASSWORD</label>
+                            <span class="field-code">FLD_02</span>
+                        </div>
+                        <input type="password" id="login-password" required placeholder="enter your password">
+                        <a href="#" class="forgot-link">FORGOT PASSWORD?</a>
+                    </div>
+                    <button type="submit" class="auth-submit">LOG IN</button>
+                </form>
+
+                <!-- Signup Form -->
+                <form id="signup-form" class="auth-form hidden">
+                    <div class="form-group">
+                        <div class="form-label-row">
+                            <label for="signup-email">EMAIL</label>
+                            <span class="field-code">FLD_01</span>
+                        </div>
+                        <input type="email" id="signup-email" required placeholder="your@email.com">
+                    </div>
+                    <div class="form-group">
+                        <div class="form-label-row">
+                            <label for="signup-password">PASSWORD</label>
+                            <span class="field-code">FLD_02</span>
+                        </div>
+                        <input type="password" id="signup-password" required minlength="12" placeholder="enter your password">
+                    </div>
+                    <div class="form-group">
+                        <div class="form-label-row">
+                            <label for="signup-confirm">CONFIRM PASSWORD</label>
+                            <span class="field-code">FLD_03</span>
+                        </div>
+                        <input type="password" id="signup-confirm" required placeholder="re-enter password">
+                    </div>
+                    <button type="submit" class="auth-submit">CREATE ACCOUNT</button>
+                </form>
+
+                <!-- Divider -->
+                <div class="auth-divider">
+                    <span>OR</span>
+                </div>
+
+                <!-- Guest button -->
+                <a href="store.html" class="auth-guest-btn">CONTINUE AS GUEST</a>
+
+                <!-- Auth mode indicator -->
+                <div class="auth-mode-bar">
+                    <span>AUTH_MODE: <span id="auth-mode-text">LOGIN</span></span>
+                    <span><span class="encrypted-dots">●●●</span> ENCRYPTED</span>
+                </div>
             </div>
 
-            <div id="auth-message" class="auth-message" role="alert" aria-live="polite"></div>
+            <!-- Accent line beneath card -->
+            <div class="auth-accent-line"></div>
+        </div>
 
-            <!-- Login Form -->
-            <form id="login-form" class="auth-form">
-                <div class="form-group">
-                    <label for="login-email">Email</label>
-                    <input type="email" id="login-email" required placeholder="your@email.com">
-                </div>
-                <div class="form-group">
-                    <label for="login-password">Password</label>
-                    <input type="password" id="login-password" required placeholder="Enter your password">
-                </div>
-                <button type="submit" class="auth-submit">Log in</button>
-            </form>
-
-            <!-- Signup Form -->
-            <form id="signup-form" class="auth-form hidden">
-                <div class="form-group">
-                    <label for="signup-email">Email</label>
-                    <input type="email" id="signup-email" required placeholder="your@email.com">
-                </div>
-                <div class="form-group">
-                    <label for="signup-password">Password</label>
-                    <input type="password" id="signup-password" required minlength="12" placeholder="At least 12 characters">
-                </div>
-                <div class="form-group">
-                    <label for="signup-confirm">Confirm Password</label>
-                    <input type="password" id="signup-confirm" required placeholder="Confirm your password">
-                </div>
-                <button type="submit" class="auth-submit">Create account</button>
-                <p class="auth-hint">
-                    You'll receive a unique username upon signup
-                </p>
-            </form>
-
-                <div class="auth-footer">
-                    <a href="store.html">Continue as guest</a>
-                </div>
-            </div>
+        <!-- Page footer -->
+        <div class="auth-page-footer">
+            SECTION-97 // SECURE ACCESS // 2026
         </div>
     </div>
 
@@ -180,6 +227,7 @@
         const loginForm = document.getElementById('login-form');
         const signupForm = document.getElementById('signup-form');
         const message = document.getElementById('auth-message');
+        const authModeText = document.getElementById('auth-mode-text');
 
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
@@ -191,10 +239,12 @@
                 if (tab.dataset.tab === 'login') {
                     loginForm.classList.remove('hidden');
                     signupForm.classList.add('hidden');
+                    authModeText.textContent = 'LOGIN';
                     authBg.classList.remove('show-signup');
                 } else {
                     loginForm.classList.add('hidden');
                     signupForm.classList.remove('hidden');
+                    authModeText.textContent = 'REGISTER';
                     authBg.classList.add('show-signup');
                 }
 
@@ -218,7 +268,7 @@
             const submitBtn = loginForm.querySelector('.auth-submit');
 
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Logging in...';
+            submitBtn.textContent = 'LOGGING IN...';
 
             const result = await signIn(email, password);
 
@@ -230,7 +280,7 @@
             } else {
                 showMessage(result.error, 'error');
                 submitBtn.disabled = false;
-                submitBtn.textContent = 'Log in';
+                submitBtn.textContent = 'LOG IN';
             }
         });
 
@@ -250,32 +300,30 @@
             }
 
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Creating account...';
+            submitBtn.textContent = 'CREATING ACCOUNT...';
 
             const result = await signUp(email, password);
 
             if (result.success) {
                 showMessage(result.message + ' Switching to login...', 'success');
-                submitBtn.textContent = 'Account created';
+                submitBtn.textContent = 'ACCOUNT CREATED';
 
                 // Auto-switch to login tab after 2 seconds
                 setTimeout(() => {
-                    // Switch tabs
                     tabs.forEach(t => t.classList.remove('active'));
                     document.querySelector('[data-tab="login"]').classList.add('active');
                     signupForm.classList.add('hidden');
                     loginForm.classList.remove('hidden');
+                    authModeText.textContent = 'LOGIN';
 
-                    // Pre-fill email so they just need their password
                     document.getElementById('login-email').value = email;
                     document.getElementById('login-password').focus();
 
                     showMessage('Account created! Log in to get started.', 'success');
 
-                    // Reset signup form for next time
                     signupForm.reset();
                     submitBtn.disabled = false;
-                    submitBtn.textContent = 'Create account';
+                    submitBtn.textContent = 'CREATE ACCOUNT';
                 }, 2000);
             } else {
                 showMessage(result.error, 'error');
