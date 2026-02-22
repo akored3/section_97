@@ -9,7 +9,7 @@ A cyberpunk-inspired streetwear e-commerce store featuring premium brands like S
 - **Dark/Light Mode** — Theme switching with localStorage persistence
 - **Product Filtering** — Filter by category or search by name/brand
 - **Shopping Cart** — Hybrid Supabase + localStorage persistence, liquid glass slide-out drawer
-- **Authentication** — Signup with auto-generated usernames, immersive cyberpunk auth page
+- **Authentication** — Signup with auto-generated usernames, HUD terminal-style auth page with corner brackets, scanlines, scan beam, field codes, and clip-path submit button
 - **Product Detail Pages** — Image gallery, per-size stock, stock validation, entrance animations
 - **User Profile** — Avatar upload, stats dashboard, order history
 - **Skeleton Loading** — Instant loading indicators for perceived performance
@@ -24,7 +24,7 @@ A cyberpunk-inspired streetwear e-commerce store featuring premium brands like S
 - **CSS3** — Custom properties, M3-inspired design tokens, gradients, animations, `backdrop-filter` glassmorphism
 - **JavaScript (ES6+)** — Modules, async/await, modern syntax
 - **Supabase** — Authentication, PostgreSQL database, Row Level Security, cart persistence
-- **Custom SVG Icons** — Inline streetwear icon pack (blueprint/technical drawing style, theme-aware via `currentColor`)
+- **Custom SVG Icons** — Inline streetwear icon pack (blueprint/technical drawing style, theme-aware via `currentColor`, fill on hover)
 - **Google Fonts** — Orbitron (headings/prices), Share Tech Mono (labels/tags), Rajdhani (body/nav)
 
 ## Project Structure
@@ -228,6 +228,8 @@ The cart drawer slides in from the right with a liquid glass effect (backdrop-fi
 - [x] Perceived performance optimization (instant skeleton loading)
 - [x] Lazy loading images with IntersectionObserver
 - [x] Cyberpunk auth page enhancement (dual backgrounds, parallax, particles, animated borders)
+- [x] Auth page HUD terminal redesign (corner brackets, scanlines, scan beam, field codes, clip-path button, contrast back-link)
+- [x] Custom blueprint SVG icons (hamburger, moon, sun) with fill-on-hover filter icons
 - [x] Product detail pages with per-size stock, image gallery, entrance animations
 - [x] User profile page with avatar upload, stats, and order history
 - [x] Cart performance: optimistic UI updates for instant cart operations
