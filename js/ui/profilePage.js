@@ -1,9 +1,91 @@
-// Profile page — displays user profile, avatar upload, stats, and order history
+// Profile page — displays user profile, avatar upload, stats, achievements, and order history
 import { getCurrentUser, signOut } from '../auth/auth.js';
 import { supabase } from '../config/supabase.js';
 import { initializeTheme } from './theme.js';
 import { escapeHtml } from '../components/productRenderer.js';
 import { initializeCart, setupCartDrawer } from './cart.js';
+
+// ── Level / XP system ──
+// ₦10,000 spent = 1 XP. Levels use quadratic thresholds.
+const LEVEL_THRESHOLDS = [0, 5, 15, 30, 50, 75, 110, 150, 200, 260, 330];
+
+function calculateLevel(totalSpent) {
+    const xp = Math.floor(totalSpent / 10000);
+    let level = 1;
+    let xpForNext = LEVEL_THRESHOLDS[1] || 5;
+    let xpForCurrent = 0;
+
+    for (let i = 1; i < LEVEL_THRESHOLDS.length; i++) {
+        if (xp >= LEVEL_THRESHOLDS[i]) {
+            level = i + 1;
+            xpForCurrent = LEVEL_THRESHOLDS[i];
+            xpForNext = LEVEL_THRESHOLDS[i + 1] || LEVEL_THRESHOLDS[i] + 100;
+        } else {
+            break;
+        }
+    }
+
+    const xpInLevel = xp - xpForCurrent;
+    const xpNeeded = xpForNext - xpForCurrent;
+    const percent = Math.min((xpInLevel / xpNeeded) * 100, 100);
+
+    return { level, xp, xpForNext, percent };
+}
+
+// ── Rank badge based on level ──
+function getRank(level) {
+    if (level >= 10) return 'LEGEND';
+    if (level >= 7) return 'ELITE_OPS';
+    if (level >= 5) return 'STREET_ELITE';
+    if (level >= 3) return 'HYPE_HUNTER';
+    return 'ROOKIE';
+}
+
+// ── Achievement definitions ──
+const ACHIEVEMENTS = [
+    {
+        id: 'first-drop',
+        name: 'First Drop',
+        icon: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>',
+        check: (orders) => orders.length >= 1
+    },
+    {
+        id: 'big-spender',
+        name: 'Big Spender',
+        icon: '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><circle cx="12" cy="15" r="1.5"/>',
+        check: (orders) => {
+            const total = orders.reduce((sum, o) => sum + parseFloat(o.total || 0), 0);
+            return total > 30000;
+        }
+    },
+    {
+        id: 'hype-beast',
+        name: 'Hype Beast',
+        icon: '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
+        check: (orders) => orders.length >= 5
+    },
+    {
+        id: 'collector',
+        name: 'Collector',
+        icon: '<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>',
+        check: (orders) => {
+            const products = new Set();
+            orders.forEach(o => (o.order_items || []).forEach(i => products.add(i.product_name)));
+            return products.size >= 10;
+        }
+    },
+    {
+        id: 'og-member',
+        name: 'OG Member',
+        icon: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+        check: (orders, createdAt) => {
+            if (!createdAt) return false;
+            const sixMonthsAgo = new Date();
+            sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+            return new Date(createdAt) <= sixMonthsAgo;
+        }
+    }
+];
 
 // Generate a default avatar SVG with the user's initial
 function generateDefaultAvatar(username) {
@@ -63,10 +145,48 @@ async function loadMemberSince() {
             const date = new Date(authUser.created_at);
             document.getElementById('profile-member-since').textContent =
                 date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+            return authUser.created_at;
         }
     } catch (e) {
         console.warn('Failed to load member since:', e);
     }
+    return null;
+}
+
+// Update level / XP display
+function updateLevelXP(totalSpent) {
+    const { level, xp, xpForNext, percent } = calculateLevel(totalSpent);
+
+    document.getElementById('profile-level').textContent = `LVL ${level}`;
+    document.getElementById('profile-xp-text').textContent = `${xp}/${xpForNext} XP`;
+    document.getElementById('profile-rank-badge').textContent = getRank(level);
+
+    // Animate XP bar fill after a short delay
+    requestAnimationFrame(() => {
+        document.getElementById('profile-xp-fill').style.width = `${percent}%`;
+    });
+}
+
+// Animate stat counters (count-up effect)
+function animateStatCounter(el, targetValue, prefix = '', suffix = '', duration = 1200) {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+        el.textContent = `${prefix}${targetValue.toLocaleString('en-US')}${suffix}`;
+        return;
+    }
+
+    const start = performance.now();
+    const animate = (now) => {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        // Ease out cubic
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = Math.floor(eased * targetValue);
+        el.textContent = `${prefix}${current.toLocaleString('en-US')}${suffix}`;
+        if (progress < 1) requestAnimationFrame(animate);
+        else el.textContent = `${prefix}${targetValue.toLocaleString('en-US')}${suffix}`;
+    };
+    requestAnimationFrame(animate);
 }
 
 // Fetch and render orders, update stats
@@ -93,11 +213,17 @@ async function loadOrders(userId) {
 
         if (error) throw error;
 
-        // Update stats
+        // Calculate total spent
         const totalSpent = (orders || []).reduce((sum, o) => sum + parseFloat(o.total || 0), 0);
-        document.getElementById('profile-total-spent').textContent =
-            `₦${totalSpent.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        document.getElementById('profile-order-count').textContent = (orders || []).length;
+
+        // Animate stat counters
+        const spentEl = document.getElementById('profile-total-spent');
+        const countEl = document.getElementById('profile-order-count');
+        animateStatCounter(spentEl, Math.round(totalSpent), '₦');
+        animateStatCounter(countEl, (orders || []).length);
+
+        // Update level/XP
+        updateLevelXP(totalSpent);
 
         // Render orders or empty state
         if (!orders || orders.length === 0) {
@@ -105,14 +231,16 @@ async function loadOrders(userId) {
         } else {
             renderOrders(orders);
         }
+
+        return orders || [];
     } catch (e) {
         console.warn('Failed to load orders:', e);
-        // If table doesn't exist yet, show empty state gracefully
         renderEmptyOrders();
+        return [];
     }
 }
 
-// Render order cards
+// Render order rows (new horizontal format with status badges)
 function renderOrders(orders) {
     const container = document.getElementById('profile-orders-list');
     container.innerHTML = orders.map(order => {
@@ -120,34 +248,28 @@ function renderOrders(orders) {
             month: 'short', day: 'numeric', year: 'numeric'
         });
         const total = parseFloat(order.total || 0).toLocaleString('en-US', {
-            minimumFractionDigits: 2, maximumFractionDigits: 2
+            minimumFractionDigits: 0, maximumFractionDigits: 0
         });
         const items = order.order_items || [];
+        const firstName = items.length > 0 ? escapeHtml(items[0].product_name) : 'Order';
+        const extra = items.length > 1 ? ` +${items.length - 1} more` : '';
+        const status = escapeHtml(order.status || 'completed').toUpperCase();
+        const orderId = `ORD-${String(order.id).slice(-4).padStart(4, '0')}`;
 
         return `
-            <div class="profile-order-card">
-                <div class="profile-order-header">
-                    <span class="profile-order-date">${escapeHtml(date)}</span>
-                    <span class="profile-order-status">${escapeHtml(order.status || 'completed')}</span>
-                    <span class="profile-order-total">₦${escapeHtml(total)}</span>
+            <div class="profile-order-row">
+                <div class="profile-order-row-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                    </svg>
                 </div>
-                <div class="profile-order-items">
-                    ${items.map(item => `
-                        <div class="profile-order-item">
-                            <img class="profile-order-item-img"
-                                 src="${escapeHtml(item.product_image || '')}"
-                                 alt="${escapeHtml(item.product_name)}"
-                                 onerror="this.style.display='none'">
-                            <div class="profile-order-item-details">
-                                <div class="profile-order-item-name">${escapeHtml(item.product_name)}</div>
-                                <div class="profile-order-item-meta">
-                                    ${item.size ? `Size ${escapeHtml(item.size)} · ` : ''}Qty ${item.quantity}
-                                </div>
-                            </div>
-                            <span class="profile-order-item-price">₦${parseFloat(item.price || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
-                        </div>
-                    `).join('')}
+                <div class="profile-order-row-details">
+                    <div class="profile-order-row-name">${firstName}${extra}</div>
+                    <div class="profile-order-row-meta">${escapeHtml(orderId)} · ${escapeHtml(date)}</div>
                 </div>
+                <span class="profile-order-status">${status}</span>
+                <span class="profile-order-row-price">₦${escapeHtml(total)}</span>
             </div>
         `;
     }).join('');
@@ -158,17 +280,53 @@ function renderEmptyOrders() {
     const container = document.getElementById('profile-orders-list');
     container.innerHTML = `
         <div class="profile-orders-empty">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="56" height="56">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48">
                 <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
                 <line x1="3" y1="6" x2="21" y2="6"></line>
                 <path d="M16 10a4 4 0 0 1-8 0"></path>
             </svg>
-            <p class="profile-empty-title">COLLECTION EMPTY</p>
+            <p>COLLECTION EMPTY</p>
             <span class="profile-empty-sub">Your drip history will appear here</span>
             <br>
             <a href="store.html" class="profile-empty-cta">Start your collection</a>
         </div>
     `;
+}
+
+// Render achievements
+function renderAchievements(orders, createdAt) {
+    const container = document.getElementById('profile-achievements');
+    container.innerHTML = ACHIEVEMENTS.map(ach => {
+        const unlocked = ach.check(orders, createdAt);
+        const stateClass = unlocked ? 'unlocked' : 'locked';
+        return `
+            <div class="profile-achievement ${stateClass}">
+                <div class="profile-achievement-hex">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        ${ach.icon}
+                    </svg>
+                </div>
+                <span class="profile-achievement-name">${escapeHtml(ach.name)}</span>
+            </div>
+        `;
+    }).join('');
+}
+
+// Tab switching
+function initTabs() {
+    const tabs = document.querySelectorAll('.profile-tab');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Deactivate all tabs
+            tabs.forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.profile-tab-panel').forEach(p => p.classList.remove('active'));
+
+            // Activate clicked tab
+            tab.classList.add('active');
+            const panel = document.getElementById(`profile-tab-${tab.dataset.tab}`);
+            if (panel) panel.classList.add('active');
+        });
+    });
 }
 
 // Setup avatar upload
@@ -274,7 +432,6 @@ function setupLogout() {
 
         const result = await signOut();
         if (result.success) {
-            // Clear cached auth state
             try {
                 localStorage.removeItem('section97-username');
             } catch (e) { /* storage unavailable */ }
@@ -288,7 +445,7 @@ function setupLogout() {
                     <polyline points="16 17 21 12 16 7"></polyline>
                     <line x1="21" y1="12" x2="9" y2="12"></line>
                 </svg>
-                Log out
+                LOGOUT
             `;
         }
     });
@@ -309,12 +466,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     loadProfile(user);
     setupAvatarUpload(user.id);
     setupLogout();
+    initTabs();
 
     // Load async data (orders + member since)
-    await Promise.all([
+    const [orders, createdAt] = await Promise.all([
         loadOrders(user.id),
         loadMemberSince()
     ]);
+
+    // Render achievements based on real data
+    renderAchievements(orders, createdAt);
 
     // Show content with entrance animation
     showContent();

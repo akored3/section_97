@@ -12,7 +12,7 @@ A cyberpunk streetwear e-commerce store built with vanilla JavaScript and Supaba
 - Authentication with auto-generated usernames
 - HUD terminal-style auth page (scanlines, scan beam, field codes, clip-path button)
 - Product detail pages with per-size stock and image gallery
-- User profiles with avatar upload and order history
+- HUD terminal-style profile page (rotating avatar ring, glitch username, level/XP, achievements, tabbed orders)
 - Skeleton loading and lazy loading
 - Fully responsive with custom blueprint SVG icons
 - Security hardened (XSS, CSP, SRI, RLS)
