@@ -33,20 +33,22 @@ function calculateLevel(totalSpent) {
 }
 
 // ── Rank badge based on level ──
+// Metallic progression: grey → bronze → silver → gold → diamond → legendary
+const RANK_DATA = [
+    { name: 'NEWBIE',          color: '#8a8a8a' },  // LVL 1 — grey
+    { name: 'FIT_ROOKIE',      color: '#8a8a8a' },  // LVL 2 — grey
+    { name: 'STREET_STYLER',   color: '#cd7f32' },  // LVL 3 — bronze
+    { name: 'NEON_DRIPPER',    color: '#cd7f32' },  // LVL 4 — bronze
+    { name: 'FIT_COMMANDER',   color: '#b0b0b0' },  // LVL 5 — silver
+    { name: 'CYBER_SWAGLORD',  color: '#b0b0b0' },  // LVL 6 — silver
+    { name: 'DRIP_ARCHITECT',  color: '#ffd700' },  // LVL 7 — gold
+    { name: 'OUTFIT_WARLORD',  color: '#ffd700' },  // LVL 8 — gold
+    { name: 'FITBOSS_2099',    color: '#b9f2ff' },  // LVL 9 — diamond
+    { name: 'GODOFDRIP.EXE',   color: '#ff44cc' },  // LVL 10+ — legendary
+];
+
 function getRank(level) {
-    const ranks = [
-        'NEWBIE',           // LVL 1
-        'FIT_ROOKIE',       // LVL 2
-        'STREET_STYLER',    // LVL 3
-        'NEON_DRIPPER',     // LVL 4
-        'FIT_COMMANDER',    // LVL 5
-        'CYBER_SWAGLORD',   // LVL 6
-        'DRIP_ARCHITECT',   // LVL 7
-        'OUTFIT_WARLORD',   // LVL 8
-        'FITBOSS_2099',     // LVL 9
-        'GODOFDRIP.EXE'     // LVL 10+
-    ];
-    return ranks[Math.min(level, 10) - 1] || 'NEWBIE';
+    return RANK_DATA[Math.min(level, 10) - 1] || RANK_DATA[0];
 }
 
 // ── Achievement definitions ──
@@ -186,13 +188,17 @@ async function loadMemberSince() {
     return null;
 }
 
-// Update level / XP display
+// Update level / XP display with rank color
 function updateLevelXP(totalSpent) {
     const { level, xp, xpForNext, percent } = calculateLevel(totalSpent);
+    const rank = getRank(level);
 
     document.getElementById('profile-level').textContent = `LVL ${level}`;
     document.getElementById('profile-xp-text').textContent = `${xp}/${xpForNext} XP`;
-    document.getElementById('profile-rank-badge').textContent = getRank(level);
+
+    const badge = document.getElementById('profile-rank-badge');
+    badge.textContent = rank.name;
+    badge.style.setProperty('--rank-color', rank.color);
 
     // Animate XP bar fill after a short delay
     requestAnimationFrame(() => {
