@@ -7,7 +7,7 @@ import { initializeCart, setupCartDrawer } from './cart.js';
 
 // ── Level / XP system ──
 // ₦10,000 spent = 1 XP. Levels use quadratic thresholds.
-const LEVEL_THRESHOLDS = [0, 5, 15, 30, 50, 75, 110, 150, 200, 260, 330];
+const LEVEL_THRESHOLDS = [0, 2, 6, 12, 20, 32, 48, 70, 100, 140, 190];
 
 function calculateLevel(totalSpent) {
     const xp = Math.floor(totalSpent / 10000);
@@ -56,16 +56,21 @@ const ACHIEVEMENTS = [
         name: 'First Drop',
         desc: 'Place your first order',
         icon: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>',
-        check: (orders) => orders.length >= 1
+        check: (orders) => orders.length >= 1,
+        progress: (orders) => ({ current: orders.length, target: 1 })
     },
     {
         id: 'big-spender',
         name: 'Big Spender',
-        desc: 'Spend over ₦30,000 total',
+        desc: 'Spend over ₦30k',
         icon: '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><circle cx="12" cy="15" r="1.5"/>',
         check: (orders) => {
             const total = orders.reduce((sum, o) => sum + parseFloat(o.total || 0), 0);
             return total > 30000;
+        },
+        progress: (orders) => {
+            const total = Math.round(orders.reduce((sum, o) => sum + parseFloat(o.total || 0), 0) / 1000);
+            return { current: total, target: 30, unit: 'k' };
         }
     },
     {
@@ -73,29 +78,40 @@ const ACHIEVEMENTS = [
         name: 'Hype Beast',
         desc: 'Complete 5 orders',
         icon: '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
-        check: (orders) => orders.length >= 5
+        check: (orders) => orders.length >= 5,
+        progress: (orders) => ({ current: orders.length, target: 5 })
     },
     {
         id: 'collector',
         name: 'Collector',
-        desc: 'Buy 10 unique products',
+        desc: 'Buy 10 unique items',
         icon: '<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>',
         check: (orders) => {
             const products = new Set();
             orders.forEach(o => (o.order_items || []).forEach(i => products.add(i.product_name)));
             return products.size >= 10;
+        },
+        progress: (orders) => {
+            const products = new Set();
+            orders.forEach(o => (o.order_items || []).forEach(i => products.add(i.product_name)));
+            return { current: products.size, target: 10 };
         }
     },
     {
         id: 'og-member',
         name: 'OG Member',
-        desc: 'Be a member for 6+ months',
+        desc: '6+ months member',
         icon: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
         check: (orders, createdAt) => {
             if (!createdAt) return false;
             const sixMonthsAgo = new Date();
             sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
             return new Date(createdAt) <= sixMonthsAgo;
+        },
+        progress: (orders, createdAt) => {
+            if (!createdAt) return { current: 0, target: 6, unit: 'mo' };
+            const months = Math.floor((Date.now() - new Date(createdAt).getTime()) / (30.44 * 24 * 60 * 60 * 1000));
+            return { current: Math.min(months, 6), target: 6, unit: 'mo' };
         }
     }
 ];
@@ -257,7 +273,7 @@ async function loadOrders(userId) {
     }
 }
 
-// Render order rows (new horizontal format with status badges)
+// Render order rows with expandable item details
 function renderOrders(orders) {
     const container = document.getElementById('profile-orders-list');
     container.innerHTML = orders.filter(order => order && order.id).map(order => {
@@ -272,20 +288,37 @@ function renderOrders(orders) {
         const status = escapeHtml(order.status || 'completed').toUpperCase();
         const orderId = `ORD-${String(order.id).slice(-4).padStart(4, '0')}`;
 
+        const itemsHtml = items.map(item => `
+            <div class="profile-order-item">
+                ${item.product_image ? `<img src="${escapeHtml(item.product_image)}" alt="${escapeHtml(item.product_name || 'Item')}" class="profile-order-item-img" loading="lazy">` : `<div class="profile-order-item-img profile-order-item-placeholder"></div>`}
+                <div class="profile-order-item-info">
+                    <span class="profile-order-item-name">${escapeHtml(item.product_name || 'Item')}</span>
+                    <span class="profile-order-item-meta">${item.size ? `Size: ${escapeHtml(item.size)}` : ''}${item.size && item.quantity ? ' · ' : ''}${item.quantity ? `Qty: ${item.quantity}` : ''}</span>
+                </div>
+                <span class="profile-order-item-price">₦${Math.round(parseFloat(item.price || 0)).toLocaleString('en-US')}</span>
+            </div>
+        `).join('');
+
         return `
             <div class="profile-order-row">
-                <div class="profile-order-row-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-                        <line x1="3" y1="6" x2="21" y2="6"/>
+                <div class="profile-order-row-header">
+                    <div class="profile-order-row-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                            <line x1="3" y1="6" x2="21" y2="6"/>
+                        </svg>
+                    </div>
+                    <div class="profile-order-row-details">
+                        <div class="profile-order-row-name">${firstName}${extra}</div>
+                        <div class="profile-order-row-meta">${escapeHtml(orderId)} · ${escapeHtml(date)}</div>
+                    </div>
+                    <span class="profile-order-status">${status}</span>
+                    <span class="profile-order-row-price">₦${escapeHtml(total)}</span>
+                    <svg class="profile-order-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true">
+                        <polyline points="6 9 12 15 18 9"/>
                     </svg>
                 </div>
-                <div class="profile-order-row-details">
-                    <div class="profile-order-row-name">${firstName}${extra}</div>
-                    <div class="profile-order-row-meta">${escapeHtml(orderId)} · ${escapeHtml(date)}</div>
-                </div>
-                <span class="profile-order-status">${status}</span>
-                <span class="profile-order-row-price">₦${escapeHtml(total)}</span>
+                ${items.length > 0 ? `<div class="profile-order-items" aria-hidden="true">${itemsHtml}</div>` : ''}
             </div>
         `;
     }).join('');
@@ -309,13 +342,19 @@ function renderEmptyOrders() {
     `;
 }
 
-// Render achievements
+// Render achievements with progress indicators
 function renderAchievements(orders, createdAt) {
     const container = document.getElementById('profile-achievements');
     container.innerHTML = ACHIEVEMENTS.map(ach => {
         const unlocked = ach.check(orders, createdAt);
         const stateClass = unlocked ? 'unlocked' : 'locked';
-        const label = unlocked ? `${ach.name} — Unlocked` : `${ach.name} — ${ach.desc}`;
+        const prog = ach.progress(orders, createdAt);
+        const unit = prog.unit || '';
+        const progressText = unlocked
+            ? 'UNLOCKED'
+            : `${prog.current}${unit}/${prog.target}${unit}`;
+        const label = unlocked ? `${ach.name} — Unlocked` : `${ach.name} — ${ach.desc} (${progressText})`;
+        const progressPercent = Math.min((prog.current / prog.target) * 100, 100);
         return `
             <div class="profile-achievement ${stateClass}" aria-label="${escapeHtml(label)}" title="${escapeHtml(label)}">
                 <div class="profile-achievement-hex">
@@ -324,45 +363,23 @@ function renderAchievements(orders, createdAt) {
                     </svg>
                 </div>
                 <span class="profile-achievement-name">${escapeHtml(ach.name)}</span>
+                <span class="profile-achievement-progress ${unlocked ? 'complete' : ''}">${progressText}</span>
+                ${!unlocked ? `<div class="profile-achievement-bar"><div class="profile-achievement-bar-fill" style="width:${progressPercent}%"></div></div>` : ''}
             </div>
         `;
     }).join('');
 }
 
-// Tab switching with WAI-ARIA keyboard navigation
-function initTabs() {
-    const tabs = Array.from(document.querySelectorAll('.profile-tab'));
-    const panels = document.querySelectorAll('.profile-tab-panel');
-
-    function activateTab(tab) {
-        // Deactivate all
-        tabs.forEach(t => {
-            t.classList.remove('active');
-            t.setAttribute('aria-selected', 'false');
-            t.setAttribute('tabindex', '-1');
-        });
-        panels.forEach(p => p.classList.remove('active'));
-
-        // Activate chosen
-        tab.classList.add('active');
-        tab.setAttribute('aria-selected', 'true');
-        tab.setAttribute('tabindex', '0');
-        tab.focus();
-        const panel = document.getElementById(`profile-tab-${tab.dataset.tab}`);
-        if (panel) panel.classList.add('active');
-    }
-
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => activateTab(tab));
-        tab.addEventListener('keydown', (e) => {
-            const idx = tabs.indexOf(tab);
-            let target = null;
-            if (e.key === 'ArrowRight') target = tabs[(idx + 1) % tabs.length];
-            else if (e.key === 'ArrowLeft') target = tabs[(idx - 1 + tabs.length) % tabs.length];
-            else if (e.key === 'Home') target = tabs[0];
-            else if (e.key === 'End') target = tabs[tabs.length - 1];
-            if (target) { e.preventDefault(); activateTab(target); }
-        });
+// Setup order row expansion (click to see items)
+function setupOrderExpansion() {
+    const container = document.getElementById('profile-orders-list');
+    container.addEventListener('click', (e) => {
+        const row = e.target.closest('.profile-order-row');
+        if (!row) return;
+        const details = row.querySelector('.profile-order-items');
+        if (!details) return;
+        const isOpen = row.classList.toggle('expanded');
+        details.setAttribute('aria-hidden', !isOpen);
     });
 }
 
@@ -516,7 +533,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     loadProfile(user);
     setupAvatarUpload(user.id);
     setupLogout();
-    initTabs();
+    setupOrderExpansion();
 
     // Load async data (orders + member since)
     const [orders, createdAt] = await Promise.all([

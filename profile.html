@@ -84,25 +84,12 @@
                 <div class="profile-scanlines"></div>
                 <div class="profile-scan-beam"></div>
 
-                <!-- Status bar -->
-                <div class="profile-status-bar">
-                    <span class="profile-status-left">
-                        <span class="status-dot"></span>
-                        SYS.PROFILE v2.1
-                    </span>
-                    <span class="profile-status-right">
-                        <span class="status-dot"></span>
-                        ONLINE
-                    </span>
-                </div>
-
                 <!-- Profile header: avatar + identity + level -->
                 <div class="profile-header">
                     <div class="profile-avatar-wrapper" id="profile-avatar-wrapper">
                         <div class="profile-avatar-ring"></div>
                         <div class="profile-avatar-ring profile-avatar-ring-inner"></div>
                         <img id="profile-avatar" class="profile-avatar" src="" alt="Your avatar">
-                        <span class="profile-avatar-status"></span>
                         <label class="profile-avatar-upload" for="avatar-input" role="button" tabindex="0" aria-label="Change avatar" title="Change avatar">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true">
                                 <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
@@ -127,17 +114,11 @@
                     </div>
                 </div>
 
-                <!-- Mode bar (footer of card) -->
-                <div class="profile-mode-bar">
-                    <span>USR_MODE: ACTIVE</span>
-                    <span><span class="encrypted-dots">&#9679;&#9679;&#9679;</span> VERIFIED</span>
-                </div>
             </section>
 
             <!-- Stats bar: total spent + order count + member since -->
             <section class="profile-stats">
                 <div class="profile-stat-card">
-                    <span class="field-code">STAT_01</span>
                     <div class="hud-bracket hud-bracket-tl"></div>
                     <div class="hud-bracket hud-bracket-tr"></div>
                     <div class="hud-bracket hud-bracket-bl"></div>
@@ -150,7 +131,6 @@
                     <span id="profile-total-spent" class="profile-stat-value" data-target="0">₦0</span>
                 </div>
                 <div class="profile-stat-card">
-                    <span class="field-code">STAT_02</span>
                     <div class="hud-bracket hud-bracket-tl"></div>
                     <div class="hud-bracket hud-bracket-tr"></div>
                     <div class="hud-bracket hud-bracket-bl"></div>
@@ -164,7 +144,6 @@
                     <span id="profile-order-count" class="profile-stat-value" data-target="0">0</span>
                 </div>
                 <div class="profile-stat-card">
-                    <span class="field-code">STAT_03</span>
                     <div class="hud-bracket hud-bracket-tl"></div>
                     <div class="hud-bracket hud-bracket-tr"></div>
                     <div class="hud-bracket hud-bracket-bl"></div>
@@ -199,53 +178,26 @@
                 <div class="hud-bracket hud-bracket-bl"></div>
                 <div class="hud-bracket hud-bracket-br"></div>
                 <div class="profile-scanlines"></div>
-                <div class="profile-scan-beam"></div>
                 <div class="profile-achievements-header">
                     <h2 class="profile-section-title">ACHIEVEMENTS</h2>
-                    <span class="field-code">ACH_SYS</span>
                 </div>
                 <div id="profile-achievements" class="profile-achievements">
                     <!-- Populated by JS -->
                 </div>
             </section>
 
-            <!-- Tabbed section: Order History / Wishlist / Settings -->
-            <section class="profile-tabs-card">
+            <!-- Order History -->
+            <section class="profile-orders-card">
                 <div class="hud-bracket hud-bracket-tl"></div>
                 <div class="hud-bracket hud-bracket-tr"></div>
                 <div class="hud-bracket hud-bracket-bl"></div>
                 <div class="hud-bracket hud-bracket-br"></div>
                 <div class="profile-scanlines"></div>
-                <div class="profile-tabs" role="tablist" aria-label="Profile sections">
-                    <button class="profile-tab active" data-tab="orders" role="tab" aria-selected="true" aria-controls="profile-tab-orders" id="tab-orders" tabindex="0">ORDER HISTORY</button>
-                    <button class="profile-tab" data-tab="wishlist" role="tab" aria-selected="false" aria-controls="profile-tab-wishlist" id="tab-wishlist" tabindex="-1">WISHLIST</button>
-                    <button class="profile-tab" data-tab="settings" role="tab" aria-selected="false" aria-controls="profile-tab-settings" id="tab-settings" tabindex="-1">SETTINGS</button>
+                <div class="profile-orders-header">
+                    <h2 class="profile-section-title">ORDER HISTORY</h2>
                 </div>
-                <div class="profile-tab-panels">
-                    <div id="profile-tab-orders" class="profile-tab-panel active" role="tabpanel" aria-labelledby="tab-orders">
-                        <div id="profile-orders-list" class="profile-orders-list">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
-                    <div id="profile-tab-wishlist" class="profile-tab-panel" role="tabpanel" aria-labelledby="tab-wishlist">
-                        <div class="profile-tab-placeholder">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="40">
-                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                            </svg>
-                            <p>WISHLIST COMING SOON</p>
-                            <span>Save your favourite drops here</span>
-                        </div>
-                    </div>
-                    <div id="profile-tab-settings" class="profile-tab-panel" role="tabpanel" aria-labelledby="tab-settings">
-                        <div class="profile-tab-placeholder">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="40">
-                                <circle cx="12" cy="12" r="3"/>
-                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-                            </svg>
-                            <p>SETTINGS COMING SOON</p>
-                            <span>Customize your experience</span>
-                        </div>
-                    </div>
+                <div id="profile-orders-list" class="profile-orders-list">
+                    <!-- Populated by JS -->
                 </div>
             </section>
 
