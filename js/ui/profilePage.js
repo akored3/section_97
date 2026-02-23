@@ -34,11 +34,19 @@ function calculateLevel(totalSpent) {
 
 // ── Rank badge based on level ──
 function getRank(level) {
-    if (level >= 10) return 'LEGEND';
-    if (level >= 7) return 'ELITE_OPS';
-    if (level >= 5) return 'STREET_ELITE';
-    if (level >= 3) return 'HYPE_HUNTER';
-    return 'ROOKIE';
+    const ranks = [
+        'NEWBIE',           // LVL 1
+        'FIT_ROOKIE',       // LVL 2
+        'STREET_STYLER',    // LVL 3
+        'NEON_DRIPPER',     // LVL 4
+        'FIT_COMMANDER',    // LVL 5
+        'CYBER_SWAGLORD',   // LVL 6
+        'DRIP_ARCHITECT',   // LVL 7
+        'OUTFIT_WARLORD',   // LVL 8
+        'FITBOSS_2099',     // LVL 9
+        'GODOFDRIP.EXE'     // LVL 10+
+    ];
+    return ranks[Math.min(level, 10) - 1] || 'NEWBIE';
 }
 
 // ── Achievement definitions ──
@@ -46,12 +54,14 @@ const ACHIEVEMENTS = [
     {
         id: 'first-drop',
         name: 'First Drop',
+        desc: 'Place your first order',
         icon: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>',
         check: (orders) => orders.length >= 1
     },
     {
         id: 'big-spender',
         name: 'Big Spender',
+        desc: 'Spend over ₦30,000 total',
         icon: '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><circle cx="12" cy="15" r="1.5"/>',
         check: (orders) => {
             const total = orders.reduce((sum, o) => sum + parseFloat(o.total || 0), 0);
@@ -61,12 +71,14 @@ const ACHIEVEMENTS = [
     {
         id: 'hype-beast',
         name: 'Hype Beast',
+        desc: 'Complete 5 orders',
         icon: '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
         check: (orders) => orders.length >= 5
     },
     {
         id: 'collector',
         name: 'Collector',
+        desc: 'Buy 10 unique products',
         icon: '<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>',
         check: (orders) => {
             const products = new Set();
@@ -77,6 +89,7 @@ const ACHIEVEMENTS = [
     {
         id: 'og-member',
         name: 'OG Member',
+        desc: 'Be a member for 6+ months',
         icon: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
         check: (orders, createdAt) => {
             if (!createdAt) return false;
@@ -124,17 +137,21 @@ function loadProfile(user) {
     const usernameEl = document.getElementById('profile-username');
     const emailEl = document.getElementById('profile-email');
 
-    avatarEl.src = user.avatar || generateDefaultAvatar(user.username);
-    avatarEl.alt = `${escapeHtml(user.username || 'User')}'s avatar`;
+    const username = user?.username || 'Unknown';
+    const email = user?.email || '';
+    const avatar = user?.avatar || null;
+
+    avatarEl.src = avatar || generateDefaultAvatar(username);
+    avatarEl.alt = `${escapeHtml(username)}'s avatar`;
     avatarEl.onerror = () => {
         avatarEl.onerror = null;
-        avatarEl.src = generateDefaultAvatar(user.username);
+        avatarEl.src = generateDefaultAvatar(username);
     };
 
-    usernameEl.textContent = user.username || 'Unknown';
-    emailEl.textContent = user.email || '';
+    usernameEl.textContent = username;
+    emailEl.textContent = email;
 
-    document.title = `${user.username || 'Profile'} | SECTION-97`;
+    document.title = `${username} | SECTION-97`;
 }
 
 // Load member since date from Supabase auth
@@ -243,15 +260,14 @@ async function loadOrders(userId) {
 // Render order rows (new horizontal format with status badges)
 function renderOrders(orders) {
     const container = document.getElementById('profile-orders-list');
-    container.innerHTML = orders.map(order => {
+    container.innerHTML = orders.filter(order => order && order.id).map(order => {
         const date = new Date(order.created_at).toLocaleDateString('en-US', {
             month: 'short', day: 'numeric', year: 'numeric'
         });
-        const total = parseFloat(order.total || 0).toLocaleString('en-US', {
-            minimumFractionDigits: 0, maximumFractionDigits: 0
-        });
+        const totalVal = parseFloat(order.total || 0);
+        const total = (isNaN(totalVal) ? 0 : Math.round(totalVal)).toLocaleString('en-US');
         const items = order.order_items || [];
-        const firstName = items.length > 0 ? escapeHtml(items[0].product_name) : 'Order';
+        const firstName = items.length > 0 ? escapeHtml(items[0].product_name || 'Item') : 'Order';
         const extra = items.length > 1 ? ` +${items.length - 1} more` : '';
         const status = escapeHtml(order.status || 'completed').toUpperCase();
         const orderId = `ORD-${String(order.id).slice(-4).padStart(4, '0')}`;
@@ -299,10 +315,11 @@ function renderAchievements(orders, createdAt) {
     container.innerHTML = ACHIEVEMENTS.map(ach => {
         const unlocked = ach.check(orders, createdAt);
         const stateClass = unlocked ? 'unlocked' : 'locked';
+        const label = unlocked ? `${ach.name} — Unlocked` : `${ach.name} — ${ach.desc}`;
         return `
-            <div class="profile-achievement ${stateClass}">
+            <div class="profile-achievement ${stateClass}" aria-label="${escapeHtml(label)}" title="${escapeHtml(label)}">
                 <div class="profile-achievement-hex">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
                         ${ach.icon}
                     </svg>
                 </div>
@@ -312,32 +329,61 @@ function renderAchievements(orders, createdAt) {
     }).join('');
 }
 
-// Tab switching
+// Tab switching with WAI-ARIA keyboard navigation
 function initTabs() {
-    const tabs = document.querySelectorAll('.profile-tab');
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            // Deactivate all tabs
-            tabs.forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.profile-tab-panel').forEach(p => p.classList.remove('active'));
+    const tabs = Array.from(document.querySelectorAll('.profile-tab'));
+    const panels = document.querySelectorAll('.profile-tab-panel');
 
-            // Activate clicked tab
-            tab.classList.add('active');
-            const panel = document.getElementById(`profile-tab-${tab.dataset.tab}`);
-            if (panel) panel.classList.add('active');
+    function activateTab(tab) {
+        // Deactivate all
+        tabs.forEach(t => {
+            t.classList.remove('active');
+            t.setAttribute('aria-selected', 'false');
+            t.setAttribute('tabindex', '-1');
+        });
+        panels.forEach(p => p.classList.remove('active'));
+
+        // Activate chosen
+        tab.classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
+        tab.setAttribute('tabindex', '0');
+        tab.focus();
+        const panel = document.getElementById(`profile-tab-${tab.dataset.tab}`);
+        if (panel) panel.classList.add('active');
+    }
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => activateTab(tab));
+        tab.addEventListener('keydown', (e) => {
+            const idx = tabs.indexOf(tab);
+            let target = null;
+            if (e.key === 'ArrowRight') target = tabs[(idx + 1) % tabs.length];
+            else if (e.key === 'ArrowLeft') target = tabs[(idx - 1 + tabs.length) % tabs.length];
+            else if (e.key === 'Home') target = tabs[0];
+            else if (e.key === 'End') target = tabs[tabs.length - 1];
+            if (target) { e.preventDefault(); activateTab(target); }
         });
     });
 }
 
 // Setup avatar upload
+let isAvatarUploading = false;
 function setupAvatarUpload(userId) {
     const input = document.getElementById('avatar-input');
     const avatarImg = document.getElementById('profile-avatar');
     const wrapper = document.getElementById('profile-avatar-wrapper');
 
+    // Allow keyboard activation on the label
+    const uploadLabel = wrapper.querySelector('.profile-avatar-upload');
+    if (uploadLabel) {
+        uploadLabel.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); }
+        });
+    }
+
     input.addEventListener('change', async (e) => {
         const file = e.target.files[0];
-        if (!file) return;
+        if (!file || isAvatarUploading) return;
 
         // Clear any previous error
         const oldError = wrapper.querySelector('.profile-avatar-error');
@@ -358,6 +404,9 @@ function setupAvatarUpload(userId) {
             input.value = '';
             return;
         }
+
+        // Lock concurrent uploads
+        isAvatarUploading = true;
 
         // Show uploading state
         avatarImg.classList.add('uploading');
@@ -403,6 +452,7 @@ function setupAvatarUpload(userId) {
             console.error('Avatar upload failed:', err);
             showAvatarError(wrapper, 'Upload failed — try again');
         } finally {
+            isAvatarUploading = false;
             avatarImg.classList.remove('uploading');
             wrapper.classList.remove('uploading');
             input.value = '';

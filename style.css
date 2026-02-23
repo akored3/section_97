@@ -2824,6 +2824,7 @@ a.dropdown-item {
     box-shadow: 0 0 20px rgba(0, 255, 100, 0.3);
     z-index: 2;
     pointer-events: none;
+    will-change: top, opacity;
     animation: profile-scan-beam 4s linear infinite;
 }
 
@@ -2917,6 +2918,7 @@ a.dropdown-item {
     border-top-color: var(--accent);
     border-right-color: var(--accent);
     opacity: 0.6;
+    will-change: transform;
     animation: profile-ring-cw 3s linear infinite;
 }
 
@@ -2927,6 +2929,7 @@ a.dropdown-item {
     border-bottom-color: var(--accent-bright);
     border-left-color: var(--accent-bright);
     opacity: 0.4;
+    will-change: transform;
     animation: profile-ring-ccw 2s linear infinite;
 }
 
@@ -3001,10 +3004,21 @@ a.dropdown-item {
     border: 2px solid var(--bg-primary);
     z-index: 3;
     opacity: 0;
+    transition: transform var(--duration-short) var(--motion-standard),
+                box-shadow var(--duration-short) var(--motion-standard),
+                opacity var(--duration-short) var(--motion-standard);
 }
 
-.profile-avatar-wrapper:hover .profile-avatar-upload {
+.profile-avatar-wrapper:hover .profile-avatar-upload,
+.profile-avatar-upload:focus-visible {
     opacity: 1;
+}
+
+/* Always show upload button on touch devices */
+@media (hover: none) {
+    .profile-avatar-upload {
+        opacity: 0.8;
+    }
 }
 
 .profile-avatar-upload:hover {
@@ -3152,6 +3166,7 @@ a.dropdown-item {
 }
 
 :root[data-theme="light"] .profile-xp-fill {
+    background: linear-gradient(90deg, var(--accent-hover), var(--accent), var(--accent-hover));
     box-shadow: 0 0 6px rgba(0, 168, 64, 0.3);
 }
 
@@ -3226,6 +3241,10 @@ a.dropdown-item {
     color: var(--accent);
 }
 
+:root[data-theme="light"] .profile-stat-value {
+    color: var(--accent-hover);
+}
+
 /* ── Log out button ── */
 .profile-actions {
     display: flex;
@@ -3254,6 +3273,17 @@ a.dropdown-item {
     background: rgba(255, 60, 60, 0.15);
     border-color: var(--error-hover);
     box-shadow: 0 0 20px rgba(255, 60, 60, 0.15);
+}
+
+:root[data-theme="light"] .profile-logout-btn {
+    background: rgba(200, 30, 30, 0.06);
+    border-color: rgba(200, 50, 50, 0.25);
+    color: #c41e1e;
+}
+
+:root[data-theme="light"] .profile-logout-btn:hover {
+    background: rgba(200, 30, 30, 0.12);
+    border-color: #c41e1e;
 }
 
 /* ── Achievements card ── */
@@ -3362,6 +3392,7 @@ a.dropdown-item {
 
 :root[data-theme="light"] .profile-achievement-hex {
     background: rgba(0, 168, 64, 0.06);
+    box-shadow: inset 0 0 0 1px rgba(0, 168, 64, 0.15);
 }
 
 :root[data-theme="light"] .profile-achievement.unlocked .profile-achievement-hex {
@@ -3418,6 +3449,7 @@ a.dropdown-item {
 .profile-tab {
     flex: 1;
     padding: var(--space-md) var(--space-lg);
+    min-height: 44px;
     font-family: var(--font-display);
     font-size: 0.75rem;
     font-weight: 700;
@@ -3430,6 +3462,11 @@ a.dropdown-item {
     transition: color var(--duration-medium) var(--motion-standard);
 }
 
+.profile-tab:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+}
+
 .profile-tab:hover {
     color: var(--text-primary);
 }
@@ -3438,7 +3475,7 @@ a.dropdown-item {
     color: var(--accent);
 }
 
-.profile-tab.active::after {
+.profile-tab::after {
     content: '';
     position: absolute;
     bottom: -1px;
@@ -3446,6 +3483,12 @@ a.dropdown-item {
     width: 100%;
     height: 2px;
     background: var(--accent);
+    opacity: 0;
+    transition: opacity var(--duration-medium) var(--motion-standard);
+}
+
+.profile-tab.active::after {
+    opacity: 1;
 }
 
 .profile-tab-panels {
@@ -3638,6 +3681,15 @@ a.dropdown-item {
     box-shadow: 0 0 20px var(--glow-accent-strong);
 }
 
+.profile-orders-empty .profile-empty-cta:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+:root[data-theme="light"] .profile-orders-empty .profile-empty-cta {
+    background: var(--accent-hover);
+}
+
 /* ── Responsive: tablet ── */
 @media (max-width: 840px) {
     .profile-header {
@@ -3661,6 +3713,14 @@ a.dropdown-item {
     .profile-avatar {
         width: 100px;
         height: 100px;
+    }
+
+    .profile-avatar-ring {
+        inset: -6px;
+    }
+
+    .profile-avatar-ring-inner {
+        inset: -3px;
     }
 
     .profile-skeleton-header {
@@ -3710,6 +3770,14 @@ a.dropdown-item {
     .profile-avatar {
         width: 80px;
         height: 80px;
+    }
+
+    .profile-avatar-ring {
+        inset: -5px;
+    }
+
+    .profile-avatar-ring-inner {
+        inset: -2px;
     }
 
     .profile-skeleton-avatar {
