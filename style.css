@@ -118,8 +118,8 @@
             --bg-primary: #0a0a0f;
             --bg-secondary: #111118;
             --text-primary: #e8e8e8;
-            --text-secondary: #666666;
-            --text-muted: #444444;
+            --text-secondary: #999999;
+            --text-muted: #666666;
             --accent: #00ff64;
             --accent-hover: #33ff85;
             --accent-dim: #009940;
@@ -312,9 +312,7 @@
         }
         
         .hero-subtitle {
-            font-family: var(--font-body);
-            font-size: 1rem;
-            font-weight: 400;
+            font: var(--text-body-md);
             letter-spacing: 2px;
             margin: 0;
             color: var(--accent);
@@ -456,8 +454,7 @@
             right: -5px;
             background: var(--error);
             color: white;
-            font-size: 0.6875rem;
-            font-weight: 700;
+            font: var(--text-label-md);
             min-width: 18px;
             height: 18px;
             padding: 0 5px;
@@ -465,7 +462,6 @@
             display: none;
             align-items: center;
             justify-content: center;
-            font-family: var(--font-mono);
             box-shadow: 0 2px 6px rgba(255, 51, 51, 0.5);
             transition: transform var(--duration-medium) var(--motion-spring);
         }
@@ -688,15 +684,14 @@
         }
 
         .no-results h3 {
-            font-family: var(--font-display);
-            font-size: 1.5rem;
+            font: var(--text-headline-lg);
             margin-bottom: 10px;
             color: var(--accent);
         }
 
         .no-results p {
+            font: var(--text-body-lg);
             color: var(--text-secondary);
-            font-size: 1rem;
         }
 
         /* Store layout: sidebar + product grid */
@@ -750,10 +745,9 @@
             border-left: 3px solid transparent;
             border-radius: 0 var(--shape-sm) var(--shape-sm) 0;
             cursor: pointer;
-            font-family: var(--font-body);
-            font-size: 0.875rem;
+            font: var(--text-body-md);
             font-weight: 600;
-            letter-spacing: 0.5px;
+            letter-spacing: 1.5px;
             transition: color 150ms ease, background 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
             background: transparent;
             text-transform: uppercase;
@@ -1301,7 +1295,7 @@
         }
 
         .product-card h3 {
-            font: var(--text-title-md);
+            font: var(--text-headline-md);
             margin: 0;
             color: var(--text-primary);
             line-height: 1.3;
@@ -1314,8 +1308,7 @@
         }
 
         .product-card p {
-            font-size: 1.125rem;
-            font-weight: 600;
+            font: var(--text-title-lg);
             color: var(--accent);
             margin: 0;
         }
@@ -1503,7 +1496,7 @@
             }
 
             .product-card h3 {
-                font-size: 0.8rem;
+                font-size: clamp(0.85rem, 3vw, 1rem);
                 -webkit-line-clamp: 1;
                 line-clamp: 1;
             }
@@ -1514,7 +1507,7 @@
 
             .product-card button {
                 padding: 8px 14px;
-                font-size: 0.65rem;
+                font-size: 0.75rem;
             }
 
             .product-actions {
@@ -1634,11 +1627,12 @@
         }
 
         .footer-logo {
-            font-family: var(--font-display);
+            font: var(--text-headline-md);
             font-size: 1.4rem;
-            font-weight: 700;
             letter-spacing: 3px;
-            transition: color var(--duration-medium) var(--motion-standard);
+            text-shadow: 0 0 15px var(--glow-accent);
+            transition: color var(--duration-medium) var(--motion-standard),
+                        text-shadow var(--duration-medium) var(--motion-standard);
         }
 
         :root[data-theme="dark"] .footer-logo {
@@ -1650,8 +1644,7 @@
         }
 
         .footer-tagline {
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
+            font: var(--text-label-lg);
             letter-spacing: 4px;
             color: var(--accent);
             animation: blink-underscore 1.2s infinite;
@@ -1705,8 +1698,8 @@
         }
 
         .footer-copy {
-            font-size: 0.8rem;
-            opacity: 0.6;
+            font: var(--text-body-sm);
+            color: var(--text-muted);
             margin-top: 10px;
         }
 
@@ -1913,7 +1906,7 @@
             color: var(--text-primary);
             width: 44px;
             height: 44px;
-            font-size: 1rem;
+            font: var(--text-body-lg);
             cursor: pointer;
             transition: background var(--duration-short) var(--motion-standard);
             display: flex;
@@ -1999,9 +1992,8 @@
         }
 
         .cart-drawer-total span:last-child {
-            font-family: var(--font-display);
+            font: var(--text-headline-md);
             font-size: 1.3rem;
-            font-weight: 700;
             color: var(--accent);
         }
 
@@ -2012,9 +2004,7 @@
             border: none;
             border-radius: var(--shape-md);
             color: var(--on-accent);
-            font-family: var(--font-display);
-            font-size: 1rem;
-            font-weight: 700;
+            font: var(--text-title-lg);
             letter-spacing: 1.5px;
             cursor: pointer;
             transition: all var(--duration-medium) var(--motion-standard);
@@ -2392,11 +2382,10 @@
 }
 
 .pdp-price {
-    font-family: var(--font-display);
-    font-size: 1.5rem;
-    font-weight: 700;
+    font: var(--text-headline-lg);
     color: var(--accent);
     margin: 0.25rem 0;
+    text-shadow: 0 0 12px var(--glow-accent);
 }
 
 .pdp-description {
@@ -3003,8 +2992,7 @@ a.dropdown-item {
 
 /* Rank badge — color set dynamically via --rank-color */
 .profile-rank-badge {
-    font-family: var(--font-mono);
-    font-size: 0.6rem;
+    font: var(--text-label-sm);
     letter-spacing: 1px;
     padding: 3px 10px;
     color: var(--rank-color, #8a8a8a);
@@ -3034,9 +3022,7 @@ a.dropdown-item {
 }
 
 .profile-level {
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    font-weight: 700;
+    font: var(--text-label-md);
     color: var(--accent);
     letter-spacing: 1px;
     white-space: nowrap;
@@ -3118,18 +3104,16 @@ a.dropdown-item {
 }
 
 .profile-stat-label {
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
+    font: var(--text-label-md);
     text-transform: uppercase;
     letter-spacing: 2px;
     color: var(--text-secondary);
 }
 
 .profile-stat-value {
-    font-family: var(--font-display);
-    font-size: 1.5rem;
-    font-weight: 700;
+    font: var(--text-headline-lg);
     color: var(--accent);
+    text-shadow: 0 0 12px var(--glow-accent);
 }
 
 :root[data-theme="light"] .profile-stat-value {
@@ -3201,12 +3185,13 @@ a.dropdown-item {
 }
 
 .profile-section-title {
-    font: var(--text-title-lg);
+    font: var(--text-headline-md);
     letter-spacing: 3px;
     color: var(--text-primary);
     margin: 0;
     position: relative;
     padding-left: var(--space-md);
+    text-shadow: 0 0 15px var(--glow-accent);
 }
 
 .profile-section-title::before {
@@ -3638,6 +3623,14 @@ a.dropdown-item {
         justify-content: center;
     }
 
+    .profile-username {
+        font-size: clamp(1.2rem, 4vw, 1.8rem);
+    }
+
+    .profile-section-title {
+        font-size: 1rem;
+    }
+
     .profile-avatar-wrapper {
         width: 100px;
         height: 100px;
@@ -3687,6 +3680,18 @@ a.dropdown-item {
 
     .profile-skeleton-stats {
         grid-template-columns: 1fr;
+    }
+
+    .profile-username {
+        font-size: 1.1rem;
+    }
+
+    .profile-stat-value {
+        font-size: 1.2rem;
+    }
+
+    .profile-section-title {
+        font-size: 0.9rem;
     }
 
     .profile-avatar-wrapper {
@@ -3967,8 +3972,7 @@ a.dropdown-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
+    font: var(--text-label-sm);
     color: rgba(0, 255, 100, 0.5);
     margin-bottom: var(--space-md);
     letter-spacing: 1px;
@@ -4008,11 +4012,12 @@ a.dropdown-item {
 }
 
 .auth-logo h1 {
-    font-family: var(--font-display);
+    font: var(--text-headline-lg);
     font-size: 2.25rem;
     color: var(--text-primary);
     margin: 0;
     animation: auth-glitch 4s ease infinite;
+    text-shadow: 0 0 20px var(--glow-accent);
 }
 
 @keyframes auth-glitch {
@@ -4055,9 +4060,8 @@ a.dropdown-item {
     border: none;
     border-bottom: 2px solid transparent;
     color: var(--text-secondary);
+    font: var(--text-label-lg);
     font-family: var(--font-display);
-    font-size: 0.85rem;
-    font-weight: 600;
     letter-spacing: 2px;
     cursor: pointer;
     transition: all var(--duration-medium) var(--motion-standard);
@@ -4120,15 +4124,13 @@ a.dropdown-item {
 }
 
 .form-label-row label {
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
+    font: var(--text-label-md);
     color: var(--text-secondary);
     letter-spacing: 2px;
 }
 
 .field-code {
-    font-family: var(--font-mono);
-    font-size: 0.6rem;
+    font: var(--text-label-sm);
     color: rgba(0, 255, 100, 0.35);
     letter-spacing: 1px;
     padding: 2px 6px;
@@ -4182,8 +4184,7 @@ a.dropdown-item {
 
 /* Forgot password link */
 .forgot-link {
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
+    font: var(--text-label-sm);
     color: rgba(0, 255, 100, 0.4);
     text-decoration: none;
     text-align: right;
@@ -4210,9 +4211,7 @@ a.dropdown-item {
     background: var(--accent);
     border: none;
     color: var(--on-accent);
-    font-family: var(--font-display);
-    font-size: 0.95rem;
-    font-weight: 700;
+    font: var(--text-title-lg);
     letter-spacing: 2px;
     cursor: pointer;
     transition: all var(--duration-medium) var(--motion-standard);
@@ -4277,8 +4276,7 @@ a.dropdown-item {
 }
 
 .auth-divider span {
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
+    font: var(--text-label-sm);
     color: var(--text-secondary);
     letter-spacing: 2px;
 }
@@ -4296,9 +4294,8 @@ a.dropdown-item {
     border: 1px solid rgba(0, 255, 100, 0.2);
     background: transparent;
     color: var(--text-secondary);
+    font: var(--text-label-lg);
     font-family: var(--font-display);
-    font-size: 0.8rem;
-    font-weight: 600;
     letter-spacing: 2px;
     text-decoration: none;
     transition: all var(--duration-medium) var(--motion-standard);
@@ -4327,8 +4324,7 @@ a.dropdown-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-family: var(--font-mono);
-    font-size: 0.6rem;
+    font: var(--text-label-sm);
     color: rgba(0, 255, 100, 0.35);
     margin-top: var(--space-md);
     padding-top: var(--space-sm);
@@ -4379,8 +4375,7 @@ a.dropdown-item {
 
 /* Page footer */
 .auth-page-footer {
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
+    font: var(--text-label-sm);
     color: rgba(0, 255, 100, 0.25);
     letter-spacing: 2px;
     margin-top: var(--space-xl);
