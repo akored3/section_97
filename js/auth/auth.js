@@ -111,12 +111,18 @@ export async function signUp(email, password) {
             throw new Error('Profile creation timeout - please try again');
         }
 
-        const { error: profileError } = await supabase
+        // Update profile with username — use .select() to verify RLS didn't silently block it
+        const { data: updatedProfile, error: profileError } = await supabase
             .from('profiles')
             .update({ username: username })
-            .eq('id', authData.user.id);
+            .eq('id', authData.user.id)
+            .select('username')
+            .single();
 
         if (profileError) throw profileError;
+        if (!updatedProfile?.username) {
+            console.warn('Profile update returned no data — RLS may be blocking writes');
+        }
 
         return {
             success: true,
@@ -150,11 +156,30 @@ export async function signIn(email, password) {
             .eq('id', data.user.id)
             .single();
 
+        let username = profile?.username;
+
+        // Repair: if profile has no username (RLS blocked it during signup), set one now
+        if (!username) {
+            try {
+                const newUsername = await getUniqueUsername();
+                const { data: repaired } = await supabase
+                    .from('profiles')
+                    .update({ username: newUsername })
+                    .eq('id', data.user.id)
+                    .select('username')
+                    .single();
+
+                username = repaired?.username || newUsername;
+            } catch (e) {
+                console.warn('Failed to repair missing username:', e);
+            }
+        }
+
         return {
             success: true,
             user: data.user,
-            username: profile?.username,
-            message: `Welcome back, ${profile?.username}!`
+            username,
+            message: `Welcome back, ${username}!`
         };
 
     } catch (error) {
@@ -191,15 +216,36 @@ export async function getCurrentUser() {
         // Get their profile
         const { data: profile } = await supabase
             .from('profiles')
-            .select('username, avatar_url')
+            .select('username, avatar_url, total_spent, order_count')
             .eq('id', user.id)
             .single();
+
+        let username = profile?.username;
+
+        // Repair: if username is null, generate and save one
+        if (!username && profile) {
+            try {
+                const newUsername = await getUniqueUsername();
+                const { data: repaired } = await supabase
+                    .from('profiles')
+                    .update({ username: newUsername })
+                    .eq('id', user.id)
+                    .select('username')
+                    .single();
+
+                username = repaired?.username || newUsername;
+            } catch (e) {
+                console.warn('Failed to repair missing username:', e);
+            }
+        }
 
         return {
             id: user.id,
             email: user.email,
-            username: profile?.username,
-            avatar: profile?.avatar_url
+            username,
+            avatar: profile?.avatar_url,
+            totalSpent: parseFloat(profile?.total_spent || 0),
+            orderCount: profile?.order_count || 0
         };
     } catch (e) {
         console.warn('Failed to get current user:', e);

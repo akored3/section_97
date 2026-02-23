@@ -3672,8 +3672,12 @@ a.dropdown-item {
     }
 }
 
-/* ── Responsive: small phone ── */
-@media (max-width: 480px) {
+/* ── Responsive: phone ── */
+@media (max-width: 600px) {
+    .pdp-container {
+        padding: 1rem;
+    }
+
     .profile-stats {
         grid-template-columns: 1fr;
     }
@@ -3682,16 +3686,69 @@ a.dropdown-item {
         grid-template-columns: 1fr;
     }
 
+    .profile-card,
+    .profile-achievements-card,
+    .profile-orders-card {
+        padding: var(--space-md);
+    }
+
     .profile-username {
-        font-size: 1.1rem;
+        font-size: clamp(1rem, 5vw, 1.4rem);
     }
 
     .profile-stat-value {
-        font-size: 1.2rem;
+        font-size: 1.3rem;
     }
 
     .profile-section-title {
-        font-size: 0.9rem;
+        font-size: 0.95rem;
+    }
+
+    .profile-actions {
+        justify-content: center;
+    }
+
+    .profile-order-row-header {
+        flex-wrap: wrap;
+        gap: var(--space-sm);
+    }
+
+    .profile-order-row-icon {
+        display: none;
+    }
+
+    .profile-order-status {
+        font-size: 0.55rem;
+        padding: 2px 6px;
+    }
+
+    .profile-order-row-price {
+        font-size: 0.8rem;
+    }
+
+    .profile-achievement {
+        width: 60px;
+    }
+
+    .profile-achievement-hex {
+        width: 46px;
+        height: 46px;
+    }
+
+    .profile-achievement-hex svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .profile-achievements {
+        gap: 0.75rem;
+    }
+}
+
+/* ── Responsive: small phone ── */
+@media (max-width: 380px) {
+    .pdp-container {
+        padding: 0.75rem;
     }
 
     .profile-avatar-wrapper {
@@ -3717,24 +3774,30 @@ a.dropdown-item {
         height: 80px;
     }
 
-    .profile-card,
-    .profile-achievements-card,
-    .profile-orders-card {
-        padding: var(--space-md);
+    .profile-username {
+        font-size: 1rem;
+    }
+
+    .profile-stat-value {
+        font-size: 1.1rem;
+    }
+
+    .profile-section-title {
+        font-size: 0.85rem;
     }
 
     .profile-achievement {
-        width: 60px;
+        width: 55px;
     }
 
     .profile-achievement-hex {
-        width: 44px;
-        height: 44px;
+        width: 40px;
+        height: 40px;
     }
 
     .profile-achievement-hex svg {
-        width: 18px;
-        height: 18px;
+        width: 16px;
+        height: 16px;
     }
 }
 

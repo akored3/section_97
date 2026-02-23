@@ -252,18 +252,6 @@ async function loadOrders(userId) {
 
         if (error) throw error;
 
-        // Calculate total spent
-        const totalSpent = (orders || []).reduce((sum, o) => sum + parseFloat(o.total || 0), 0);
-
-        // Animate stat counters
-        const spentEl = document.getElementById('profile-total-spent');
-        const countEl = document.getElementById('profile-order-count');
-        animateStatCounter(spentEl, Math.round(totalSpent), '₦');
-        animateStatCounter(countEl, (orders || []).length);
-
-        // Update level/XP
-        updateLevelXP(totalSpent);
-
         // Render orders or empty state
         if (!orders || orders.length === 0) {
             renderEmptyOrders();
@@ -540,6 +528,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupAvatarUpload(user.id);
     setupLogout();
     setupOrderExpansion();
+
+    // Stats from profile (server-side, kept in sync by DB trigger)
+    const totalSpent = user.totalSpent || 0;
+    animateStatCounter(document.getElementById('profile-total-spent'), Math.round(totalSpent), '₦');
+    animateStatCounter(document.getElementById('profile-order-count'), user.orderCount || 0);
+    updateLevelXP(totalSpent);
 
     // Load async data (orders + member since)
     const [orders, createdAt] = await Promise.all([
