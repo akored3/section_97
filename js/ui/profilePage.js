@@ -35,14 +35,14 @@ function calculateLevel(totalSpent) {
 // ── Rank badge based on level ──
 // Metallic progression: grey → bronze → silver → gold → diamond → legendary
 const RANK_DATA = [
-    { name: 'NEWBIE',          color: '#8a8a8a' },  // LVL 1 — grey
-    { name: 'FIT_ROOKIE',      color: '#8a8a8a' },  // LVL 2 — grey
+    { name: 'NEWBIE',          color: '#4a9eff' },  // LVL 1 — blue
+    { name: 'FIT_ROOKIE',      color: '#22c55e' },  // LVL 2 — green
     { name: 'STREET_STYLER',   color: '#cd7f32' },  // LVL 3 — bronze
-    { name: 'NEON_DRIPPER',    color: '#cd7f32' },  // LVL 4 — bronze
+    { name: 'NEON_DRIPPER',    color: '#e86e2a' },  // LVL 4 — copper
     { name: 'FIT_COMMANDER',   color: '#b0b0b0' },  // LVL 5 — silver
-    { name: 'CYBER_SWAGLORD',  color: '#b0b0b0' },  // LVL 6 — silver
+    { name: 'CYBER_SWAGLORD',  color: '#a78bfa' },  // LVL 6 — purple
     { name: 'DRIP_ARCHITECT',  color: '#ffd700' },  // LVL 7 — gold
-    { name: 'OUTFIT_WARLORD',  color: '#ffd700' },  // LVL 8 — gold
+    { name: 'OUTFIT_WARLORD',  color: '#ff6b35' },  // LVL 8 — flame
     { name: 'FITBOSS_2099',    color: '#b9f2ff' },  // LVL 9 — diamond
     { name: 'GODOFDRIP.EXE',   color: '#ff44cc' },  // LVL 10+ — legendary
 ];
@@ -364,6 +364,21 @@ function renderAchievements(orders, createdAt) {
     }).join('');
 }
 
+// Setup achievements dropdown toggle
+function setupAchievementsDropdown() {
+    const btn = document.getElementById('achievements-toggle');
+    const content = document.getElementById('profile-achievements');
+    if (!btn || !content) return;
+
+    btn.addEventListener('click', () => {
+        const expanded = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', !expanded);
+        content.setAttribute('aria-hidden', expanded);
+        content.classList.toggle('achievements-collapsed', expanded);
+        content.classList.toggle('achievements-expanded', !expanded);
+    });
+}
+
 // Setup order row expansion (click to see items)
 function setupOrderExpansion() {
     const container = document.getElementById('profile-orders-list');
@@ -528,6 +543,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupAvatarUpload(user.id);
     setupLogout();
     setupOrderExpansion();
+    setupAchievementsDropdown();
 
     // Stats from profile (server-side, kept in sync by DB trigger)
     const totalSpent = user.totalSpent || 0;
