@@ -58,62 +58,71 @@ const ACHIEVEMENTS = [
         name: 'First Drop',
         desc: 'Place your first order',
         icon: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>',
+        color: '#4a9eff',  // blue
         check: (orders) => orders.length >= 1,
         progress: (orders) => ({ current: orders.length, target: 1 })
     },
     {
         id: 'big-spender',
         name: 'Big Spender',
-        desc: 'Spend over ₦30k',
+        desc: 'Spend over ₦50k',
+        color: '#ffd700',  // gold
         icon: '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><circle cx="12" cy="15" r="1.5"/>',
         check: (orders) => {
             const total = orders.reduce((sum, o) => sum + parseFloat(o.total || 0), 0);
-            return total > 30000;
+            return total > 50000;
         },
         progress: (orders) => {
             const total = Math.round(orders.reduce((sum, o) => sum + parseFloat(o.total || 0), 0) / 1000);
-            return { current: total, target: 30, unit: 'k' };
+            return { current: total, target: 50, unit: 'k' };
         }
     },
     {
         id: 'hype-beast',
         name: 'Hype Beast',
-        desc: 'Complete 5 orders',
+        desc: 'Complete 15 orders',
         icon: '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
-        check: (orders) => orders.length >= 5,
-        progress: (orders) => ({ current: orders.length, target: 5 })
+        color: '#a78bfa',  // purple
+        check: (orders) => orders.length >= 15,
+        progress: (orders) => ({ current: orders.length, target: 15 })
     },
     {
         id: 'collector',
         name: 'Collector',
-        desc: 'Buy 10 unique items',
+        desc: 'Buy 5+ items worth ₦30k+',
+        color: '#00ffd5',  // cyan
         icon: '<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>',
         check: (orders) => {
-            const products = new Set();
-            orders.forEach(o => (o.order_items || []).forEach(i => products.add(i.product_name)));
-            return products.size >= 10;
+            let count = 0;
+            orders.forEach(o => (o.order_items || []).forEach(i => {
+                if (parseFloat(i.price || 0) >= 30000) count++;
+            }));
+            return count >= 5;
         },
         progress: (orders) => {
-            const products = new Set();
-            orders.forEach(o => (o.order_items || []).forEach(i => products.add(i.product_name)));
-            return { current: products.size, target: 10 };
+            let count = 0;
+            orders.forEach(o => (o.order_items || []).forEach(i => {
+                if (parseFloat(i.price || 0) >= 30000) count++;
+            }));
+            return { current: count, target: 5 };
         }
     },
     {
         id: 'og-member',
         name: 'OG Member',
-        desc: '6+ months member',
+        desc: '1 year member',
+        color: '#ff6b35',  // flame
         icon: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
         check: (orders, createdAt) => {
             if (!createdAt) return false;
-            const sixMonthsAgo = new Date();
-            sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-            return new Date(createdAt) <= sixMonthsAgo;
+            const oneYearAgo = new Date();
+            oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+            return new Date(createdAt) <= oneYearAgo;
         },
         progress: (orders, createdAt) => {
-            if (!createdAt) return { current: 0, target: 6, unit: 'mo' };
+            if (!createdAt) return { current: 0, target: 12, unit: 'mo' };
             const months = Math.floor((Date.now() - new Date(createdAt).getTime()) / (30.44 * 24 * 60 * 60 * 1000));
-            return { current: Math.min(months, 6), target: 6, unit: 'mo' };
+            return { current: Math.min(months, 12), target: 12, unit: 'mo' };
         }
     }
 ];
@@ -349,8 +358,9 @@ function renderAchievements(orders, createdAt) {
             : `${prog.current}${unit}/${prog.target}${unit}`;
         const label = unlocked ? `${ach.name} — Unlocked` : `${ach.name} — ${ach.desc} (${progressText})`;
         const progressPercent = Math.min((prog.current / prog.target) * 100, 100);
+        const colorStyle = unlocked && ach.color ? `style="--ach-color: ${ach.color}"` : '';
         return `
-            <div class="profile-achievement ${stateClass}" aria-label="${escapeHtml(label)}" title="${escapeHtml(label)}">
+            <div class="profile-achievement ${stateClass}" ${colorStyle} aria-label="${escapeHtml(label)}" title="${escapeHtml(label)}">
                 <div class="profile-achievement-hex">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
                         ${ach.icon}

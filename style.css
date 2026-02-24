@@ -2759,13 +2759,14 @@ a.dropdown-item {
 .profile-card {
     position: relative;
     background: rgba(10, 10, 15, 0.92);
-    border: 1px solid rgba(0, 255, 100, 0.15);
+    border: 3px solid rgba(0, 255, 100, 0.15);
     padding: var(--space-lg) var(--space-xl);
     overflow: hidden;
 }
 
 :root[data-theme="light"] .profile-card {
     background: rgba(255, 255, 255, 0.88);
+    border-width: 2px;
     border-color: rgba(0, 168, 64, 0.2);
 }
 
@@ -3166,13 +3167,14 @@ a.dropdown-item {
 .profile-achievements-card {
     position: relative;
     background: rgba(10, 10, 15, 0.92);
-    border: 1px solid rgba(255, 215, 0, 0.2);
+    border: 3px solid rgba(255, 215, 0, 0.2);
     padding: 0;
     overflow: hidden;
 }
 
 :root[data-theme="light"] .profile-achievements-card {
     background: rgba(255, 255, 255, 0.88);
+    border-width: 2px;
     border-color: rgba(184, 150, 12, 0.2);
 }
 
@@ -3456,18 +3458,19 @@ a.dropdown-item {
     line-height: 1.3;
 }
 
-/* Unlocked achievement */
+/* Unlocked achievement — uses per-achievement --ach-color */
 .profile-achievement.unlocked .profile-achievement-hex {
-    background: rgba(0, 255, 100, 0.15);
-    box-shadow: 0 0 20px rgba(0, 255, 100, 0.2), inset 0 0 10px rgba(0, 255, 100, 0.1);
+    background: color-mix(in srgb, var(--ach-color, var(--accent)) 15%, transparent);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--ach-color, var(--accent)) 20%, transparent),
+                inset 0 0 10px color-mix(in srgb, var(--ach-color, var(--accent)) 10%, transparent);
 }
 
 .profile-achievement.unlocked .profile-achievement-hex svg {
-    color: var(--accent);
+    color: var(--ach-color, var(--accent));
 }
 
 .profile-achievement.unlocked .profile-achievement-name {
-    color: var(--accent);
+    color: var(--ach-color, var(--accent));
 }
 
 :root[data-theme="light"] .profile-achievement-hex {
@@ -3476,16 +3479,16 @@ a.dropdown-item {
 }
 
 :root[data-theme="light"] .profile-achievement.unlocked .profile-achievement-hex {
-    background: rgba(0, 168, 64, 0.12);
-    box-shadow: 0 0 15px rgba(0, 168, 64, 0.15);
+    background: color-mix(in srgb, var(--ach-color, var(--accent-hover)) 12%, transparent);
+    box-shadow: 0 0 15px color-mix(in srgb, var(--ach-color, var(--accent-hover)) 15%, transparent);
 }
 
 :root[data-theme="light"] .profile-achievement.unlocked .profile-achievement-hex svg {
-    color: var(--accent-hover);
+    color: var(--ach-color, var(--accent-hover));
 }
 
 :root[data-theme="light"] .profile-achievement.unlocked .profile-achievement-name {
-    color: var(--accent-hover);
+    color: var(--ach-color, var(--accent-hover));
 }
 
 /* Locked achievement — lock icon overlay */
@@ -3545,13 +3548,14 @@ a.dropdown-item {
 .profile-orders-card {
     position: relative;
     background: rgba(10, 10, 15, 0.92);
-    border: 1px solid rgba(0, 255, 100, 0.12);
+    border: 3px solid rgba(0, 255, 100, 0.12);
     padding: var(--space-lg) var(--space-xl);
     overflow: hidden;
 }
 
 :root[data-theme="light"] .profile-orders-card {
     background: rgba(255, 255, 255, 0.88);
+    border-width: 2px;
     border-color: rgba(0, 168, 64, 0.15);
 }
 
