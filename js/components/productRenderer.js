@@ -7,6 +7,12 @@ export function escapeHtml(str) {
     return div.innerHTML;
 }
 
+// Convert image path to optimized WebP variant
+// e.g. "images/foo.jpeg" → "images/foo_400w.webp"
+function webpSrc(originalPath, width = 400) {
+    return originalPath.replace(/\.(jpeg|jpg|png)$/i, `_${width}w.webp`);
+}
+
 export function showSkeletons(count = 8) {
     const productContainer = document.getElementById("product-container");
     if (!productContainer) return;
@@ -48,13 +54,17 @@ export function renderProducts(productsToRender) {
         const safeBack = hasBackImage ? escapeHtml(product.imageBack) : '';
         const formattedPrice = Number(product.price).toLocaleString();
 
+        // Optimized WebP sources (400w for cards)
+        const webpFront = webpSrc(safeImage, 400);
+        const webpBack = hasBackImage ? webpSrc(safeBack, 400) : '';
+
         // Load visible products immediately, rest are lazy loaded
         const cardsPerRow = window.innerWidth < 768 ? 2 : (window.innerWidth < 992 ? 2 : 3);
         const aboveFoldCount = cardsPerRow * 2; // ~2 rows worth
         const isAboveFold = index < aboveFoldCount;
         const imgClass = isAboveFold ? 'product loaded' : 'product lazy-load';
-        const imgSrc = isAboveFold ? safeImage : 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"%3E%3C/svg%3E';
-        const dataSrc = isAboveFold ? '' : `data-src="${safeImage}"`;
+        const imgSrc = isAboveFold ? webpFront : 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"%3E%3C/svg%3E';
+        const dataSrc = isAboveFold ? '' : `data-src="${webpFront}"`;
 
         return `
             <div class="product-card">
@@ -63,11 +73,14 @@ export function renderProducts(productsToRender) {
                          ${dataSrc}
                          class="${imgClass}"
                          alt="${safeName}"
+                         width="400" height="497"
                          loading="lazy"
-                         data-front="${safeImage}"
-                         ${hasBackImage ? `data-back="${safeBack}"` : ''}
+                         data-front="${webpFront}"
+                         ${hasBackImage ? `data-back="${webpBack}"` : ''}
+                         data-original-front="${safeImage}"
+                         ${hasBackImage ? `data-original-back="${safeBack}"` : ''}
                          data-current="front"
-                         onerror="this.onerror=null;this.src='images/placeholder.png';">
+                         onerror="this.onerror=null;this.src=this.dataset.originalFront||'images/placeholder.png';">
                     ${hasBackImage ? `
                         <button class="gallery-arrow gallery-prev" aria-label="Previous image">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
@@ -139,17 +152,13 @@ function initGalleryArrows() {
             const img = imageContainer.querySelector('img.product');
             const dots = imageContainer.querySelectorAll('.gallery-dot');
 
-            const frontSrc = img.dataset.front;
-            const backSrc = img.dataset.back;
-            const current = img.dataset.current;
-
-            if (current === 'front') {
-                img.src = backSrc;
+            if (img.dataset.current === 'front') {
+                img.src = img.dataset.back;
                 img.dataset.current = 'back';
                 dots[0].classList.remove('active');
                 dots[1].classList.add('active');
             } else {
-                img.src = frontSrc;
+                img.src = img.dataset.front;
                 img.dataset.current = 'front';
                 dots[0].classList.add('active');
                 dots[1].classList.remove('active');

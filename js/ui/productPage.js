@@ -4,6 +4,11 @@ import { initializeTheme } from '../ui/theme.js';
 import { escapeHtml } from '../components/productRenderer.js';
 import { initializeCart, setupCartDrawer, addToCart, openCartDrawer } from './cart.js';
 
+// Convert image path to optimized WebP variant
+function webpSrc(originalPath, width = 800) {
+    return originalPath.replace(/\.(jpeg|jpg|png)$/i, `_${width}w.webp`);
+}
+
 let selectedSize = null;
 let selectedSizeStock = null;
 let currentProduct = null;
@@ -37,20 +42,31 @@ function renderProduct(product) {
     // Dynamic page title
     document.title = `${product.name} | SECTION-97`;
 
-    // Main image with error fallback
+    // Main image with WebP + JPEG fallback
     const mainImage = document.getElementById('pdp-main-image');
-    mainImage.src = product.imageSrc;
+    const frontWebp = webpSrc(product.imageSrc, 800);
+    mainImage.src = frontWebp;
     mainImage.alt = safeName;
+    mainImage.width = 800;
+    mainImage.height = 994;
     mainImage.onerror = () => {
-        mainImage.onerror = null;
-        mainImage.src = 'images/placeholder.png';
+        // Fall back to original JPEG if WebP missing
+        if (mainImage.src !== product.imageSrc) {
+            mainImage.src = product.imageSrc;
+        } else {
+            mainImage.onerror = null;
+            mainImage.src = 'images/placeholder.png';
+        }
     };
 
-    // Thumbnails (front + back if available)
+    // Thumbnails (front + back if available) — use 400w for thumbs
     const thumbContainer = document.getElementById('pdp-thumbnails');
-    let thumbsHtml = `<img src="${escapeHtml(product.imageSrc)}" alt="${safeName} front" class="pdp-thumb active" data-src="${escapeHtml(product.imageSrc)}">`;
+    const frontThumb = webpSrc(product.imageSrc, 400);
+    let thumbsHtml = `<img src="${frontThumb}" alt="${safeName} front" class="pdp-thumb active" data-src="${escapeHtml(frontWebp)}" data-original="${escapeHtml(product.imageSrc)}">`;
     if (product.imageBack) {
-        thumbsHtml += `<img src="${escapeHtml(product.imageBack)}" alt="${safeName} back" class="pdp-thumb" data-src="${escapeHtml(product.imageBack)}">`;
+        const backWebp = webpSrc(product.imageBack, 800);
+        const backThumb = webpSrc(product.imageBack, 400);
+        thumbsHtml += `<img src="${backThumb}" alt="${safeName} back" class="pdp-thumb" data-src="${escapeHtml(backWebp)}" data-original="${escapeHtml(product.imageBack)}">`;
     }
     thumbContainer.innerHTML = thumbsHtml;
 

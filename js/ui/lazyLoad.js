@@ -17,8 +17,8 @@ export function initializeLazyLoading() {
             }
         });
     }, {
-        // Start loading 100px before image enters viewport
-        rootMargin: '100px 0px',
+        // Start loading 250px before image enters viewport
+        rootMargin: '250px 0px',
         threshold: 0.01
     });
 
@@ -42,10 +42,17 @@ function loadImage(img) {
     };
 
     tempImg.onerror = () => {
-        // Fallback to placeholder on error
-        img.src = 'images/placeholder.png';
-        img.classList.add('loaded');
-        img.classList.remove('lazy-load');
+        // Fall back to original JPEG, then placeholder
+        const original = img.dataset.originalFront;
+        if (original && src !== original) {
+            img.src = original;
+            img.classList.add('loaded');
+            img.classList.remove('lazy-load');
+        } else {
+            img.src = 'images/placeholder.png';
+            img.classList.add('loaded');
+            img.classList.remove('lazy-load');
+        }
     };
 
     // Start loading
