@@ -387,6 +387,11 @@ export function setupCartDrawer() {
         });
     });
 
+    // Checkout button → navigate to checkout page
+    document.querySelector('.cart-drawer-checkout')?.addEventListener('click', () => {
+        window.location.href = 'checkout.html';
+    });
+
     // Event delegation for drawer item actions (qty +/-, remove)
     document.getElementById('cart-drawer-items')?.addEventListener('click', (e) => {
         const btn = e.target.closest('[data-action]');
@@ -421,4 +426,15 @@ export function clearCart() {
     saveLocal();
     updateBadge();
     renderDrawer();
+}
+
+export async function clearCartFull() {
+    if (currentUserId && useSupabase) {
+        try {
+            await supabase.from('cart_items').delete().eq('user_id', currentUserId);
+        } catch (e) {
+            console.warn('Failed to clear Supabase cart:', e);
+        }
+    }
+    clearCart();
 }

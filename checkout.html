@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SECTION-97 | Checkout</title>
+    <meta name="description" content="Complete your SECTION-97 order. Secure payment via Paystack.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://js.paystack.co; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://paystack.com; font-src https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co https://*.paystack.co https://*.paystack.com; img-src 'self' data: https:; frame-src https://js.paystack.co https://*.paystack.com;">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <script>
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+
+    <!-- Top bar -->
+    <div class="checkout-top-bar">
+        <a href="store.html" class="checkout-back-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            CONTINUE SHOPPING
+        </a>
+        <div class="checkout-top-actions">
+            <span class="checkout-brand">SECTION-97</span>
+            <button id="theme-toggle" class="pdp-theme-toggle" aria-label="Toggle dark mode">
+                <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                    <path d="M38 6C22 6 10 18 10 32C10 46 22 58 38 58C30 52 26 42 26 32C26 22 30 12 38 6Z"/>
+                    <circle cx="44" cy="16" r="1.5" stroke-width="0.9" opacity="0.4"/>
+                    <circle cx="50" cy="26" r="1" stroke-width="0.75" opacity="0.3"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main checkout container -->
+    <div class="checkout-container">
+
+        <!-- Title -->
+        <div class="checkout-header">
+            <h1 class="checkout-title">CHECKOUT</h1>
+            <span class="checkout-subtitle">// SECURE_TRANSACTION</span>
+        </div>
+
+        <!-- Stepper -->
+        <div class="checkout-stepper" id="checkout-stepper">
+            <div class="checkout-step active" data-step="1">
+                <div class="checkout-step-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <path d="M16 10a4 4 0 0 1-8 0"/>
+                    </svg>
+                </div>
+                <span class="checkout-step-label">CART</span>
+            </div>
+            <div class="checkout-step-line"></div>
+            <div class="checkout-step" data-step="2">
+                <div class="checkout-step-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20">
+                        <rect x="1" y="3" width="15" height="13" rx="2"/>
+                        <path d="M16 8h4l3 3v5a2 2 0 0 1-2 2h-1"/>
+                        <circle cx="5.5" cy="18.5" r="2.5"/>
+                        <circle cx="18.5" cy="18.5" r="2.5"/>
+                    </svg>
+                </div>
+                <span class="checkout-step-label">SHIPPING</span>
+            </div>
+            <div class="checkout-step-line"></div>
+            <div class="checkout-step" data-step="3">
+                <div class="checkout-step-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20">
+                        <rect x="1" y="4" width="22" height="16" rx="2"/>
+                        <line x1="1" y1="10" x2="23" y2="10"/>
+                    </svg>
+                </div>
+                <span class="checkout-step-label">PAYMENT</span>
+            </div>
+            <div class="checkout-step-line"></div>
+            <div class="checkout-step" data-step="4">
+                <div class="checkout-step-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                </div>
+                <span class="checkout-step-label">CONFIRM</span>
+            </div>
+        </div>
+
+        <!-- Checkout body: main content + sidebar -->
+        <div class="checkout-body">
+
+            <!-- Left column: step content -->
+            <div class="checkout-main">
+
+                <!-- Step 1: Cart Review -->
+                <div class="checkout-step-content" id="step-cart">
+                    <div class="checkout-section">
+                        <h2 class="checkout-section-title">YOUR CART</h2>
+                        <div id="checkout-items" class="checkout-items">
+                            <!-- Rendered by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Shipping -->
+                <div class="checkout-step-content hidden" id="step-shipping">
+                    <div class="checkout-section">
+                        <h2 class="checkout-section-title">SHIPPING DETAILS</h2>
+                        <form id="checkout-shipping-form" class="checkout-form" novalidate>
+                            <div class="form-group">
+                                <label for="checkout-name">FULL NAME</label>
+                                <input type="text" id="checkout-name" required placeholder="Enter your full name" autocomplete="name">
+                            </div>
+                            <div class="form-group">
+                                <label for="checkout-address">STREET ADDRESS</label>
+                                <input type="text" id="checkout-address" required placeholder="Enter your street address" autocomplete="street-address">
+                            </div>
+                            <div class="checkout-form-row">
+                                <div class="form-group">
+                                    <label for="checkout-city">CITY</label>
+                                    <input type="text" id="checkout-city" required placeholder="City" autocomplete="address-level2">
+                                </div>
+                                <div class="form-group">
+                                    <label for="checkout-zip">ZIP / POSTAL CODE</label>
+                                    <input type="text" id="checkout-zip" placeholder="100001" autocomplete="postal-code">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="checkout-phone">PHONE NUMBER</label>
+                                <input type="tel" id="checkout-phone" required placeholder="+234 XXX XXX XXXX" autocomplete="tel">
+                            </div>
+                            <div class="checkout-delivery-info">
+                                <strong>ESTIMATED DELIVERY: 5-7 BUSINESS DAYS</strong>
+                                <span>Express delivery available at checkout</span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Step 3: Payment (handled by Paystack popup, no visible content) -->
+                <div class="checkout-step-content hidden" id="step-payment"></div>
+
+                <!-- Step 4: Confirmation -->
+                <div class="checkout-step-content hidden" id="step-confirm">
+                    <div class="checkout-section checkout-confirm-section">
+                        <div class="checkout-confirm-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="64" height="64">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                        </div>
+                        <h2 class="checkout-confirm-title">ORDER CONFIRMED</h2>
+                        <p class="checkout-confirm-text">Your order has been successfully placed and is being processed.</p>
+                        <div class="checkout-order-id" id="checkout-order-id"></div>
+                        <div class="checkout-timeline">
+                            <h3 class="checkout-timeline-title">EST. DELIVERY</h3>
+                            <div class="checkout-timeline-track">
+                                <div class="checkout-timeline-node active">
+                                    <div class="checkout-timeline-dot"></div>
+                                    <div class="checkout-timeline-info">
+                                        <span class="checkout-timeline-label">Order Placed</span>
+                                        <span class="checkout-timeline-date">Today</span>
+                                    </div>
+                                </div>
+                                <div class="checkout-timeline-node">
+                                    <div class="checkout-timeline-dot"></div>
+                                    <div class="checkout-timeline-info">
+                                        <span class="checkout-timeline-label">Processing</span>
+                                        <span class="checkout-timeline-date">1-2 days</span>
+                                    </div>
+                                </div>
+                                <div class="checkout-timeline-node">
+                                    <div class="checkout-timeline-dot"></div>
+                                    <div class="checkout-timeline-info">
+                                        <span class="checkout-timeline-label">Shipped</span>
+                                        <span class="checkout-timeline-date">3-5 days</span>
+                                    </div>
+                                </div>
+                                <div class="checkout-timeline-node">
+                                    <div class="checkout-timeline-dot"></div>
+                                    <div class="checkout-timeline-info">
+                                        <span class="checkout-timeline-label">Delivered</span>
+                                        <span class="checkout-timeline-date">5-7 days</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right column: Order Summary (persists across all steps) -->
+            <div class="checkout-sidebar">
+                <div class="checkout-summary">
+                    <h2 class="checkout-section-title">ORDER SUMMARY</h2>
+                    <div id="checkout-summary-items" class="checkout-summary-items">
+                        <!-- Rendered by JS -->
+                    </div>
+                    <div class="checkout-summary-totals">
+                        <div class="checkout-summary-row">
+                            <span>SUBTOTAL</span>
+                            <span id="checkout-subtotal">₦0</span>
+                        </div>
+                        <div class="checkout-summary-row">
+                            <span>SHIPPING</span>
+                            <span class="checkout-shipping-free">FREE</span>
+                        </div>
+                        <div class="checkout-summary-total">
+                            <span>TOTAL</span>
+                            <span id="checkout-total" class="checkout-total-price">₦0</span>
+                        </div>
+                    </div>
+                    <button type="button" id="checkout-action-btn" class="checkout-action-btn">PROCEED TO SHIPPING</button>
+                    <button type="button" id="checkout-back-btn" class="checkout-back-btn hidden">← GO BACK</button>
+                    <div class="checkout-trust-badges">
+                        <span class="checkout-trust-badge"><span class="checkout-trust-dot"></span> SSL ENCRYPTED</span>
+                        <span class="checkout-trust-badge"><span class="checkout-trust-dot"></span> SECURE PAY</span>
+                        <span class="checkout-trust-badge"><span class="checkout-trust-dot"></span> VERIFIED</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error state: not logged in -->
+        <div id="checkout-error-auth" class="checkout-error-state hidden">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="64" height="64">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M15 9l-6 6M9 9l6 6"/>
+            </svg>
+            <h2>Not logged in</h2>
+            <p>You need to be logged in to checkout.</p>
+            <a href="auth.html" class="checkout-error-link">Log In</a>
+        </div>
+
+        <!-- Error state: empty cart -->
+        <div id="checkout-error-empty" class="checkout-error-state hidden">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="64" height="64">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <path d="M16 10a4 4 0 0 1-8 0"/>
+            </svg>
+            <h2>Cart is empty</h2>
+            <p>Add some items before checking out.</p>
+            <a href="store.html" class="checkout-error-link">Browse Store</a>
+        </div>
+
+        <!-- Footer -->
+        <div class="checkout-footer">
+            SECTION-97 &bull; CHECKOUT_SYS &bull; v3.2.1 &bull; 2026
+        </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div id="checkout-toast" class="checkout-toast hidden"></div>
+
+    <!-- Supabase + Paystack -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.95.2/dist/umd/supabase.min.js" integrity="sha384-O3Y0txdelyzhAPieX5MdbO1gTZ6zC6OPZWkeMpKKWrLqkDY+aR7MIcVR5oxNfmo3" crossorigin="anonymous"></script>
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+    <script type="module" src="js/ui/checkout.js"></script>
+</body>
+</html>
