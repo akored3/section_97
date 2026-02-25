@@ -77,8 +77,8 @@
         }
 
         :root[data-theme="light"] {
-            --bg-primary: #F2F5F0;
-            --bg-secondary: #E6EBE3;
+            --bg-primary: #FAFCF8;
+            --bg-secondary: #F0F4ED;
             --text-primary: #1a1f1a;
             --text-secondary: #4a5248;
             --text-muted: #8a8a8a;
@@ -165,9 +165,7 @@
         }
 
         :root[data-theme="light"] body {
-            background:
-              repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(0, 168, 22, 0.02) 2px, rgba(0, 168, 22, 0.02) 4px),
-              linear-gradient(135deg, #F2F5F0 0%, #E6EBE3 50%, #ECF0E8 100%);
+            background: #edf2f7;
             min-height: 100vh;
         }
 
@@ -188,6 +186,7 @@
         :root[data-theme="light"] body::before {
             opacity: 0.04;
         }
+
 
         /* ── Focus-visible: keyboard navigation ring ── */
         :focus-visible {
@@ -5100,12 +5099,18 @@ a.dropdown-item {
 .checkout-form .form-group input {
     width: 100%;
     padding: 14px var(--space-md);
-    background: var(--bg-secondary);
-    border: 1px solid var(--outline);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.22);
     border-radius: var(--shape-xs);
     color: var(--text-primary);
     font: var(--text-body-md);
-    transition: border-color var(--duration-short) var(--motion-standard);
+    transition: border-color var(--duration-short) var(--motion-standard),
+                background var(--duration-short) var(--motion-standard);
+}
+
+:root[data-theme="light"] .checkout-form .form-group input {
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.15);
 }
 
 .checkout-form .form-group input:focus {
