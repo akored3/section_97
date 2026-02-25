@@ -44,19 +44,16 @@ async function updateAuthButton() {
     // Mobile auth section
     const mobileUserInfo = document.getElementById('mobile-user-info');
     const mobileUsername = document.getElementById('mobile-username');
-    const mobileProfileBtn = document.getElementById('mobile-profile-btn');
 
     if (mobileLoginBtn && mobileLogoutBtn) {
         if (user) {
             mobileLoginBtn.classList.add('hidden');
             if (mobileUserInfo) mobileUserInfo.classList.remove('hidden');
             if (mobileUsername) mobileUsername.textContent = user.username || 'Account';
-            if (mobileProfileBtn) mobileProfileBtn.classList.remove('hidden');
             mobileLogoutBtn.classList.remove('hidden');
         } else {
             mobileLoginBtn.classList.remove('hidden');
             if (mobileUserInfo) mobileUserInfo.classList.add('hidden');
-            if (mobileProfileBtn) mobileProfileBtn.classList.add('hidden');
             mobileLogoutBtn.classList.add('hidden');
         }
     }
