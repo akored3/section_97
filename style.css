@@ -1341,6 +1341,95 @@
             position: absolute;
             bottom: 20px;
             right: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        /* ─── Card Size Picker (glass overlay on image) ─── */
+        .product-image > img {
+            transition: filter var(--duration-medium) var(--motion-standard);
+        }
+
+        .product-image.picker-blur > img {
+            filter: blur(6px) brightness(0.5);
+        }
+
+        .card-size-picker {
+            display: none;
+            position: absolute;
+            inset: 0;
+            z-index: 10;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 16px;
+            background: rgba(10, 10, 15, 0.6);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border-radius: var(--shape-md);
+        }
+
+        .card-size-picker.open {
+            display: flex;
+            animation: sizePickerIn var(--duration-medium) var(--motion-standard);
+        }
+
+        @keyframes sizePickerIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .card-size-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+        }
+
+        .card-size-chips {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .card-size-chip {
+            font-family: var(--font-mono);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border: 1.5px solid rgba(255, 255, 255, 0.25);
+            border-radius: var(--shape-sm);
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            cursor: pointer;
+            transition: all var(--duration-short) var(--motion-standard);
+        }
+
+        .card-size-chip:hover:not([disabled]) {
+            border-color: var(--accent);
+            background: rgba(0, 255, 100, 0.15);
+            color: var(--accent);
+            box-shadow: 0 0 12px var(--glow-accent);
+        }
+
+        .card-size-chip.out-of-stock {
+            opacity: 0.2;
+            text-decoration: line-through;
+            cursor: not-allowed;
+        }
+
+        .add-to-cart-btn.added-flash {
+            background: var(--accent) !important;
+            box-shadow: 0 0 16px var(--glow-accent-strong) !important;
+        }
+
+        /* Light mode: same dark glass overlay for contrast */
+        :root[data-theme="light"] .card-size-picker {
+            background: rgba(10, 10, 15, 0.55);
         }
 
         :root[data-theme="dark"] .product-card {
@@ -1537,6 +1626,20 @@
             .product-actions {
                 bottom: 10px;
                 right: 10px;
+            }
+
+            .card-size-chip {
+                font-size: 0.6875rem;
+                padding: 6px 12px;
+            }
+
+            .card-size-label {
+                font-size: 0.625rem;
+            }
+
+            .card-size-picker {
+                padding: 12px;
+                gap: 8px;
             }
         }
 

@@ -1,6 +1,6 @@
 // Shopping cart — Supabase sync with localStorage fallback, optimistic UI
 import { supabase } from '../config/supabase.js';
-import { escapeHtml } from '../components/productRenderer.js';
+import { escapeHtml, productSizesMap } from '../components/productRenderer.js';
 
 // ─── State ───────────────────────────────────────
 let cart = [];
@@ -350,19 +350,101 @@ export async function handleAuthChange(userId) {
 
 // ─── Store Page: Add-to-Cart Buttons ─────────────
 
+// Close any open size picker
+function closeAllPickers() {
+    document.querySelectorAll('.card-size-picker.open').forEach(picker => {
+        picker.classList.remove('open');
+        const card = picker.closest('.product-card');
+        const img = card?.querySelector('.product-image');
+        if (img) img.classList.remove('picker-blur');
+        const btn = card?.querySelector('.add-to-cart-btn');
+        if (btn) btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg> Add to bag`;
+    });
+}
+
+// Close picker when clicking outside any card
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.product-card')) closeAllPickers();
+});
+
 export function setupAddToCartButtons() {
     document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
-            addToCart({
-                id: btn.dataset.id,
-                name: btn.dataset.name,
-                price: btn.dataset.price,
-                image: btn.dataset.image,
-                size: null
-            });
+
+            const sizes = productSizesMap.get(btn.dataset.id) || [];
+
+            // No sizes or single "ONE SIZE" → add directly
+            if (sizes.length === 0) {
+                addToCart({ id: btn.dataset.id, name: btn.dataset.name, price: btn.dataset.price, image: btn.dataset.image, size: null });
+                showAddedFeedback(btn);
+                return;
+            }
+            if (sizes.length === 1 && sizes[0].stock > 0) {
+                addToCart({ id: btn.dataset.id, name: btn.dataset.name, price: btn.dataset.price, image: btn.dataset.image, size: sizes[0].size });
+                showAddedFeedback(btn);
+                return;
+            }
+
+            const card = btn.closest('.product-card');
+            const imageContainer = card.querySelector('.product-image');
+            let picker = imageContainer.querySelector('.card-size-picker');
+
+            // Toggle picker if already open
+            if (picker && picker.classList.contains('open')) {
+                closeAllPickers();
+                return;
+            }
+
+            // Close any other open pickers first
+            closeAllPickers();
+
+            // Create picker if it doesn't exist yet
+            if (!picker) {
+                picker = document.createElement('div');
+                picker.className = 'card-size-picker';
+                picker.innerHTML = `
+                    <span class="card-size-label">SELECT SIZE</span>
+                    <div class="card-size-chips">
+                        ${sizes.map(s => `<button type="button" class="card-size-chip ${s.stock <= 0 ? 'out-of-stock' : ''}"
+                            data-size="${escapeHtml(s.size)}" ${s.stock <= 0 ? 'disabled' : ''}>${escapeHtml(s.size)}</button>`).join('')}
+                    </div>`;
+                imageContainer.appendChild(picker);
+
+                // Size chip click handler
+                picker.addEventListener('click', (ev) => {
+                    ev.stopPropagation();
+                    const chip = ev.target.closest('.card-size-chip:not([disabled])');
+                    if (!chip) return;
+
+                    addToCart({
+                        id: btn.dataset.id,
+                        name: btn.dataset.name,
+                        price: btn.dataset.price,
+                        image: btn.dataset.image,
+                        size: chip.dataset.size
+                    });
+
+                    closeAllPickers();
+                    showAddedFeedback(btn);
+                });
+            }
+
+            // Open the picker + blur the image
+            picker.classList.add('open');
+            imageContainer.classList.add('picker-blur');
+            btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> Close`;
         });
     });
+}
+
+function showAddedFeedback(btn) {
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="20 6 9 17 4 12"></polyline></svg> Added!`;
+    btn.classList.add('added-flash');
+    setTimeout(() => {
+        btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg> Add to bag`;
+        btn.classList.remove('added-flash');
+    }, 1200);
 }
 
 // ─── Setup Cart Drawer ───────────────────────────

@@ -5,7 +5,7 @@ export async function fetchProducts() {
     try {
         const { data, error } = await supabase
             .from('products')
-            .select('*')
+            .select('*, product_sizes (size, stock)')
             .order('id');
 
         if (error) {
@@ -21,7 +21,11 @@ export async function fetchProducts() {
             imageBack: product.image_back,
             category: product.category,
             brand: product.brand,
-            stock: product.stock
+            stock: product.stock,
+            sizes: (product.product_sizes || []).map(s => ({
+                size: s.size,
+                stock: s.stock
+            }))
         }));
     } catch (error) {
         console.error('Error fetching products from Supabase:', error);

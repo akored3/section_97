@@ -197,7 +197,6 @@ function validateShipping() {
         name: document.getElementById('checkout-name'),
         address: document.getElementById('checkout-address'),
         city: document.getElementById('checkout-city'),
-        zip: document.getElementById('checkout-zip'),
         phone: document.getElementById('checkout-phone')
     };
 
@@ -205,7 +204,7 @@ function validateShipping() {
     const data = {};
 
     // Clear previous errors
-    Object.values(fields).forEach(f => f.closest('.form-group').classList.remove('invalid'));
+    Object.values(fields).forEach(f => f?.closest('.form-group')?.classList.remove('invalid'));
 
     // Name
     if (!fields.name.value.trim()) {
@@ -230,9 +229,6 @@ function validateShipping() {
     } else {
         data.city = fields.city.value.trim();
     }
-
-    // Zip (optional)
-    data.zip = fields.zip.value.trim();
 
     // Phone — must start with 0 or +234
     const phone = fields.phone.value.trim();
@@ -307,7 +303,8 @@ async function createOrder(userId, cart, total, reference, shippingData) {
         product_price: item.price,
         price: item.price,
         product_image: item.image || '',
-        quantity: item.quantity
+        quantity: item.quantity,
+        size: item.size || null
     }));
 
     const { error: itemsError } = await supabase

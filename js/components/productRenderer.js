@@ -7,6 +7,9 @@ export function escapeHtml(str) {
     return div.innerHTML;
 }
 
+// Size data stored in JS (avoids HTML attribute escaping issues)
+export const productSizesMap = new Map();
+
 export function showSkeletons(count = 8) {
     const productContainer = document.getElementById("product-container");
     if (!productContainer) return;
@@ -47,6 +50,9 @@ export function renderProducts(productsToRender) {
         const safeImage = escapeHtml(product.imageSrc);
         const safeBack = hasBackImage ? escapeHtml(product.imageBack) : '';
         const formattedPrice = Number(product.price).toLocaleString();
+
+        // Store sizes in JS Map keyed by product ID
+        productSizesMap.set(String(product.id), product.sizes || []);
 
         // Load visible products immediately, rest are lazy loaded
         const cardsPerRow = window.innerWidth < 768 ? 2 : (window.innerWidth < 992 ? 2 : 3);
@@ -122,7 +128,7 @@ function initCardNavigation() {
     cards.forEach(card => {
         card.style.cursor = 'pointer';
         card.addEventListener('click', (e) => {
-            if (e.target.closest('.add-to-cart-btn') || e.target.closest('.gallery-arrow')) return;
+            if (e.target.closest('.add-to-cart-btn') || e.target.closest('.gallery-arrow') || e.target.closest('.card-size-picker')) return;
             const id = card.querySelector('.add-to-cart-btn')?.dataset.id;
             if (id) window.location.href = `product.html?id=${id}`;
         });
