@@ -169,6 +169,19 @@
             min-height: 100vh;
         }
 
+        /* Custom scrollbar — mobile */
+        @media (max-width: 600px) {
+            :root[data-theme="dark"] {
+                scrollbar-color: #00ff64 transparent;
+                scrollbar-width: thin;
+            }
+
+            :root[data-theme="light"] {
+                scrollbar-color: rgba(0, 140, 18, 0.4) transparent;
+                scrollbar-width: thin;
+            }
+        }
+
         /* Film grain overlay for texture */
         body::before {
             content: '';
@@ -1588,6 +1601,7 @@
             .hero-title {
                 font-size: clamp(1.25rem, 5vw, 1.5rem);
                 letter-spacing: 1px;
+                white-space: nowrap;
             }
 
             .hero-subtitle {
@@ -1596,6 +1610,17 @@
 
             .hero-section {
                 padding: 15px 10px;
+            }
+
+            .moon-btn, .cart-btn, .hamburger-btn {
+                width: 40px;
+                height: 40px;
+                border-width: 1.5px;
+            }
+
+            .moon-btn svg, .cart-btn svg, .hamburger-btn svg {
+                width: 18px;
+                height: 18px;
             }
 
             #product-container {
@@ -1608,24 +1633,33 @@
                 padding: 10px;
             }
 
+            .product-footer {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .product-info {
+                padding-right: 0;
+            }
+
             .product-card h3 {
                 font-size: clamp(0.85rem, 3vw, 1rem);
-                -webkit-line-clamp: 1;
-                line-clamp: 1;
+                -webkit-line-clamp: 2;
+                line-clamp: 2;
             }
 
             .product-card p {
                 font-size: 0.95rem;
             }
 
-            .product-card button {
-                padding: 8px 14px;
-                font-size: 0.75rem;
+            .product-actions {
+                position: static;
             }
 
-            .product-actions {
-                bottom: 10px;
-                right: 10px;
+            .add-to-cart-btn {
+                padding: 8px 14px;
+                font-size: 0.75rem;
+                width: 100%;
             }
 
             .card-size-chip {
@@ -4520,8 +4554,8 @@ a.dropdown-item {
 
 .form-group input {
     padding: 12px var(--space-md);
-    border: 1px solid rgba(0, 255, 100, 0.15);
-    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(0, 255, 100, 0.2);
+    background: rgba(255, 255, 255, 0.08);
     color: var(--text-primary);
     font-family: var(--font-body);
     font-size: 1rem;
@@ -4538,7 +4572,7 @@ a.dropdown-item {
 .form-group input:focus {
     outline: none;
     border-color: var(--accent);
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(255, 255, 255, 0.12);
     box-shadow: 0 0 0 2px rgba(0, 255, 100, 0.1), 0 0 20px rgba(0, 255, 100, 0.08);
 }
 

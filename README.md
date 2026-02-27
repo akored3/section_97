@@ -15,6 +15,7 @@ A cyberpunk streetwear e-commerce store with real payments. Built from scratch w
 ### Store
 - Product grid with category filtering (hoodies, tees, pants, jackets, shoes, bags)
 - Real-time search across product names and brands
+- Size selection directly on product cards (glass overlay picker with blur effect)
 - Dark/light mode toggle with localStorage persistence
 - Skeleton loading placeholders and lazy-loaded images
 - Staggered grid layout with film grain overlay and scanline hover effects
@@ -159,6 +160,9 @@ Use Paystack's test card: `4084 0840 8408 4081`, any future expiry, CVV `408`.
 - [x] Product detail pages with stock tracking
 - [x] User profiles with XP, achievements, order history
 - [x] Checkout flow with Paystack payments
+- [x] Size selection on store page cards
+- [x] Mobile navigation drawer redesign
+- [ ] Mobile UI/UX polish
 - [ ] Admin dashboard (order management, product CRUD)
 - [ ] Currency localization (i18n)
 - [ ] Image optimization (WebP, responsive sizes)
