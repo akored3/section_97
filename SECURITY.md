@@ -41,14 +41,18 @@ Security measures, design decisions, and known limitations for the SECTION-97 st
 - SRI integrity hash on Paystack CDN script (`checkout.html`)
 - SRI integrity hash on Supabase CDN script (all pages)
 
-### Production TODO: Payment Verification
-Server-side payment verification requires a **Supabase Edge Function** that:
-1. Receives the Paystack payment `reference` and `order_id`
-2. Calls `https://api.paystack.co/transaction/verify/:reference` with the secret key
-3. Verifies the paid amount matches the order total
-4. Updates order status from `'pending'` to `'completed'` (or `'failed'`)
+### Server-Side Payment Verification (Edge Function)
+A **Supabase Edge Function** (`verify-payment`) handles payment verification:
+1. Receives the Paystack `reference` and `order_id` from the client
+2. Verifies the order belongs to the authenticated user (via RLS)
+3. Calls `https://api.paystack.co/transaction/verify/:reference` with the **secret key** (stored as a Supabase secret, never in client code)
+4. Compares the amount Paystack actually charged against the order total in the database (±₦1 tolerance for rounding)
+5. Updates order status to `'completed'` (verified) or `'failed'` (mismatch/unsuccessful)
 
-Until this is implemented, orders remain as `'pending'` after checkout.
+This prevents:
+- **Price manipulation**: Even if an attacker modifies the Paystack popup amount, the Edge Function catches the mismatch
+- **Fake payment references**: Fabricated references fail Paystack's verify API
+- **Direct status manipulation**: RLS policies prevent clients from updating order status; only the Edge Function (via `service_role`) can change it
 
 ## Content Security Policy (CSP)
 
@@ -93,16 +97,41 @@ The `.gitignore` entry for `supabase.js` keeps keys out of the repository as a b
 
 localStorage is accessible to any script on the same origin. XSS is mitigated by consistent use of `escapeHtml()` throughout the codebase.
 
+## Input Validation
+
+- **Product ID**: Strict numeric regex (`/^\d+$/`) — rejects trailing garbage from `parseInt`
+- **Cart quantity**: Bounded 1–100 via database CHECK constraints and RPC validation
+
 ## Known Limitations
 
-These items require backend infrastructure (Supabase Edge Functions) or architectural changes:
+These items require additional infrastructure or architectural changes:
 
-1. **Payment verification** — Paystack payments are not verified server-side (see Production TODO above)
-2. **Rate limiting** — No app-level rate limiting on auth attempts, checkout, or API calls. Supabase provides some built-in rate limiting.
-3. **CSP `unsafe-inline`** — Required for theme toggle; nonce-based CSP is a future improvement
-4. **Stock validation** — Stock levels are not checked atomically at checkout. Overselling is possible under race conditions.
-5. **Audit logging** — No logging of auth events, payment attempts, or suspicious activity
-6. **Field-level encryption** — Shipping addresses stored in plaintext in the database
+1. **Rate limiting** — No app-level rate limiting on auth attempts, checkout, or API calls. Supabase provides some built-in rate limiting.
+2. **CSP `unsafe-inline`** — Required for theme toggle; nonce-based CSP is a future improvement
+3. **Stock validation** — Stock levels are not checked atomically at checkout. Overselling is possible under race conditions.
+4. **Audit logging** — No logging of auth events, payment attempts, or suspicious activity
+5. **Field-level encryption** — Shipping addresses stored in plaintext in the database
+
+---
+
+## Edge Function Deployment
+
+To deploy the `verify-payment` Edge Function:
+```bash
+# Install Supabase CLI if not already installed
+npm install -g supabase
+
+# Link your project
+supabase link --project-ref YOUR_PROJECT_REF
+
+# Set the Paystack secret key
+supabase secrets set PAYSTACK_SECRET_KEY=sk_live_your_key_here
+
+# Deploy the function
+supabase functions deploy verify-payment
+```
+
+After deploying, run `supabase_payment_verification_migration.sql` in the SQL Editor to lock down order status updates.
 
 ---
 

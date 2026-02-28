@@ -299,6 +299,21 @@ async function createOrder(userId, cart, reference, shippingData) {
     return orderId;
 }
 
+// ─── Payment Verification ───────────────────────
+
+async function verifyPayment(reference, orderId) {
+    // Calls Supabase Edge Function to verify payment with Paystack API.
+    // The Edge Function uses the secret key server-side, checks the paid
+    // amount matches the order total, and updates status to 'completed'.
+    const { data, error } = await supabase.functions.invoke('verify-payment', {
+        body: { reference, order_id: orderId }
+    });
+
+    if (error) throw new Error('Payment verification failed');
+    if (!data.verified) throw new Error(data.error || 'Payment not verified');
+    return data;
+}
+
 // ─── Order ID Formatting ─────────────────────────
 
 function formatOrderId(uuid) {
@@ -370,6 +385,10 @@ async function handleAction() {
             // Payment succeeded — create order
             btn.textContent = 'CREATING ORDER...';
             const orderId = await createOrder(currentUser.id, cart, reference, shippingData);
+
+            // Verify payment server-side (Edge Function checks Paystack + amount match)
+            btn.textContent = 'VERIFYING PAYMENT...';
+            await verifyPayment(reference, orderId);
 
             // Clear cart
             await clearCartFull();

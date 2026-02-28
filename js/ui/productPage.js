@@ -163,11 +163,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     await initializeCart();
     setupCartDrawer();
 
-    // Validate URL param before fetch
+    // Validate URL param before fetch (strict numeric check)
     const id = new URLSearchParams(window.location.search).get('id');
-    if (!id || isNaN(parseInt(id)) || parseInt(id) < 1) return showError();
+    if (!id || !/^\d+$/.test(id) || parseInt(id, 10) < 1) return showError();
 
-    const product = await fetchProductById(parseInt(id));
+    const product = await fetchProductById(parseInt(id, 10));
 
     if (!product) return showError();
 
