@@ -55,8 +55,36 @@
         <!-- Loading state -->
         <div id="profile-skeleton" class="profile-skeleton">
             <div class="s97-loader">
-                <span class="s97-loader-mark">S97</span>
-                <span class="s97-loader-text">Loading profile...</span>
+                <div class="s97-progress">
+                    <div class="s97-progress__header">
+                        <span class="s97-progress__label">LOADING PROFILE</span>
+                        <span class="s97-progress__percent">0%</span>
+                    </div>
+                    <div class="s97-progress__track">
+                        <div class="corner-bracket corner-bracket--tl"></div>
+                        <div class="corner-bracket corner-bracket--tr"></div>
+                        <div class="corner-bracket corner-bracket--bl"></div>
+                        <div class="corner-bracket corner-bracket--br"></div>
+                        <div class="s97-progress__fill"></div>
+                    </div>
+                    <div class="s97-progress__ticks">
+                        <div class="s97-progress__tick" data-tick="0"><div class="s97-progress__tick-mark"></div><span class="s97-progress__tick-label">0</span></div>
+                        <div class="s97-progress__tick" data-tick="25"><div class="s97-progress__tick-mark"></div><span class="s97-progress__tick-label">25</span></div>
+                        <div class="s97-progress__tick" data-tick="50"><div class="s97-progress__tick-mark"></div><span class="s97-progress__tick-label">50</span></div>
+                        <div class="s97-progress__tick" data-tick="75"><div class="s97-progress__tick-mark"></div><span class="s97-progress__tick-label">75</span></div>
+                        <div class="s97-progress__tick" data-tick="100"><div class="s97-progress__tick-mark"></div><span class="s97-progress__tick-label">100</span></div>
+                    </div>
+                    <div class="s97-progress__status">
+                        <div class="s97-progress__indicators">
+                            <div class="s97-progress__indicator" data-at="15"><div class="s97-progress__indicator-dot"></div><span class="s97-progress__indicator-label">SYS</span></div>
+                            <div class="s97-progress__indicator" data-at="30"><div class="s97-progress__indicator-dot"></div><span class="s97-progress__indicator-label">NET</span></div>
+                            <div class="s97-progress__indicator" data-at="50"><div class="s97-progress__indicator-dot"></div><span class="s97-progress__indicator-label">GFX</span></div>
+                            <div class="s97-progress__indicator" data-at="70"><div class="s97-progress__indicator-dot"></div><span class="s97-progress__indicator-label">HUD</span></div>
+                            <div class="s97-progress__indicator" data-at="90"><div class="s97-progress__indicator-dot"></div><span class="s97-progress__indicator-label">RDY</span></div>
+                        </div>
+                        <span class="s97-progress__state">LOADING</span>
+                    </div>
+                </div>
             </div>
         </div>
 

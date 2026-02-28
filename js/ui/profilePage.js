@@ -4,6 +4,7 @@ import { supabase } from '../config/supabase.js';
 import { initializeTheme } from './theme.js';
 import { escapeHtml } from '../components/productRenderer.js';
 import { initializeCart, setupCartDrawer } from './cart.js';
+import { initPageLoader } from './progressBar.js';
 
 // ── Level / XP system ──
 // ₦10,000 spent = 1 XP. Levels use quadratic thresholds.
@@ -539,6 +540,7 @@ function setupLogout() {
 
 // Initialize everything when DOM is ready
 document.addEventListener('DOMContentLoaded', async () => {
+    const loader = initPageLoader('profile-skeleton');
     initializeTheme();
     await initializeCart();
     setupCartDrawer();
@@ -570,6 +572,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Render achievements based on real data
     renderAchievements(orders, createdAt);
 
-    // Show content with entrance animation
+    // Complete progress bar and show content
+    if (loader) loader.complete();
     showContent();
 });

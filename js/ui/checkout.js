@@ -3,6 +3,7 @@ import { getCurrentUser } from '../auth/auth.js';
 import { supabase, PAYSTACK_PUBLIC_KEY } from '../config/supabase.js';
 import { escapeHtml } from '../components/productRenderer.js';
 import { initializeCart, getCart, getCartTotal, updateQuantity, removeFromCart, clearCartFull, handleAuthChange } from './cart.js';
+import { initPageLoader } from './progressBar.js';
 
 // ─── State ───────────────────────────────────────
 let currentStep = 1;
@@ -439,6 +440,7 @@ function setupThemeToggle() {
 // ─── Initialize ──────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', async () => {
+    const loader = initPageLoader('checkout-loader');
     setupThemeToggle();
     await initializeCart();
 
@@ -457,7 +459,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Empty cart guard
     if (cart.length === 0) return showError('empty');
 
-    // Render initial state
+    // Complete progress bar and render cart
+    if (loader) loader.complete();
     renderCartItems();
     renderOrderSummary();
     updateStepper(1);

@@ -1542,63 +1542,202 @@
             animation: shimmer 1.5s infinite;
         }
 
-        /* ── S97 Content Loader ── */
-        @keyframes s97-pulse {
-            0%, 100% { opacity: 0.3; text-shadow: 0 0 8px rgba(0, 255, 100, 0.2); }
-            50% { opacity: 1; text-shadow: 0 0 20px rgba(0, 255, 100, 0.6), 0 0 40px rgba(0, 255, 100, 0.2); }
-        }
-
-        @keyframes s97-line-scan {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(100%); }
-        }
-
+        /* ── S97 HUD Progress Bar Loader ── */
         .s97-loader {
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 4rem 1rem;
-            gap: 1rem;
-        }
-
-        .s97-loader-mark {
-            font-family: var(--font-heading);
-            font-size: 1.8rem;
-            font-weight: 700;
-            letter-spacing: 3px;
-            color: var(--accent);
-            animation: s97-pulse 1.8s ease-in-out infinite;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .s97-loader-mark::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(transparent 40%, rgba(0, 255, 100, 0.08) 50%, transparent 60%);
-            animation: s97-line-scan 2s linear infinite;
-        }
-
-        .s97-loader-text {
-            font-family: var(--font-mono);
-            font-size: 0.65rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--text-muted);
         }
 
         .s97-loader.hidden { display: none; }
 
-        :root[data-theme="light"] .s97-loader-mark {
-            color: var(--accent-hover);
-            animation-name: s97-pulse-light;
+        .s97-progress {
+            width: 100%;
+            max-width: 420px;
+            padding: 0 24px;
         }
 
-        @keyframes s97-pulse-light {
-            0%, 100% { opacity: 0.3; text-shadow: 0 0 8px rgba(0, 140, 18, 0.15); }
-            50% { opacity: 1; text-shadow: 0 0 16px rgba(0, 140, 18, 0.4), 0 0 30px rgba(0, 140, 18, 0.15); }
+        .s97-progress__header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .s97-progress__label {
+            font-family: var(--font-mono);
+            font-size: 0.55rem;
+            color: var(--text-muted);
+            letter-spacing: 0.15em;
+        }
+
+        .s97-progress__percent {
+            font-family: var(--font-mono);
+            font-size: 0.55rem;
+            color: var(--accent);
+            letter-spacing: 0.15em;
+            text-shadow: 0 0 8px var(--glow-accent);
+        }
+
+        .s97-progress__track {
+            position: relative;
+            height: 4px;
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(0, 255, 100, 0.08);
+            overflow: hidden;
+        }
+
+        :root[data-theme="light"] .s97-progress__track {
+            background-color: rgba(0, 0, 0, 0.02);
+            border-color: rgba(0, 168, 64, 0.1);
+        }
+
+        /* Corner brackets */
+        .s97-progress .corner-bracket {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            z-index: 5;
+        }
+        .corner-bracket--tl { top: 0; left: 0; border-top: 1.5px solid rgba(0, 255, 100, 0.25); border-left: 1.5px solid rgba(0, 255, 100, 0.25); }
+        .corner-bracket--tr { top: 0; right: 0; border-top: 1.5px solid rgba(0, 255, 100, 0.25); border-right: 1.5px solid rgba(0, 255, 100, 0.25); }
+        .corner-bracket--bl { bottom: 0; left: 0; border-bottom: 1.5px solid rgba(0, 255, 100, 0.25); border-left: 1.5px solid rgba(0, 255, 100, 0.25); }
+        .corner-bracket--br { bottom: 0; right: 0; border-bottom: 1.5px solid rgba(0, 255, 100, 0.25); border-right: 1.5px solid rgba(0, 255, 100, 0.25); }
+
+        :root[data-theme="light"] .corner-bracket--tl,
+        :root[data-theme="light"] .corner-bracket--tr,
+        :root[data-theme="light"] .corner-bracket--bl,
+        :root[data-theme="light"] .corner-bracket--br {
+            border-color: rgba(0, 168, 64, 0.25);
+        }
+
+        .s97-progress__fill {
+            height: 100%;
+            width: 0%;
+            background-color: var(--accent);
+            box-shadow: 0 0 12px var(--glow-accent), 0 0 30px rgba(0, 255, 100, 0.08);
+            position: relative;
+            transition: width 0.3s ease-out;
+        }
+
+        :root[data-theme="light"] .s97-progress__fill {
+            box-shadow: 0 0 10px rgba(0, 168, 64, 0.2), 0 0 24px rgba(0, 168, 64, 0.06);
+        }
+
+        @keyframes shine-sweep {
+            0%   { left: -30%; }
+            100% { left: 130%; }
+        }
+
+        .s97-progress__fill::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            width: 30%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shine-sweep 1.5s infinite 0.5s;
+        }
+
+        /* Tick marks */
+        .s97-progress__ticks {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 6px;
+        }
+
+        .s97-progress__tick {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .s97-progress__tick-mark {
+            width: 1px;
+            height: 5px;
+            background-color: var(--text-muted);
+            opacity: 0.3;
+            transition: background-color 0.3s, opacity 0.3s, box-shadow 0.3s;
+        }
+
+        .s97-progress__tick-mark.active {
+            background-color: var(--accent);
+            opacity: 0.8;
+            box-shadow: 0 0 4px var(--glow-accent);
+        }
+
+        .s97-progress__tick-label {
+            font-family: var(--font-mono);
+            font-size: 0.3rem;
+            color: var(--text-muted);
+            letter-spacing: 0.1em;
+            transition: color 0.3s;
+        }
+
+        .s97-progress__tick-label.active {
+            color: var(--text-secondary);
+        }
+
+        /* Status indicators row */
+        .s97-progress__status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+        }
+
+        .s97-progress__indicators {
+            display: flex;
+            gap: 16px;
+        }
+
+        .s97-progress__indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .s97-progress__indicator-dot {
+            width: 4px;
+            height: 4px;
+            background-color: var(--text-muted);
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        .s97-progress__indicator-dot.active {
+            background-color: var(--accent);
+            box-shadow: 0 0 6px var(--glow-accent);
+        }
+
+        .s97-progress__indicator-label {
+            font-family: var(--font-mono);
+            font-size: 0.35rem;
+            color: var(--text-muted);
+            letter-spacing: 0.12em;
+            transition: color 0.3s;
+        }
+
+        .s97-progress__indicator-label.active {
+            color: var(--accent);
+        }
+
+        @keyframes blink-state {
+            0%, 100% { opacity: 0.4; }
+            50%      { opacity: 1; }
+        }
+
+        .s97-progress__state {
+            font-family: var(--font-mono);
+            font-size: 0.35rem;
+            color: var(--text-muted);
+            letter-spacing: 0.12em;
+            animation: blink-state 1.5s infinite;
+        }
+
+        .s97-progress__state.complete {
+            color: var(--accent);
+            text-shadow: 0 0 6px var(--glow-accent);
         }
 
         /* Collapse auth + cart buttons while search is expanded */

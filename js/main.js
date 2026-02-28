@@ -7,6 +7,7 @@ import { initializeMenu } from './ui/menu.js';
 import { getCurrentUser, onAuthStateChange, signOut } from './auth/auth.js';
 import { initializeLazyLoading } from './ui/lazyLoad.js';
 import { initializeCart, setupCartDrawer, setupAddToCartButtons, handleAuthChange } from './ui/cart.js';
+import { initPageLoader } from './ui/progressBar.js';
 
 // Track if user is logged in
 let isLoggedIn = false;
@@ -145,6 +146,9 @@ async function safeInit(name, fn) {
 
 // Initialize everything when DOM is ready
 document.addEventListener('DOMContentLoaded', async function() {
+    // Start HUD progress bar animation
+    const loader = initPageLoader('store-loader');
+
     await safeInit('Cart', async () => {
         await initializeCart();
         setupCartDrawer();
@@ -166,6 +170,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     let products = [];
     await safeInit('Products', async () => {
         products = await fetchProducts();
+        if (loader) loader.complete();
         renderProducts(products);
         initializeLazyLoading();
         setupAddToCartButtons();

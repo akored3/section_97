@@ -140,8 +140,36 @@
 
                 <!-- Auth loader (shown during login/signup) -->
                 <div id="auth-loader" class="s97-loader hidden">
-                    <span class="s97-loader-mark">S97</span>
-                    <span class="s97-loader-text">Authenticating...</span>
+                    <div class="s97-progress">
+                        <div class="s97-progress__header">
+                            <span class="s97-progress__label">AUTHENTICATING</span>
+                            <span class="s97-progress__percent">0%</span>
+                        </div>
+                        <div class="s97-progress__track">
+                            <div class="corner-bracket corner-bracket--tl"></div>
+                            <div class="corner-bracket corner-bracket--tr"></div>
+                            <div class="corner-bracket corner-bracket--bl"></div>
+                            <div class="corner-bracket corner-bracket--br"></div>
+                            <div class="s97-progress__fill"></div>
+                        </div>
+                        <div class="s97-progress__ticks">
+                            <div class="s97-progress__tick" data-tick="0"><div class="s97-progress__tick-mark"></div><span class="s97-progress__tick-label">0</span></div>
+                            <div class="s97-progress__tick" data-tick="25"><div class="s97-progress__tick-mark"></div><span class="s97-progress__tick-label">25</span></div>
+                            <div class="s97-progress__tick" data-tick="50"><div class="s97-progress__tick-mark"></div><span class="s97-progress__tick-label">50</span></div>
+                            <div class="s97-progress__tick" data-tick="75"><div class="s97-progress__tick-mark"></div><span class="s97-progress__tick-label">75</span></div>
+                            <div class="s97-progress__tick" data-tick="100"><div class="s97-progress__tick-mark"></div><span class="s97-progress__tick-label">100</span></div>
+                        </div>
+                        <div class="s97-progress__status">
+                            <div class="s97-progress__indicators">
+                                <div class="s97-progress__indicator" data-at="15"><div class="s97-progress__indicator-dot"></div><span class="s97-progress__indicator-label">SYS</span></div>
+                                <div class="s97-progress__indicator" data-at="30"><div class="s97-progress__indicator-dot"></div><span class="s97-progress__indicator-label">NET</span></div>
+                                <div class="s97-progress__indicator" data-at="50"><div class="s97-progress__indicator-dot"></div><span class="s97-progress__indicator-label">GFX</span></div>
+                                <div class="s97-progress__indicator" data-at="70"><div class="s97-progress__indicator-dot"></div><span class="s97-progress__indicator-label">HUD</span></div>
+                                <div class="s97-progress__indicator" data-at="90"><div class="s97-progress__indicator-dot"></div><span class="s97-progress__indicator-label">RDY</span></div>
+                            </div>
+                            <span class="s97-progress__state">LOADING</span>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Login Form -->
@@ -204,6 +232,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.95.2/dist/umd/supabase.min.js" integrity="sha384-O3Y0txdelyzhAPieX5MdbO1gTZ6zC6OPZWkeMpKKWrLqkDY+aR7MIcVR5oxNfmo3" crossorigin="anonymous"></script>
     <script type="module">
         import { signIn, signUp, getCurrentUser } from './js/auth/auth.js';
+        import { startS97Progress } from './js/ui/progressBar.js';
 
         // Check if already logged in
         getCurrentUser().then(user => {
@@ -260,8 +289,10 @@
             submitBtn.disabled = true;
             submitBtn.textContent = 'LOGGING IN...';
             loginForm.classList.add('hidden');
-            document.getElementById('auth-loader').classList.remove('hidden');
-            document.getElementById('auth-loader').querySelector('.s97-loader-text').textContent = 'Logging in...';
+            const authLoader = document.getElementById('auth-loader');
+            authLoader.classList.remove('hidden');
+            authLoader.querySelector('.s97-progress__label').textContent = 'LOGGING IN';
+            startS97Progress(authLoader);
 
             const result = await signIn(email, password);
 
@@ -297,8 +328,10 @@
             submitBtn.disabled = true;
             submitBtn.textContent = 'CREATING ACCOUNT...';
             signupForm.classList.add('hidden');
-            document.getElementById('auth-loader').classList.remove('hidden');
-            document.getElementById('auth-loader').querySelector('.s97-loader-text').textContent = 'Creating account...';
+            const authLoader2 = document.getElementById('auth-loader');
+            authLoader2.classList.remove('hidden');
+            authLoader2.querySelector('.s97-progress__label').textContent = 'CREATING ACCOUNT';
+            startS97Progress(authLoader2);
 
             const result = await signUp(email, password);
 
