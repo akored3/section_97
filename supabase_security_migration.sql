@@ -74,7 +74,7 @@ BEGIN
     RETURNING id INTO v_order_id;
 
     -- Insert order items with SERVER-SIDE prices from products table
-    INSERT INTO order_items (order_id, product_id, product_name, product_image, size, quantity, price)
+    INSERT INTO order_items (order_id, product_id, product_name, product_image, size, quantity, product_price)
     SELECT
         v_order_id,
         (item->>'product_id')::INTEGER,
