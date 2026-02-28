@@ -38,8 +38,8 @@ Security measures, design decisions, and known limitations for the SECTION-97 st
 - Payment amount displayed to user comes from client-side cart total (for Paystack popup)
 - **Actual order total is calculated server-side** by `create_validated_order()` from product prices in the database
 - Orders are created with status `'pending'` — not `'completed'`
-- SRI integrity hash on Paystack CDN script (`checkout.html`)
 - SRI integrity hash on Supabase CDN script (all pages)
+- Paystack CDN script loaded without SRI (their CDN does not serve CORS headers required for integrity checks)
 
 ### Server-Side Payment Verification (Edge Function)
 A **Supabase Edge Function** (`verify-payment`) handles payment verification:
