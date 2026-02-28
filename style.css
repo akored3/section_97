@@ -1542,6 +1542,65 @@
             animation: shimmer 1.5s infinite;
         }
 
+        /* ── S97 Content Loader ── */
+        @keyframes s97-pulse {
+            0%, 100% { opacity: 0.3; text-shadow: 0 0 8px rgba(0, 255, 100, 0.2); }
+            50% { opacity: 1; text-shadow: 0 0 20px rgba(0, 255, 100, 0.6), 0 0 40px rgba(0, 255, 100, 0.2); }
+        }
+
+        @keyframes s97-line-scan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        .s97-loader {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 1rem;
+            gap: 1rem;
+        }
+
+        .s97-loader-mark {
+            font-family: var(--font-heading);
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: var(--accent);
+            animation: s97-pulse 1.8s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .s97-loader-mark::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(transparent 40%, rgba(0, 255, 100, 0.08) 50%, transparent 60%);
+            animation: s97-line-scan 2s linear infinite;
+        }
+
+        .s97-loader-text {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .s97-loader.hidden { display: none; }
+
+        :root[data-theme="light"] .s97-loader-mark {
+            color: var(--accent-hover);
+            animation-name: s97-pulse-light;
+        }
+
+        @keyframes s97-pulse-light {
+            0%, 100% { opacity: 0.3; text-shadow: 0 0 8px rgba(0, 140, 18, 0.15); }
+            50% { opacity: 1; text-shadow: 0 0 16px rgba(0, 140, 18, 0.4), 0 0 30px rgba(0, 140, 18, 0.15); }
+        }
+
         /* Collapse auth + cart buttons while search is expanded */
         .hero-section:has(.search-input-container.expanded) > .auth-wrapper,
         .hero-section:has(.search-input-container.expanded) > .cart-btn {

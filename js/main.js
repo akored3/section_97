@@ -1,6 +1,6 @@
 // Main entry point - coordinates all modules
 import { fetchProducts } from './data/products.js';
-import { renderProducts, showSkeletons } from './components/productRenderer.js';
+import { renderProducts } from './components/productRenderer.js';
 import { initializeFilters, initializeSearch } from './components/filters.js';
 import { initializeTheme } from './ui/theme.js';
 import { initializeMenu } from './ui/menu.js';
@@ -145,9 +145,6 @@ async function safeInit(name, fn) {
 
 // Initialize everything when DOM is ready
 document.addEventListener('DOMContentLoaded', async function() {
-    // Show skeleton cards immediately for better UX
-    showSkeletons(8);
-
     await safeInit('Cart', async () => {
         await initializeCart();
         setupCartDrawer();

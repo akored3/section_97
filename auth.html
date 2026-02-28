@@ -138,6 +138,12 @@
 
                 <div id="auth-message" class="auth-message" role="alert" aria-live="polite"></div>
 
+                <!-- Auth loader (shown during login/signup) -->
+                <div id="auth-loader" class="s97-loader hidden">
+                    <span class="s97-loader-mark">S97</span>
+                    <span class="s97-loader-text">Authenticating...</span>
+                </div>
+
                 <!-- Login Form -->
                 <form id="login-form" class="auth-form">
                     <div class="form-group">
@@ -253,6 +259,9 @@
 
             submitBtn.disabled = true;
             submitBtn.textContent = 'LOGGING IN...';
+            loginForm.classList.add('hidden');
+            document.getElementById('auth-loader').classList.remove('hidden');
+            document.getElementById('auth-loader').querySelector('.s97-loader-text').textContent = 'Logging in...';
 
             const result = await signIn(email, password);
 
@@ -265,6 +274,8 @@
                 showMessage(result.error, 'error');
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'LOG IN';
+                loginForm.classList.remove('hidden');
+                document.getElementById('auth-loader').classList.add('hidden');
             }
         });
 
@@ -285,8 +296,13 @@
 
             submitBtn.disabled = true;
             submitBtn.textContent = 'CREATING ACCOUNT...';
+            signupForm.classList.add('hidden');
+            document.getElementById('auth-loader').classList.remove('hidden');
+            document.getElementById('auth-loader').querySelector('.s97-loader-text').textContent = 'Creating account...';
 
             const result = await signUp(email, password);
+
+            document.getElementById('auth-loader').classList.add('hidden');
 
             if (result.success) {
                 showMessage(result.message + ' Switching to login...', 'success');
@@ -296,7 +312,6 @@
                 setTimeout(() => {
                     tabs.forEach(t => t.classList.remove('active'));
                     document.querySelector('[data-tab="login"]').classList.add('active');
-                    signupForm.classList.add('hidden');
                     loginForm.classList.remove('hidden');
                     authModeText.textContent = 'LOGIN';
 
@@ -313,6 +328,7 @@
                 showMessage(result.error, 'error');
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'CREATE ACCOUNT';
+                signupForm.classList.remove('hidden');
             }
         });
     </script>
