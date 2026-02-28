@@ -52,10 +52,15 @@ A cyberpunk streetwear e-commerce store with real payments. Built from scratch w
 
 ### Security
 - Content Security Policy (CSP) on every page
-- Subresource Integrity (SRI) on CDN scripts
+- Subresource Integrity (SRI) on all CDN scripts (Supabase + Paystack)
 - Row Level Security (RLS) on all Supabase tables
-- HTML escaping for user-generated content
-- Strict referrer policy
+- Server-side price validation via `create_validated_order()` Postgres function
+- Database CHECK constraints on price, quantity, and stock fields
+- HTML escaping for user-generated content (XSS prevention)
+- Avatar upload: MIME-type whitelist with extension derived from MIME (not filename)
+- Input length limits on all shipping form fields (HTML + JS enforcement)
+- Strict referrer policy + `X-Content-Type-Options: nosniff`
+- See [SECURITY.md](SECURITY.md) for full details
 
 ---
 
@@ -106,6 +111,8 @@ new_web/
 ├── supabase_cart_migration.sql       # Cart table + RLS policies
 ├── supabase_orders_migration.sql     # Orders + order_items tables
 ├── supabase_checkout_migration.sql   # payment_reference column
+├── supabase_security_migration.sql   # CHECK constraints + validated order RPC
+├── SECURITY.md                       # Security documentation
 └── images/                           # Product images
 ```
 
@@ -129,6 +136,7 @@ cd section_97
    - `supabase_cart_migration.sql` — cart table + RLS
    - `supabase_orders_migration.sql` — orders + order_items tables
    - `supabase_checkout_migration.sql` — payment_reference column
+   - `supabase_security_migration.sql` — CHECK constraints + server-side order validation
 
 2. **Config** — Create `js/config/supabase.js`:
    ```js

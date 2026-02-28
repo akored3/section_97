@@ -425,9 +425,10 @@ function setupAvatarUpload(userId) {
         const oldError = wrapper.querySelector('.profile-avatar-error');
         if (oldError) oldError.remove();
 
-        // Validate file type
-        const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-        if (!ALLOWED_TYPES.includes(file.type)) {
+        // Validate file type and derive safe extension from MIME
+        const MIME_TO_EXT = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' };
+        const safeExt = MIME_TO_EXT[file.type];
+        if (!safeExt) {
             showAvatarError(wrapper, 'Use JPG, PNG, or WebP');
             input.value = '';
             return;
@@ -459,9 +460,8 @@ function setupAvatarUpload(userId) {
                 await supabase.storage.from('avatars').remove(oldPaths);
             }
 
-            // Upload new avatar
-            const ext = file.name.split('.').pop().toLowerCase();
-            const filePath = `${userId}/${Date.now()}.${ext}`;
+            // Upload new avatar (extension from validated MIME type, not filename)
+            const filePath = `${userId}/${Date.now()}.${safeExt}`;
 
             const { error: uploadError } = await supabase.storage
                 .from('avatars')

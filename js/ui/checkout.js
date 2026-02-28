@@ -206,28 +206,28 @@ function validateShipping() {
     // Clear previous errors
     Object.values(fields).forEach(f => f?.closest('.form-group')?.classList.remove('invalid'));
 
-    // Name
+    // Name (max 100 chars)
     if (!fields.name.value.trim()) {
         fields.name.closest('.form-group').classList.add('invalid');
         valid = false;
     } else {
-        data.name = fields.name.value.trim();
+        data.name = fields.name.value.trim().slice(0, 100);
     }
 
-    // Address
+    // Address (max 200 chars)
     if (!fields.address.value.trim()) {
         fields.address.closest('.form-group').classList.add('invalid');
         valid = false;
     } else {
-        data.address = fields.address.value.trim();
+        data.address = fields.address.value.trim().slice(0, 200);
     }
 
-    // City
+    // City (max 50 chars)
     if (!fields.city.value.trim()) {
         fields.city.closest('.form-group').classList.add('invalid');
         valid = false;
     } else {
-        data.city = fields.city.value.trim();
+        data.city = fields.city.value.trim().slice(0, 50);
     }
 
     // Phone — must start with 0 or +234
@@ -279,45 +279,23 @@ function initiatePaystack(email, amountKobo, metadata) {
 
 // ─── Order Creation ──────────────────────────────
 
-async function createOrder(userId, cart, total, reference, shippingData) {
-    // Insert order — matches actual orders table schema
-    const { data: order, error: orderError } = await supabase
-        .from('orders')
-        .insert({
-            user_id: userId,
-            total: total,
-            status: 'completed',
-            payment_reference: reference,
-            shipping_address: `${shippingData.address}, ${shippingData.city}`
-        })
-        .select('id')
-        .single();
-
-    if (orderError) throw orderError;
-
-    // Insert order items — matches actual order_items table schema
+async function createOrder(userId, cart, reference, shippingData) {
+    // Server-side validated order: prices are looked up from the products table,
+    // never trusted from the client. Total is calculated server-side.
     const items = cart.map(item => ({
-        order_id: order.id,
         product_id: parseInt(item.id),
-        product_name: item.name,
-        product_price: item.price,
-        price: item.price,
-        product_image: item.image || '',
-        quantity: item.quantity,
-        size: item.size || null
+        size: item.size || null,
+        quantity: item.quantity
     }));
 
-    const { error: itemsError } = await supabase
-        .from('order_items')
-        .insert(items);
+    const { data: orderId, error } = await supabase.rpc('create_validated_order', {
+        p_items: items,
+        p_shipping_address: `${shippingData.address}, ${shippingData.city}`,
+        p_payment_reference: reference
+    });
 
-    // If items insert fails, delete the orphan order so it doesn't show in profile
-    if (itemsError) {
-        await supabase.from('orders').delete().eq('id', order.id);
-        throw itemsError;
-    }
-
-    return order.id;
+    if (error) throw error;
+    return orderId;
 }
 
 // ─── Order ID Formatting ─────────────────────────
@@ -390,7 +368,7 @@ async function handleAction() {
 
             // Payment succeeded — create order
             btn.textContent = 'CREATING ORDER...';
-            const orderId = await createOrder(currentUser.id, cart, total, reference, shippingData);
+            const orderId = await createOrder(currentUser.id, cart, reference, shippingData);
 
             // Clear cart
             await clearCartFull();

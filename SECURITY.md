@@ -1,0 +1,109 @@
+# SECTION-97 Security
+
+Security measures, design decisions, and known limitations for the SECTION-97 streetwear store.
+
+---
+
+## Authentication & Authorization
+
+- **Supabase Auth** handles signup, login, logout, and session management
+- Sessions persist via `autoRefreshToken` and `persistSession`
+- **Row Level Security (RLS)** enforces per-user data isolation:
+  - `products` — public read (anyone can browse the store)
+  - `cart_items` — users can only CRUD their own cart
+  - `orders` — users can only view/create their own orders
+  - `order_items` — scoped to the user's own orders via subquery
+- Custom `X-Client-Info` header sent with all Supabase requests
+
+## Data Validation
+
+### Server-Side (Database)
+- **CHECK constraints** on all critical fields:
+  - `cart_items.quantity >= 1`
+  - `order_items.quantity >= 1`, `order_items.price >= 0`
+  - `orders.total >= 0`
+  - `products.price >= 0`, `products.stock >= 0`
+  - `orders.shipping_address` length <= 300 characters
+- **`create_validated_order()` Postgres function** — calculates order totals from the `products` table, never trusting client-supplied prices. Creates order + items atomically.
+
+### Client-Side (Defense in Depth)
+- HTML `maxlength` on shipping form: name (100), address (200), city (50), phone (20)
+- JS `.slice()` enforcement as backup in `validateShipping()`
+- Phone regex: `/^(\+234|0)\d{10}$/`
+- `escapeHtml()` used on all dynamic DOM content to prevent XSS
+
+## Payment Security
+
+- **Paystack public key only** — the secret key (`sk_*`) is never in client code
+- Payment amount displayed to user comes from client-side cart total (for Paystack popup)
+- **Actual order total is calculated server-side** by `create_validated_order()` from product prices in the database
+- Orders are created with status `'pending'` — not `'completed'`
+- SRI integrity hash on Paystack CDN script (`checkout.html`)
+- SRI integrity hash on Supabase CDN script (all pages)
+
+### Production TODO: Payment Verification
+Server-side payment verification requires a **Supabase Edge Function** that:
+1. Receives the Paystack payment `reference` and `order_id`
+2. Calls `https://api.paystack.co/transaction/verify/:reference` with the secret key
+3. Verifies the paid amount matches the order total
+4. Updates order status from `'pending'` to `'completed'` (or `'failed'`)
+
+Until this is implemented, orders remain as `'pending'` after checkout.
+
+## Content Security Policy (CSP)
+
+All HTML pages include CSP headers via `<meta>` tags:
+- `default-src 'self'`
+- `script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net` (+ `https://js.paystack.co` on checkout)
+- `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`
+- `connect-src 'self' https://*.supabase.co` (+ `https://*.paystack.co` on checkout)
+- `img-src 'self' data: https:`
+- `frame-ancestors 'none'` (prevents clickjacking)
+
+### Why `unsafe-inline`?
+The theme toggle requires an inline `<script>` that runs before DOM load to prevent a flash of the wrong theme. Removing `unsafe-inline` would require a nonce-based CSP, which is a future improvement.
+
+Additional headers: `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`
+
+## File Upload Security
+
+- **MIME type whitelist**: only `image/jpeg`, `image/png`, `image/webp` accepted
+- **File extension derived from MIME type** (not from user-supplied filename) — prevents extension spoofing
+- **2MB file size limit**
+- Files stored in user-scoped paths: `{userId}/{timestamp}.{ext}`
+- Supabase Storage RLS controls access
+
+## API Keys & Secrets
+
+| Key | Location | Exposure | Notes |
+|-----|----------|----------|-------|
+| Supabase URL | `supabase.js` (gitignored) | Public by design | Identifies the project; RLS is the security layer |
+| Supabase Anon Key | `supabase.js` (gitignored) | Public by design | Equivalent to a public API key; all security comes from RLS policies |
+| Paystack Public Key | `supabase.js` (gitignored) | Public by design | `pk_*` keys are meant for client-side; secret key never in codebase |
+
+The `.gitignore` entry for `supabase.js` keeps keys out of the repository as a best practice, but these keys are designed to be safe for client-side use.
+
+## localStorage Usage
+
+| Key | Data | Sensitive? | Notes |
+|-----|------|------------|-------|
+| `theme` | `'dark'` or `'light'` | No | Theme preference |
+| `section97-username` | Display name | Low | Convenience cache for UI, cleared on logout |
+| `section97-cart` | Cart items array | No | Fallback for unauthenticated users |
+
+localStorage is accessible to any script on the same origin. XSS is mitigated by consistent use of `escapeHtml()` throughout the codebase.
+
+## Known Limitations
+
+These items require backend infrastructure (Supabase Edge Functions) or architectural changes:
+
+1. **Payment verification** — Paystack payments are not verified server-side (see Production TODO above)
+2. **Rate limiting** — No app-level rate limiting on auth attempts, checkout, or API calls. Supabase provides some built-in rate limiting.
+3. **CSP `unsafe-inline`** — Required for theme toggle; nonce-based CSP is a future improvement
+4. **Stock validation** — Stock levels are not checked atomically at checkout. Overselling is possible under race conditions.
+5. **Audit logging** — No logging of auth events, payment attempts, or suspicious activity
+6. **Field-level encryption** — Shipping addresses stored in plaintext in the database
+
+---
+
+*Last updated: 2026-02-28*

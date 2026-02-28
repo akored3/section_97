@@ -117,19 +117,19 @@
                         <form id="checkout-shipping-form" class="checkout-form" novalidate>
                             <div class="form-group">
                                 <label for="checkout-name">FULL NAME</label>
-                                <input type="text" id="checkout-name" required placeholder="Enter your full name" autocomplete="name">
+                                <input type="text" id="checkout-name" required placeholder="Enter your full name" autocomplete="name" maxlength="100">
                             </div>
                             <div class="form-group">
                                 <label for="checkout-address">STREET ADDRESS</label>
-                                <input type="text" id="checkout-address" required placeholder="Enter your street address" autocomplete="street-address">
+                                <input type="text" id="checkout-address" required placeholder="Enter your street address" autocomplete="street-address" maxlength="200">
                             </div>
                             <div class="form-group">
                                 <label for="checkout-city">CITY</label>
-                                <input type="text" id="checkout-city" required placeholder="City" autocomplete="address-level2">
+                                <input type="text" id="checkout-city" required placeholder="City" autocomplete="address-level2" maxlength="50">
                             </div>
                             <div class="form-group">
                                 <label for="checkout-phone">PHONE NUMBER</label>
-                                <input type="tel" id="checkout-phone" required placeholder="+234 XXX XXX XXXX" autocomplete="tel">
+                                <input type="tel" id="checkout-phone" required placeholder="+234 XXX XXX XXXX" autocomplete="tel" maxlength="20">
                             </div>
                             <div class="checkout-delivery-info">
                                 <strong>ESTIMATED DELIVERY: 5-7 BUSINESS DAYS</strong>
@@ -257,7 +257,7 @@
 
     <!-- Supabase + Paystack -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.95.2/dist/umd/supabase.min.js" integrity="sha384-O3Y0txdelyzhAPieX5MdbO1gTZ6zC6OPZWkeMpKKWrLqkDY+aR7MIcVR5oxNfmo3" crossorigin="anonymous"></script>
-    <script src="https://js.paystack.co/v1/inline.js"></script>
+    <script src="https://js.paystack.co/v1/inline.js" integrity="sha384-QrP0u+4fz1ULjkyrXuG/dik/AMsB81GAIHKFg628v7P2r5s2kN2CiCeXlwd2uK+i" crossorigin="anonymous"></script>
     <script type="module" src="js/ui/checkout.js"></script>
 </body>
 </html>
