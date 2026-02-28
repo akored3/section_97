@@ -767,8 +767,8 @@
         /* --- DARK MODE filter buttons --- */
         :root[data-theme="dark"] .filter-btn.sidebar-filter {
             color: rgba(255, 255, 255, 0.55);
-            border-color: rgba(0, 255, 100, 0.06);
-            border-left-color: transparent;
+            border-color: rgba(0, 255, 100, 0.2);
+            border-left-color: rgba(0, 255, 100, 0.15);
             background: rgba(20, 24, 20, 0.6);
             box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.6),
                         inset 0 -1px 1px rgba(255, 255, 255, 0.06),
@@ -802,8 +802,8 @@
         /* --- LIGHT MODE filter buttons --- */
         :root[data-theme="light"] .filter-btn.sidebar-filter {
             color: #3d4a3b;
-            border-color: rgba(0, 168, 22, 0.1);
-            border-left-color: transparent;
+            border-color: rgba(0, 168, 22, 0.2);
+            border-left-color: rgba(0, 168, 22, 0.15);
             background: rgba(255, 255, 255, 0.55);
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06),
                         inset 0 -1px 2px rgba(255, 255, 255, 0.7);
@@ -3643,15 +3643,16 @@ a.dropdown-item {
 
 :root[data-theme="light"] .profile-achievement.unlocked .profile-achievement-hex {
     background: color-mix(in srgb, var(--ach-color, var(--accent-hover)) 12%, transparent);
-    box-shadow: 0 0 15px color-mix(in srgb, var(--ach-color, var(--accent-hover)) 15%, transparent);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--ach-color, var(--accent-hover)) 20%, transparent),
+                inset 0 0 0 1.5px color-mix(in srgb, var(--ach-color, var(--accent-hover)) 35%, transparent);
 }
 
 :root[data-theme="light"] .profile-achievement.unlocked .profile-achievement-hex svg {
-    color: var(--ach-color, var(--accent-hover));
+    color: color-mix(in srgb, var(--ach-color, var(--accent-hover)) 85%, #333);
 }
 
 :root[data-theme="light"] .profile-achievement.unlocked .profile-achievement-name {
-    color: var(--ach-color, var(--accent-hover));
+    color: color-mix(in srgb, var(--ach-color, var(--accent-hover)) 80%, #333);
 }
 
 /* Locked achievement — lock icon overlay */
@@ -4989,6 +4990,7 @@ a.dropdown-item {
     font: var(--text-title-lg);
     color: var(--accent);
     letter-spacing: 2px;
+    white-space: nowrap;
 }
 
 .checkout-container {

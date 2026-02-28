@@ -252,7 +252,7 @@ function initiatePaystack(email, amountKobo, metadata) {
             return;
         }
 
-        console.log('Opening Paystack popup:', { email, amountKobo });
+        console.log('Opening Paystack popup…');
         const handler = PaystackPop.setup({
             key: PAYSTACK_PUBLIC_KEY,
             email: email,
@@ -385,7 +385,7 @@ async function handleAction() {
             updateStepper(3);
 
             // Open Paystack popup
-            console.log('Initiating Paystack payment...', { email: currentUser.email, amountKobo, shippingData });
+            console.log('Initiating Paystack payment…');
             const reference = await initiatePaystack(currentUser.email, amountKobo, shippingData);
 
             // Payment succeeded — create order
@@ -409,8 +409,7 @@ async function handleAction() {
                 showToast('Payment cancelled. Your cart is still saved.');
             } else {
                 showToast('Something went wrong. Please try again.');
-                console.error('Checkout error:', err);
-                console.error('Error details:', JSON.stringify(err, null, 2));
+                console.error('Checkout error:', err.message || err);
             }
         }
     }
