@@ -53,21 +53,7 @@
                 updateIcon(newTheme);
             });
 
-            // Parallax mouse-follow effect
-            const authBg = document.getElementById('auth-bg');
-            const authContainer = document.querySelector('.auth-container');
-
-            authContainer.addEventListener('mousemove', (e) => {
-                const { clientX, clientY } = e;
-                const { innerWidth, innerHeight } = window;
-                const moveX = ((clientX / innerWidth) - 0.5) * 80;
-                const moveY = ((clientY / innerHeight) - 0.5) * 80;
-                authBg.style.transform = `translate(${moveX}px, ${moveY}px) scale(1)`;
-            });
-
-            authContainer.addEventListener('mouseleave', () => {
-                authBg.style.transform = 'translate(0, 0) scale(1)';
-            });
+            // Auth background element (parallax removed)
         });
     </script>
 
@@ -114,15 +100,6 @@
                 <div class="auth-scanlines"></div>
                 <!-- Scan beam -->
                 <div class="auth-scan-beam"></div>
-
-                <!-- System status bar -->
-                <div class="auth-status-bar">
-                    <span class="status-indicator">
-                        <span class="status-dot"></span>
-                        SYS.AUTH v2.6
-                    </span>
-                    <span>SECURE_CONN</span>
-                </div>
 
                 <!-- Logo with glitch -->
                 <div class="auth-logo">
@@ -286,9 +263,18 @@
             const password = document.getElementById('login-password').value;
             const submitBtn = loginForm.querySelector('.auth-submit');
 
+            const authExtras = [
+                document.querySelector('.auth-tabs'),
+                document.querySelector('.auth-divider'),
+                document.querySelector('.auth-guest-btn'),
+                document.querySelector('.auth-mode-bar')
+            ];
+
             submitBtn.disabled = true;
             submitBtn.textContent = 'LOGGING IN...';
             loginForm.classList.add('hidden');
+            authExtras.forEach(el => el.classList.add('hidden'));
+            document.getElementById('auth-message').textContent = '';
             const authLoader = document.getElementById('auth-loader');
             authLoader.classList.remove('hidden');
             authLoader.querySelector('.s97-progress__label').textContent = 'LOGGING IN';
@@ -296,17 +282,19 @@
 
             const result = await signIn(email, password);
 
+            document.getElementById('auth-loader').classList.add('hidden');
+
             if (result.success) {
                 showMessage(result.message, 'success');
                 setTimeout(() => {
                     window.location.href = 'store.html';
                 }, 1500);
             } else {
-                showMessage(result.error, 'error');
+                authExtras.forEach(el => el.classList.remove('hidden'));
+                loginForm.classList.remove('hidden');
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'LOG IN';
-                loginForm.classList.remove('hidden');
-                document.getElementById('auth-loader').classList.add('hidden');
+                showMessage(result.error, 'error');
             }
         });
 
@@ -325,9 +313,19 @@
                 return;
             }
 
+            const signupMessage = document.getElementById('auth-message');
+            const signupExtras = [
+                document.querySelector('.auth-tabs'),
+                document.querySelector('.auth-divider'),
+                document.querySelector('.auth-guest-btn'),
+                document.querySelector('.auth-mode-bar'),
+                signupMessage
+            ];
+
             submitBtn.disabled = true;
             submitBtn.textContent = 'CREATING ACCOUNT...';
             signupForm.classList.add('hidden');
+            signupExtras.forEach(el => el.classList.add('hidden'));
             const authLoader2 = document.getElementById('auth-loader');
             authLoader2.classList.remove('hidden');
             authLoader2.querySelector('.s97-progress__label').textContent = 'CREATING ACCOUNT';
@@ -336,6 +334,7 @@
             const result = await signUp(email, password);
 
             document.getElementById('auth-loader').classList.add('hidden');
+            signupExtras.forEach(el => el.classList.remove('hidden'));
 
             if (result.success) {
                 showMessage(result.message + ' Switching to login...', 'success');

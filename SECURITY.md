@@ -116,23 +116,37 @@ These items require additional infrastructure or architectural changes:
 
 ## Edge Function Deployment
 
-To deploy the `verify-payment` Edge Function:
+The `verify-payment` Edge Function is deployed automatically via **GitHub Actions** on every push to `main` that changes files in `supabase/functions/`.
+
+### How it works
+The workflow (`.github/workflows/deploy-edge-functions.yml`) does the following:
+1. Checks out the repo
+2. Installs the Supabase CLI via `supabase/setup-cli@v1`
+3. Links the project using `SUPABASE_PROJECT_ID`
+4. Sets the `PAYSTACK_SECRET_KEY` as a Supabase secret
+5. Deploys the function with `supabase functions deploy verify-payment --no-verify-jwt`
+
+### Required GitHub Secrets
+These must be configured in the repo's **Settings > Secrets and variables > Actions**:
+
+| Secret | Description | Format |
+|--------|-------------|--------|
+| `SUPABASE_ACCESS_TOKEN` | Personal access token from Supabase Dashboard > Access Tokens | Starts with `sbp_` |
+| `SUPABASE_PROJECT_ID` | Project reference ID from Supabase Dashboard > Settings > General | e.g. `abcdefghijklmnop` |
+| `PAYSTACK_SECRET_KEY` | Paystack secret key (test or live) | Starts with `sk_test_` or `sk_live_` |
+
+### Manual deployment (alternative)
+If you prefer deploying locally instead of via CI:
 ```bash
-# Install Supabase CLI if not already installed
-npm install -g supabase
-
-# Link your project
-supabase link --project-ref YOUR_PROJECT_REF
-
-# Set the Paystack secret key
-supabase secrets set PAYSTACK_SECRET_KEY=sk_live_your_key_here
-
-# Deploy the function
-supabase functions deploy verify-payment
+# Install Supabase CLI
+npx supabase link --project-ref YOUR_PROJECT_REF
+npx supabase secrets set PAYSTACK_SECRET_KEY=sk_live_your_key_here
+npx supabase functions deploy verify-payment --no-verify-jwt
 ```
 
-After deploying, run `supabase_payment_verification_migration.sql` in the SQL Editor to lock down order status updates.
+### Post-deployment
+After the first deploy, run `supabase_payment_verification_migration.sql` in the Supabase SQL Editor to lock down order status updates and add cart quantity bounds.
 
 ---
 
-*Last updated: 2026-02-28*
+*Last updated: 2026-03-01*

@@ -59,13 +59,37 @@ function updateStepper(step) {
 // ─── Step Navigation ─────────────────────────────
 
 function goToStep(step) {
-    // Hide all step content
-    document.querySelectorAll('.checkout-step-content').forEach(el => el.classList.add('hidden'));
-
-    // Show target step
     const stepIds = ['step-cart', 'step-shipping', 'step-payment', 'step-confirm'];
+    const allSteps = document.querySelectorAll('.checkout-step-content');
+    const currentVisible = document.querySelector('.checkout-step-content:not(.hidden)');
     const target = document.getElementById(stepIds[step - 1]);
-    if (target) target.classList.remove('hidden');
+
+    function showTarget() {
+        // Hide all steps
+        allSteps.forEach(el => {
+            el.classList.add('hidden');
+            el.classList.remove('step-exit');
+        });
+        // Show and animate in the target
+        if (target) {
+            target.classList.remove('hidden');
+            // Re-trigger entrance animation
+            target.style.animation = 'none';
+            target.offsetHeight; // force reflow
+            target.style.animation = '';
+        }
+    }
+
+    // If there's a visible step, animate it out first
+    if (currentVisible && currentVisible !== target) {
+        currentVisible.classList.add('step-exit');
+        currentVisible.addEventListener('animationend', function handler() {
+            currentVisible.removeEventListener('animationend', handler);
+            showTarget();
+        }, { once: true });
+    } else {
+        showTarget();
+    }
 
     currentStep = step;
     updateStepper(step);
