@@ -105,13 +105,25 @@ export async function signUp(email, password) {
 
         if (authError) throw authError;
 
-        // Wait for database trigger to create profile (retry pattern)
+        // If email confirmation is required, user won't be authenticated yet
+        // The session will be null until they confirm their email
+        const needsConfirmation = !authData.session;
+
+        if (needsConfirmation) {
+            return {
+                success: true,
+                user: authData.user,
+                needsConfirmation: true,
+                message: 'Account created! Check your email to confirm your account.'
+            };
+        }
+
+        // No confirmation needed — set up profile immediately
         const profileCreated = await waitForProfile(authData.user.id);
         if (!profileCreated) {
             throw new Error('Profile creation timeout - please try again');
         }
 
-        // Update profile with username — use .select() to verify RLS didn't silently block it
         const { data: updatedProfile, error: profileError } = await supabase
             .from('profiles')
             .update({ username: username })
@@ -158,7 +170,7 @@ export async function signIn(email, password) {
 
         let username = profile?.username;
 
-        // Repair: if profile has no username (RLS blocked it during signup), set one now
+        // Repair: if profile has no username (e.g. email confirmation flow), set one now
         if (!username) {
             try {
                 const newUsername = await getUniqueUsername();
