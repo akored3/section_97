@@ -12,6 +12,7 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co; img-src 'self' data: https:; frame-ancestors 'none';">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -171,7 +172,7 @@
                     </div>
                     <div class="form-group">
                         <label for="signup-password">PASSWORD</label>
-                        <input type="password" id="signup-password" required minlength="12" placeholder="enter your password">
+                        <input type="password" id="signup-password" required placeholder="enter your password">
                     </div>
                     <div class="form-group">
                         <label for="signup-confirm">CONFIRM PASSWORD</label>
@@ -306,6 +307,12 @@
             const password = document.getElementById('signup-password').value;
             const confirm = document.getElementById('signup-confirm').value;
             const submitBtn = signupForm.querySelector('.auth-submit');
+
+            // Validate password length
+            if (password.length < 12) {
+                showMessage('Password must be at least 12 characters', 'error');
+                return;
+            }
 
             // Validate passwords match
             if (password !== confirm) {
