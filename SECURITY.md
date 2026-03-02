@@ -8,11 +8,16 @@ Security measures, design decisions, and known limitations for the SECTION-97 st
 
 - **Supabase Auth** handles signup, login, logout, and session management
 - Sessions persist via `autoRefreshToken` and `persistSession`
+- **Password policy**: minimum 12 characters enforced client-side (Supabase default minimum is 6)
+- **Email confirmation** enabled — prevents account enumeration and bulk fake signups
 - **Row Level Security (RLS)** enforces per-user data isolation:
   - `products` — public read (anyone can browse the store)
   - `cart_items` — users can only CRUD their own cart
   - `orders` — users can only view/create their own orders
   - `order_items` — scoped to the user's own orders via subquery
+  - `profiles` — users can only read/update their own profile; INSERT limited to own ID
+- **Profile stat tampering protection**: `protect_profile_stats()` trigger prevents authenticated users from modifying `total_spent` or `order_count` directly — only the server-side `update_profile_stats()` SECURITY DEFINER trigger can change these fields
+- **Auto-RLS trigger** enabled on Supabase project — all new tables get RLS automatically
 - Custom `X-Client-Info` header sent with all Supabase requests
 
 ## Data Validation
@@ -38,6 +43,7 @@ Security measures, design decisions, and known limitations for the SECTION-97 st
 - Payment amount displayed to user comes from client-side cart total (for Paystack popup)
 - **Actual order total is calculated server-side** by `create_validated_order()` from product prices in the database
 - Orders are created with status `'pending'` — not `'completed'`
+- **Payment replay protection**: UNIQUE constraint on `orders.payment_reference` — one payment = one order
 - SRI integrity hash on Supabase CDN script (all pages)
 - Paystack CDN script loaded without SRI (their CDN does not serve CORS headers required for integrity checks)
 
@@ -67,7 +73,7 @@ All HTML pages include CSP headers via `<meta>` tags:
 ### Why `unsafe-inline`?
 The theme toggle requires an inline `<script>` that runs before DOM load to prevent a flash of the wrong theme. Removing `unsafe-inline` would require a nonce-based CSP, which is a future improvement.
 
-Additional headers: `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`
+Additional headers: `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()`
 
 ## File Upload Security
 
@@ -102,7 +108,38 @@ localStorage is accessible to any script on the same origin. XSS is mitigated by
 - **Product ID**: Strict numeric regex (`/^\d+$/`) — rejects trailing garbage from `parseInt`
 - **Cart quantity**: Bounded 1–100 via database CHECK constraints and RPC validation
 
-## Known Limitations
+## Pentest Audit (2026-03-02)
+
+Full security audit against a 10-chapter e-commerce pentesting checklist. Results:
+
+### Passed / Already Covered
+- **SQL Injection** — Supabase JS SDK parameterizes all queries; `create_validated_order()` uses parameterized inputs
+- **XSS** — `escapeHtml()` used consistently on all user-controlled data before `innerHTML` insertion
+- **CSRF** — JWT in localStorage (not cookies), so CSRF attacks cannot work
+- **Session management** — Supabase handles token generation, expiry, refresh, and invalidation
+- **Price tampering** — `create_validated_order()` looks up prices server-side from the `products` table
+- **Checkout bypass** — Orders stay `pending` until Edge Function verifies payment with Paystack's secret key
+- **Unauthenticated access** — RLS blocks all non-public tables for anonymous users
+- **Data exposure** — Profile queries select only needed fields (`username, avatar_url, total_spent, order_count`)
+
+### Fixed During Audit
+- **Profiles RLS** — Was missing; added owner-only SELECT/UPDATE/INSERT policies + stat tamper protection
+- **Payment replay** — Added UNIQUE constraint on `payment_reference` (prevents reuse of payment references)
+- **Security headers** — Added `Permissions-Policy` to all pages
+- **Console logging** — Removed informational `console.log` calls that leaked operational details
+- **Password validation** — Replaced browser native tooltip with custom error message
+
+### Dashboard Actions Taken
+- Enabled email confirmation (prevents account enumeration + bulk fake signups)
+- Enabled auto-RLS trigger for new tables
+
+### Not Applicable (features not yet built)
+- NoSQL injection, file upload bypass, GraphQL introspection, MFA bypass
+- Coupon reuse, refund abuse, reward points abuse, referral abuse
+- Admin endpoint access (no admin dashboard yet)
+- Password reset flow (not implemented yet)
+
+### Known Limitations
 
 These items require additional infrastructure or architectural changes:
 
@@ -111,6 +148,9 @@ These items require additional infrastructure or architectural changes:
 3. **Stock validation** — Stock levels are not checked atomically at checkout. Overselling is possible under race conditions.
 4. **Audit logging** — No logging of auth events, payment attempts, or suspicious activity
 5. **Field-level encryption** — Shipping addresses stored in plaintext in the database
+6. **Bot protection** — No CAPTCHA on signup/login forms. Cloudflare Turnstile recommended before going live.
+7. **HSTS** — Cannot be set via meta tags; must be configured at the hosting provider level on deployment.
+8. **Account deletion** — No account deletion or data export flow. Required for NDPR/GDPR compliance before launch.
 
 ---
 
@@ -149,4 +189,4 @@ After the first deploy, run `supabase_payment_verification_migration.sql` in the
 
 ---
 
-*Last updated: 2026-03-01*
+*Last updated: 2026-03-02*

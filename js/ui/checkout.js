@@ -277,7 +277,6 @@ function initiatePaystack(email, amountKobo, metadata) {
             return;
         }
 
-        console.log('Opening Paystack popup…');
         const handler = PaystackPop.setup({
             key: PAYSTACK_PUBLIC_KEY,
             email: email,
@@ -403,7 +402,6 @@ async function handleAction() {
             updateStepper(3);
 
             // Open Paystack popup
-            console.log('Initiating Paystack payment…');
             const reference = await initiatePaystack(currentUser.email, amountKobo, shippingData);
 
             // Payment succeeded — create order

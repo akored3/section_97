@@ -185,5 +185,4 @@ document.addEventListener('DOMContentLoaded', async function() {
     await safeInit('Menu', () => initializeMenu());
     await safeInit('IdleTimeout', () => initializeIdleTimeout());
 
-    console.log('SECTION-97 initialized ✓');
 });
