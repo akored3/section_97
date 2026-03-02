@@ -341,7 +341,7 @@ function renderEmptyOrders() {
             <p>COLLECTION EMPTY</p>
             <span class="profile-empty-sub">Your drip history will appear here</span>
             <br>
-            <a href="store.html" class="profile-empty-cta">Start your collection</a>
+            <a href="index.html" class="profile-empty-cta">Start your collection</a>
         </div>
     `;
 }
@@ -523,7 +523,7 @@ function setupLogout() {
                 localStorage.removeItem('section97-username');
             } catch (e) { /* storage unavailable */ }
 
-            window.location.href = 'store.html';
+            window.location.href = 'index.html';
         } else {
             btn.disabled = false;
             btn.innerHTML = `

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SECTION-97 | Premium Streetwear - Supreme, Corteiz, Balenciaga</title>
+    <meta name="description" content="Shop premium streetwear at SECTION-97. Featuring exclusive drops from Supreme, Corteiz, and Balenciaga NBA collection. Stay Metal.">
+    <meta name="keywords" content="streetwear, Supreme, Corteiz, Balenciaga, hoodies, sneakers, urban fashion">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="SECTION-97 | Premium Streetwear">
+    <meta property="og:description" content="Shop premium streetwear. Exclusive drops from Supreme, Corteiz, and Balenciaga NBA collection.">
+    <meta property="og:image" content="images/og-image.jpg">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co; img-src 'self' data: https:; frame-ancestors 'none';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
+    <link rel ="stylesheet" href="style.css">
+    </head>
+<body>
+    <script>
+        // Apply saved theme immediately to prevent flash
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+
+        // Cache auth state to prevent "Login" flash on page load
+        const cachedUser = localStorage.getItem('section97-username');
+        if (cachedUser) {
+            document.addEventListener('DOMContentLoaded', () => {
+                const authText = document.getElementById('auth-text');
+                if (authText) authText.textContent = cachedUser;
+                const mobileLogin = document.getElementById('mobile-login-btn');
+                const mobileUserInfo = document.getElementById('mobile-user-info');
+                const mobileUsername = document.getElementById('mobile-username');
+                const mobileLogout = document.getElementById('mobile-logout-btn');
+                if (mobileLogin) mobileLogin.classList.add('hidden');
+                if (mobileUserInfo) mobileUserInfo.classList.remove('hidden');
+                if (mobileUsername) mobileUsername.textContent = cachedUser;
+                if (mobileLogout) mobileLogout.classList.remove('hidden');
+            });
+        }
+    </script>
+    <a href="#product-container" class="skip-link">Skip to products</a>
+    <header class="hero-section">
+        <button class="moon-btn" id="theme-toggle" aria-label="Toggle dark mode">
+            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M38 6C22 6 10 18 10 32C10 46 22 58 38 58C30 52 26 42 26 32C26 22 30 12 38 6Z"/>
+                <circle cx="44" cy="16" r="1.5" stroke-width="0.9" opacity="0.4"/>
+                <circle cx="50" cy="26" r="1" stroke-width="0.75" opacity="0.3"/>
+            </svg>
+        </button>
+        <div class="hero-content">
+            <h1 class="hero-title">SECTION-97<span class="cursor">_</span></h1>
+            <p class="hero-subtitle">Stay Metal</p>
+        </div>
+        <div class="search-wrapper" id="search-wrapper">
+            <button class="search-toggle" id="search-toggle" aria-label="Open search">
+                <svg class="search-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                    <circle cx="28" cy="28" r="18"/>
+                    <line x1="42" y1="42" x2="56" y2="56"/>
+                    <circle cx="28" cy="28" r="8" stroke-width="0.5" stroke-dasharray="2 3" opacity="0.3"/>
+                </svg>
+            </button>
+            <div class="search-input-container" id="search-container">
+                <svg class="search-icon-inner" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+                    <circle cx="28" cy="28" r="18"/>
+                    <line x1="42" y1="42" x2="56" y2="56"/>
+                    <circle cx="28" cy="28" r="8" stroke-width="0.5" stroke-dasharray="2 3" opacity="0.3"/>
+                </svg>
+                <input type="text" id="search-input" class="search-input" placeholder="Search..." autocomplete="off">
+                <button class="search-close" id="search-close" aria-label="Close search">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="auth-wrapper" id="auth-wrapper">
+            <button class="auth-btn" id="auth-btn" aria-label="Login or Sign up">
+                <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
+                    <circle cx="32" cy="20" r="12"/>
+                    <path d="M8 58C8 44 18 36 32 36C46 36 56 44 56 58"/>
+                    <path d="M24 20H40" stroke-width="0.5" stroke-dasharray="2 2" opacity="0.3"/>
+                </svg>
+                <span id="auth-text">Login</span>
+            </button>
+            <div class="auth-dropdown" id="auth-dropdown" role="menu">
+                <a href="profile.html" class="dropdown-item">
+                    <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+                        <circle cx="32" cy="20" r="12"/>
+                        <path d="M8 58C8 44 18 36 32 36C46 36 56 44 56 58"/>
+                        <path d="M24 20H40" stroke-width="0.5" stroke-dasharray="2 2" opacity="0.3"/>
+                    </svg>
+                    Profile
+                </a>
+                <button class="dropdown-item" id="logout-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    Log out
+                </button>
+            </div>
+        </div>
+        <button class="cart-btn" aria-label="Shopping cart">
+            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 8H14L20 44H50L56 18H18"/>
+                <circle cx="24" cy="52" r="4"/>
+                <circle cx="46" cy="52" r="4"/>
+                <line x1="28" y1="26" x2="48" y2="26" stroke-width="0.65" opacity="0.4"/>
+                <line x1="26" y1="34" x2="46" y2="34" stroke-width="0.65" opacity="0.4"/>
+            </svg>
+            <span class="cart-badge" id="cart-badge" aria-live="polite">0</span>
+        </button>
+        <button class="hamburger-btn" id="hamburger-toggle" aria-label="Toggle menu">
+            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="8" y1="16" x2="56" y2="16"/>
+                <line x1="8" y1="32" x2="42" y2="32"/>
+                <line x1="8" y1="48" x2="56" y2="48"/>
+                <circle cx="52" cy="32" r="3" fill="currentColor" opacity="0.4"/>
+            </svg>
+        </button>
+    </header>
+
+    <!-- Hamburger menu for mobile -->
+    <div class="mobile-menu" id="mobile-menu" role="dialog" aria-label="Navigation menu">
+        <div class="mobile-menu-content">
+            <button class="close-btn" id="close-menu" aria-label="Close menu">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <!-- Mobile Search -->
+            <div class="mobile-search-wrapper">
+                <div class="mobile-search-container">
+                    <svg class="search-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+                        <circle cx="28" cy="28" r="18"/>
+                        <line x1="42" y1="42" x2="56" y2="56"/>
+                        <circle cx="28" cy="28" r="8" stroke-width="0.5" stroke-dasharray="2 3" opacity="0.3"/>
+                    </svg>
+                    <input type="text" id="mobile-search-input" class="mobile-search-input" placeholder="Search products..." autocomplete="off">
+                </div>
+            </div>
+            <!-- Mobile Auth Section -->
+            <div class="mobile-auth-section" id="mobile-auth-section">
+                <a href="auth.html" class="mobile-auth-btn" id="mobile-login-btn">
+                    <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                        <circle cx="32" cy="20" r="12"/>
+                        <path d="M8 58C8 44 18 36 32 36C46 36 56 44 56 58"/>
+                        <path d="M24 20H40" stroke-width="0.5" stroke-dasharray="2 2" opacity="0.3"/>
+                    </svg>
+                    <span>Login / Sign up</span>
+                </a>
+                <a href="profile.html" class="mobile-user-link hidden" id="mobile-user-info">
+                    <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                        <circle cx="32" cy="20" r="12"/>
+                        <path d="M8 58C8 44 18 36 32 36C46 36 56 44 56 58"/>
+                        <path d="M24 20H40" stroke-width="0.5" stroke-dasharray="2 2" opacity="0.3"/>
+                    </svg>
+                    <span id="mobile-username">Account</span>
+                    <svg class="mobile-user-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                </a>
+            </div>
+            <div class="mobile-filter-buttons">
+                <button class="filter-btn glass-btn mobile-filter" data-category="hoodies" aria-label="Filter Hoodies">
+                    <svg class="filter-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 20C22 10 26 4 32 4C38 4 42 10 42 20"/><path d="M22 20L12 24L6 32L12 38L18 32V56H46V32L52 38L58 32L52 24L42 20"/><path d="M26 20C28 25 30 27 32 27C34 27 36 25 38 20"/><line x1="30" y1="27" x2="27" y2="36" stroke-width="0.65" opacity="0.5"/><line x1="34" y1="27" x2="37" y2="36" stroke-width="0.65" opacity="0.5"/><path d="M24 42C24 40 28 38 32 38C36 38 40 40 40 42V48H24V42Z" stroke-width="0.65" opacity="0.35"/></svg>
+                    <span>Hoodies</span>
+                </button>
+                <button class="filter-btn glass-btn mobile-filter" data-category="tshirts" aria-label="Filter T-Shirts">
+                    <svg class="filter-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 8L16 10L6 18L12 28L18 24V56H46V24L52 28L58 18L48 10L42 8"/><path d="M22 8C22 8 24 14 32 14C40 14 42 8 42 8"/><line x1="18" y1="24" x2="46" y2="24" stroke-width="0.65" stroke-dasharray="2 3" opacity="0.4"/></svg>
+                    <span>T-Shirts</span>
+                </button>
+                <button class="filter-btn glass-btn mobile-filter" data-category="pants" aria-label="Filter Pants">
+                    <svg class="filter-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 6H50V20L42 58H36L32 30L28 58H22L14 20V6Z"/><line x1="14" y1="12" x2="50" y2="12" stroke-width="0.65" opacity="0.4"/><line x1="14" y1="20" x2="50" y2="20" stroke-width="0.5" stroke-dasharray="2 3" opacity="0.3"/></svg>
+                    <span>Pants</span>
+                </button>
+                <button class="filter-btn glass-btn mobile-filter" data-category="jackets" aria-label="Filter Jackets">
+                    <svg class="filter-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6L14 10L6 20L6 40L14 36V58H28V6"/><path d="M40 6L50 10L58 20V40L50 36V58H36V6"/><path d="M28 6H36"/><path d="M28 58H36"/><line x1="32" y1="10" x2="32" y2="54" stroke-width="0.65" stroke-dasharray="3 3" opacity="0.5"/><rect x="16" y="28" width="8" height="10" rx="1" stroke-width="0.75" opacity="0.5"/><rect x="40" y="28" width="8" height="10" rx="1" stroke-width="0.75" opacity="0.5"/></svg>
+                    <span>Jackets</span>
+                </button>
+                <button class="filter-btn glass-btn mobile-filter" data-category="shoes" aria-label="Filter Shoes">
+                    <svg class="filter-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="50" width="42" height="8" rx="3"/><path d="M10 50C8 42 12 32 22 26L28 22V8H44V50"/></svg>
+                    <span>Shoes</span>
+                </button>
+                <button class="filter-btn glass-btn mobile-filter" data-category="bags" aria-label="Filter Bags">
+                    <svg class="filter-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="24" width="44" height="36" rx="3"/><path d="M22 24V16C22 10 26 6 32 6C38 6 42 10 42 16V24"/><line x1="10" y1="36" x2="54" y2="36" stroke-width="0.65" opacity="0.4"/><circle cx="32" cy="44" r="4" stroke-width="0.65" opacity="0.35"/></svg>
+                    <span>Bags</span>
+                </button>
+                <button class="filter-btn glass-btn mobile-filter" data-category="all" aria-label="Show All Products">
+                    <svg class="filter-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="22" height="22" rx="3"/><rect x="36" y="6" width="22" height="22" rx="3"/><rect x="6" y="36" width="22" height="22" rx="3"/><rect x="36" y="36" width="22" height="22" rx="3"/><line x1="12" y1="17" x2="22" y2="17" stroke-width="0.65" stroke-dasharray="2 2" opacity="0.3"/><line x1="42" y1="17" x2="52" y2="17" stroke-width="0.65" stroke-dasharray="2 2" opacity="0.3"/><line x1="12" y1="47" x2="22" y2="47" stroke-width="0.65" stroke-dasharray="2 2" opacity="0.3"/><line x1="42" y1="47" x2="52" y2="47" stroke-width="0.65" stroke-dasharray="2 2" opacity="0.3"/></svg>
+                    <span>All</span>
+                </button>
+            </div>
+            <!-- Logout at bottom of drawer -->
+            <button class="mobile-logout-btn hidden" id="mobile-logout-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Log out
+            </button>
+        </div>
+    </div>
+
+    <!-- Main content: sidebar + product grid -->
+    <main class="store-layout">
+        <aside class="sidebar" id="sidebar">
+            <nav class="sidebar-filters" aria-label="Product filters">
+                <button class="filter-btn sidebar-filter" data-category="all" aria-label="Show All Products">
+                    <svg class="filter-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="22" height="22" rx="3"/><rect x="36" y="6" width="22" height="22" rx="3"/><rect x="6" y="36" width="22" height="22" rx="3"/><rect x="36" y="36" width="22" height="22" rx="3"/><line x1="12" y1="17" x2="22" y2="17" stroke-width="0.65" stroke-dasharray="2 2" opacity="0.3"/><line x1="42" y1="17" x2="52" y2="17" stroke-width="0.65" stroke-dasharray="2 2" opacity="0.3"/><line x1="12" y1="47" x2="22" y2="47" stroke-width="0.65" stroke-dasharray="2 2" opacity="0.3"/><line x1="42" y1="47" x2="52" y2="47" stroke-width="0.65" stroke-dasharray="2 2" opacity="0.3"/></svg>
+                    <span>All</span>
+                </button>
+                <button class="filter-btn sidebar-filter" data-category="hoodies" aria-label="Filter Hoodies">
+                    <svg class="filter-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 20C22 10 26 4 32 4C38 4 42 10 42 20"/><path d="M22 20L12 24L6 32L12 38L18 32V56H46V32L52 38L58 32L52 24L42 20"/><path d="M26 20C28 25 30 27 32 27C34 27 36 25 38 20"/><line x1="30" y1="27" x2="27" y2="36" stroke-width="0.65" opacity="0.5"/><line x1="34" y1="27" x2="37" y2="36" stroke-width="0.65" opacity="0.5"/><path d="M24 42C24 40 28 38 32 38C36 38 40 40 40 42V48H24V42Z" stroke-width="0.65" opacity="0.35"/></svg>
+                    <span>Hoodies</span>
+                </button>
+                <button class="filter-btn sidebar-filter" data-category="tshirts" aria-label="Filter T-Shirts">
+                    <svg class="filter-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 8L16 10L6 18L12 28L18 24V56H46V24L52 28L58 18L48 10L42 8"/><path d="M22 8C22 8 24 14 32 14C40 14 42 8 42 8"/><line x1="18" y1="24" x2="46" y2="24" stroke-width="0.65" stroke-dasharray="2 3" opacity="0.4"/></svg>
+                    <span>T-Shirts</span>
+                </button>
+                <button class="filter-btn sidebar-filter" data-category="pants" aria-label="Filter Pants">
+                    <svg class="filter-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 6H50V20L42 58H36L32 30L28 58H22L14 20V6Z"/><line x1="14" y1="12" x2="50" y2="12" stroke-width="0.65" opacity="0.4"/><line x1="14" y1="20" x2="50" y2="20" stroke-width="0.5" stroke-dasharray="2 3" opacity="0.3"/></svg>
+                    <span>Pants</span>
+                </button>
+                <button class="filter-btn sidebar-filter" data-category="jackets" aria-label="Filter Jackets">
+                    <svg class="filter-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6L14 10L6 20L6 40L14 36V58H28V6"/><path d="M40 6L50 10L58 20V40L50 36V58H36V6"/><path d="M28 6H36"/><path d="M28 58H36"/><line x1="32" y1="10" x2="32" y2="54" stroke-width="0.65" stroke-dasharray="3 3" opacity="0.5"/><rect x="16" y="28" width="8" height="10" rx="1" stroke-width="0.75" opacity="0.5"/><rect x="40" y="28" width="8" height="10" rx="1" stroke-width="0.75" opacity="0.5"/></svg>
+                    <span>Jackets</span>
+                </button>
+                <button class="filter-btn sidebar-filter" data-category="shoes" aria-label="Filter Shoes">
+                    <svg class="filter-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="50" width="42" height="8" rx="3"/><path d="M10 50C8 42 12 32 22 26L28 22V8H44V50"/></svg>
+                    <span>Shoes</span>
+                </button>
+                <button class="filter-btn sidebar-filter" data-category="bags" aria-label="Filter Bags">
+                    <svg class="filter-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="24" width="44" height="36" rx="3"/><path d="M22 24V16C22 10 26 6 32 6C38 6 42 10 42 16V24"/><line x1="10" y1="36" x2="54" y2="36" stroke-width="0.65" opacity="0.4"/><circle cx="32" cy="44" r="4" stroke-width="0.65" opacity="0.35"/></svg>
+                    <span>Bags</span>
+                </button>
+            </nav>
+        </aside>
+
+        <section class="container" id="product-container" aria-label="Product catalog">
+            <div id="store-loader" class="s97-loader">
+                <div class="s97-progress">
+                    <div class="s97-progress__header">
+                        <span class="s97-progress__label">LOADING PRODUCTS</span>
+                        <span class="s97-progress__percent">0%</span>
+                    </div>
+                    <div class="s97-progress__track">
+                        <div class="corner-bracket corner-bracket--tl"></div>
+                        <div class="corner-bracket corner-bracket--tr"></div>
+                        <div class="corner-bracket corner-bracket--bl"></div>
+                        <div class="corner-bracket corner-bracket--br"></div>
+                        <div class="s97-progress__fill"></div>
+                    </div>
+                    <div class="s97-progress__ticks">
+                        <div class="s97-progress__tick" data-tick="0"><div class="s97-progress__tick-mark"></div><span class="s97-progress__tick-label">0</span></div>
+                        <div class="s97-progress__tick" data-tick="25"><div class="s97-progress__tick-mark"></div><span class="s97-progress__tick-label">25</span></div>
+                        <div class="s97-progress__tick" data-tick="50"><div class="s97-progress__tick-mark"></div><span class="s97-progress__tick-label">50</span></div>
+                        <div class="s97-progress__tick" data-tick="75"><div class="s97-progress__tick-mark"></div><span class="s97-progress__tick-label">75</span></div>
+                        <div class="s97-progress__tick" data-tick="100"><div class="s97-progress__tick-mark"></div><span class="s97-progress__tick-label">100</span></div>
+                    </div>
+                    <div class="s97-progress__status">
+                        <div class="s97-progress__indicators">
+                            <div class="s97-progress__indicator" data-at="15"><div class="s97-progress__indicator-dot"></div><span class="s97-progress__indicator-label">SYS</span></div>
+                            <div class="s97-progress__indicator" data-at="30"><div class="s97-progress__indicator-dot"></div><span class="s97-progress__indicator-label">NET</span></div>
+                            <div class="s97-progress__indicator" data-at="50"><div class="s97-progress__indicator-dot"></div><span class="s97-progress__indicator-label">GFX</span></div>
+                            <div class="s97-progress__indicator" data-at="70"><div class="s97-progress__indicator-dot"></div><span class="s97-progress__indicator-label">HUD</span></div>
+                            <div class="s97-progress__indicator" data-at="90"><div class="s97-progress__indicator-dot"></div><span class="s97-progress__indicator-label">RDY</span></div>
+                        </div>
+                        <span class="s97-progress__state">LOADING</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <span class="footer-logo">SECTION-97</span>
+                <span class="footer-tagline">STAY METAL_</span>
+            </div>
+            <div class="footer-links">
+                <a href="#" class="footer-link">INSTAGRAM</a>
+                <a href="#" class="footer-link">TWITTER</a>
+                <a href="#" class="footer-link">DISCORD</a>
+            </div>
+            <p class="footer-copy">&copy; 2026 METALBEARD. Stay tuned, big things coming.</p>
+        </div>
+    </footer>
+
+    <!-- Cart Drawer -->
+    <div class="cart-overlay" id="cart-overlay"></div>
+    <aside class="cart-drawer" id="cart-drawer" role="dialog" aria-label="Shopping cart">
+        <div class="cart-drawer-header">
+            <h2>YOUR CART</h2>
+            <button class="cart-drawer-close" id="cart-drawer-close" aria-label="Close cart">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="cart-drawer-items" id="cart-drawer-items">
+            <!-- Cart items rendered by JS -->
+        </div>
+        <div class="cart-drawer-footer" id="cart-drawer-footer">
+            <div class="cart-drawer-total">
+                <span>Subtotal</span>
+                <span id="cart-drawer-total">$0.00</span>
+            </div>
+            <button class="cart-drawer-checkout">Checkout</button>
+        </div>
+    </aside>
+
+    <!-- Supabase Client Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.95.2/dist/umd/supabase.min.js" integrity="sha384-O3Y0txdelyzhAPieX5MdbO1gTZ6zC6OPZWkeMpKKWrLqkDY+aR7MIcVR5oxNfmo3" crossorigin="anonymous"></script>
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
