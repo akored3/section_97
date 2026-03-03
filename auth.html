@@ -169,14 +169,17 @@
                     <div class="form-group">
                         <label for="signup-email">EMAIL</label>
                         <input type="email" id="signup-email" required placeholder="your@email.com">
+                        <span class="field-hint" id="email-hint"></span>
                     </div>
                     <div class="form-group">
                         <label for="signup-password">PASSWORD</label>
                         <input type="password" id="signup-password" required placeholder="enter your password">
+                        <span class="field-hint" id="password-hint"></span>
                     </div>
                     <div class="form-group">
                         <label for="signup-confirm">CONFIRM PASSWORD</label>
                         <input type="password" id="signup-confirm" required placeholder="re-enter password">
+                        <span class="field-hint" id="confirm-hint"></span>
                     </div>
                     <button type="submit" class="auth-submit">CREATE ACCOUNT</button>
                 </form>
@@ -296,6 +299,54 @@
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'LOG IN';
                 showMessage(result.error, 'error');
+            }
+        });
+
+        // Real-time signup field validation
+        const emailInput = document.getElementById('signup-email');
+        const passwordInput = document.getElementById('signup-password');
+        const confirmInput = document.getElementById('signup-confirm');
+        const emailHint = document.getElementById('email-hint');
+        const passwordHint = document.getElementById('password-hint');
+        const confirmHint = document.getElementById('confirm-hint');
+
+        function setHint(el, text, type) {
+            el.textContent = text;
+            el.className = `field-hint ${type}`;
+        }
+
+        emailInput.addEventListener('input', () => {
+            const val = emailInput.value;
+            if (!val) {
+                setHint(emailHint, '', '');
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+                setHint(emailHint, 'Enter a valid email — confirmation will be sent here', 'warn');
+            } else {
+                setHint(emailHint, 'Looks good', 'valid');
+            }
+        });
+
+        passwordInput.addEventListener('input', () => {
+            const len = passwordInput.value.length;
+            if (!len) {
+                setHint(passwordHint, '', '');
+            } else if (len < 12) {
+                setHint(passwordHint, `${12 - len} more character${12 - len === 1 ? '' : 's'} needed`, 'warn');
+            } else {
+                setHint(passwordHint, 'Strong enough', 'valid');
+            }
+            // Re-check confirm if it has a value
+            if (confirmInput.value) confirmInput.dispatchEvent(new Event('input'));
+        });
+
+        confirmInput.addEventListener('input', () => {
+            const val = confirmInput.value;
+            if (!val) {
+                setHint(confirmHint, '', '');
+            } else if (val !== passwordInput.value) {
+                setHint(confirmHint, 'Passwords don\'t match', 'warn');
+            } else {
+                setHint(confirmHint, 'Passwords match', 'valid');
             }
         });
 

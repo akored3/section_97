@@ -4814,6 +4814,27 @@ a.dropdown-item {
     color: rgba(0, 0, 0, 0.35);
 }
 
+/* Inline field hints */
+.field-hint {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.03em;
+    min-height: 1rem;
+    transition: color var(--duration-fast) var(--motion-standard);
+}
+.field-hint:empty {
+    display: none;
+}
+.field-hint.warn {
+    color: #ffaa00;
+}
+.field-hint.valid {
+    color: var(--accent);
+}
+:root[data-theme="light"] .field-hint.warn {
+    color: #cc8800;
+}
+
 /* Forgot password link */
 .forgot-link {
     font: var(--text-label-sm);
