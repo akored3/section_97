@@ -36,14 +36,22 @@ function withSize(query, size) {
 
 // ─── Badge ───────────────────────────────────────
 
-function updateBadge() {
+let lastBadgeCount = -1;
+
+function updateBadge(skipPulse = false) {
     const count = cart.reduce((sum, i) => sum + i.quantity, 0);
+    // Skip if badge already shows the correct count
+    if (count === lastBadgeCount) return;
+    lastBadgeCount = count;
+
     document.querySelectorAll('#cart-badge').forEach(badge => {
         badge.textContent = count;
         badge.style.display = count > 0 ? 'flex' : 'none';
         badge.classList.remove('pulse');
-        void badge.offsetWidth;
-        if (count > 0) badge.classList.add('pulse');
+        if (count > 0 && !skipPulse) {
+            void badge.offsetWidth;
+            badge.classList.add('pulse');
+        }
     });
 }
 
@@ -335,7 +343,7 @@ export async function handleAuthChange(userId) {
         }
 
         saveLocal();
-        updateBadge();
+        updateBadge(true);
     } else {
         // Logout: clear cart (items belong to the account, not the browser)
         currentUserId = null;
@@ -500,7 +508,7 @@ export async function initializeCart() {
 
 // Show badge for guest users only (no Supabase sync will follow)
 export function updateBadgeIfGuest() {
-    if (!currentUserId) updateBadge();
+    if (!currentUserId) updateBadge(true);
 }
 
 // ─── Public Getters ──────────────────────────────
