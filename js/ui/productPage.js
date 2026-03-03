@@ -2,7 +2,8 @@
 import { fetchProductById } from '../data/products.js';
 import { initializeTheme } from '../ui/theme.js';
 import { escapeHtml } from '../components/productRenderer.js';
-import { initializeCart, setupCartDrawer, addToCart, openCartDrawer } from './cart.js';
+import { initializeCart, setupCartDrawer, addToCart, openCartDrawer, handleAuthChange, updateBadgeIfGuest } from './cart.js';
+import { getCurrentUser } from '../auth/auth.js';
 
 let selectedSize = null;
 let selectedSizeStock = null;
@@ -162,6 +163,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     initializeTheme();
     await initializeCart();
     setupCartDrawer();
+
+    // Auth-aware cart sync
+    const user = await getCurrentUser();
+    if (user) await handleAuthChange(user.id);
+    else updateBadgeIfGuest();
 
     // Validate URL param before fetch (strict numeric check)
     const id = new URLSearchParams(window.location.search).get('id');

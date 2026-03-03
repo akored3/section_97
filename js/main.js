@@ -6,7 +6,7 @@ import { initializeTheme } from './ui/theme.js';
 import { initializeMenu } from './ui/menu.js';
 import { getCurrentUser, onAuthStateChange, signOut } from './auth/auth.js';
 import { initializeLazyLoading } from './ui/lazyLoad.js';
-import { initializeCart, setupCartDrawer, setupAddToCartButtons, handleAuthChange } from './ui/cart.js';
+import { initializeCart, setupCartDrawer, setupAddToCartButtons, handleAuthChange, updateBadgeIfGuest } from './ui/cart.js';
 import { initPageLoader } from './ui/progressBar.js';
 
 // Track if user is logged in
@@ -164,6 +164,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         // Initial auth-aware cart load
         const user = await getCurrentUser();
         if (user) await handleAuthChange(user.id);
+        else updateBadgeIfGuest();
     });
 
     // Products - core content

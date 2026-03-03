@@ -494,7 +494,13 @@ export function setupCartDrawer() {
 
 export async function initializeCart() {
     cart = loadLocal();
-    updateBadge();
+    // Don't update badge here — handleAuthChange() will set the correct
+    // count after Supabase sync. For guests, updateBadgeIfGuest() runs below.
+}
+
+// Show badge for guest users only (no Supabase sync will follow)
+export function updateBadgeIfGuest() {
+    if (!currentUserId) updateBadge();
 }
 
 // ─── Public Getters ──────────────────────────────

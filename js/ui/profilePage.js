@@ -3,7 +3,7 @@ import { getCurrentUser, signOut } from '../auth/auth.js';
 import { supabase } from '../config/supabase.js';
 import { initializeTheme } from './theme.js';
 import { escapeHtml } from '../components/productRenderer.js';
-import { initializeCart, setupCartDrawer } from './cart.js';
+import { initializeCart, setupCartDrawer, handleAuthChange } from './cart.js';
 import { initPageLoader } from './progressBar.js';
 
 // ── Level / XP system ──
@@ -549,6 +549,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Auth guard: redirect if not logged in
     if (!user) return showError();
+
+    // Sync cart with Supabase for correct badge count
+    await handleAuthChange(user.id);
 
     // Render profile
     loadProfile(user);
