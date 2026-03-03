@@ -320,13 +320,12 @@
                 return;
             }
 
-            const signupMessage = document.getElementById('auth-message');
             const signupExtras = [
                 document.querySelector('.auth-tabs'),
                 document.querySelector('.auth-divider'),
                 document.querySelector('.auth-guest-btn'),
                 document.querySelector('.auth-mode-bar'),
-                signupMessage
+                message
             ];
 
             submitBtn.disabled = true;
@@ -348,7 +347,9 @@
                     // Email confirmation required — don't switch to login yet
                     showMessage(result.message, 'success');
                     submitBtn.textContent = 'CHECK YOUR EMAIL';
+                    signupForm.classList.remove('hidden');
                     signupForm.reset();
+                    submitBtn.disabled = false;
                 } else {
                     // No confirmation needed — switch to login
                     showMessage(result.message + ' Switching to login...', 'success');

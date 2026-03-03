@@ -12,10 +12,16 @@ function isOffensive(username) {
     return BLOCKED_PATTERNS.some(p => lower.includes(p));
 }
 
+// Cache for username word pools
+let usernameWords = null;
+
 // Generate a unique username from word pools
 async function generateUsername() {
-    const response = await fetch('./js/data/usernames.json');
-    const data = await response.json();
+    if (!usernameWords) {
+        const response = await fetch('./js/data/usernames.json');
+        usernameWords = await response.json();
+    }
+    const data = usernameWords;
 
     for (let i = 0; i < 5; i++) {
         const first = data.firstWords[Math.floor(Math.random() * data.firstWords.length)];
@@ -91,12 +97,27 @@ async function getUniqueUsername() {
     return 'User' + Date.now().toString(36);
 }
 
+// Assign a username to a profile that doesn't have one yet
+async function repairUsername(userId) {
+    try {
+        const newUsername = await getUniqueUsername();
+        const { data: repaired } = await supabase
+            .from('profiles')
+            .update({ username: newUsername })
+            .eq('id', userId)
+            .select('username')
+            .single();
+
+        return repaired?.username || newUsername;
+    } catch (e) {
+        console.warn('Failed to repair missing username:', e);
+        return null;
+    }
+}
+
 // Sign up a new user
 export async function signUp(email, password) {
     try {
-        // Generate unique username first (before signup)
-        const username = await getUniqueUsername();
-
         // Create the auth user (trigger auto-creates profile row)
         const { data: authData, error: authError } = await supabase.auth.signUp({
             email,
@@ -107,9 +128,7 @@ export async function signUp(email, password) {
 
         // If email confirmation is required, user won't be authenticated yet
         // The session will be null until they confirm their email
-        const needsConfirmation = !authData.session;
-
-        if (needsConfirmation) {
+        if (!authData.session) {
             return {
                 success: true,
                 user: authData.user,
@@ -124,6 +143,7 @@ export async function signUp(email, password) {
             throw new Error('Profile creation timeout - please try again');
         }
 
+        const username = await getUniqueUsername();
         const { data: updatedProfile, error: profileError } = await supabase
             .from('profiles')
             .update({ username: username })
@@ -168,24 +188,7 @@ export async function signIn(email, password) {
             .eq('id', data.user.id)
             .single();
 
-        let username = profile?.username;
-
-        // Repair: if profile has no username (e.g. email confirmation flow), set one now
-        if (!username) {
-            try {
-                const newUsername = await getUniqueUsername();
-                const { data: repaired } = await supabase
-                    .from('profiles')
-                    .update({ username: newUsername })
-                    .eq('id', data.user.id)
-                    .select('username')
-                    .single();
-
-                username = repaired?.username || newUsername;
-            } catch (e) {
-                console.warn('Failed to repair missing username:', e);
-            }
-        }
+        const username = profile?.username || await repairUsername(data.user.id);
 
         return {
             success: true,
@@ -232,24 +235,7 @@ export async function getCurrentUser() {
             .eq('id', user.id)
             .single();
 
-        let username = profile?.username;
-
-        // Repair: if username is null, generate and save one
-        if (!username && profile) {
-            try {
-                const newUsername = await getUniqueUsername();
-                const { data: repaired } = await supabase
-                    .from('profiles')
-                    .update({ username: newUsername })
-                    .eq('id', user.id)
-                    .select('username')
-                    .single();
-
-                username = repaired?.username || newUsername;
-            } catch (e) {
-                console.warn('Failed to repair missing username:', e);
-            }
-        }
+        const username = profile?.username || (profile ? await repairUsername(user.id) : null);
 
         return {
             id: user.id,
