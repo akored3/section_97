@@ -98,21 +98,31 @@ async function getUniqueUsername() {
 }
 
 // Assign a username to a profile that doesn't have one yet
+let repairInProgress = null;
 async function repairUsername(userId) {
-    try {
-        const newUsername = await getUniqueUsername();
-        const { data: repaired } = await supabase
-            .from('profiles')
-            .update({ username: newUsername })
-            .eq('id', userId)
-            .select('username')
-            .single();
+    // Prevent concurrent repairs from generating different usernames
+    if (repairInProgress) return repairInProgress;
 
-        return repaired?.username || newUsername;
-    } catch (e) {
-        console.warn('Failed to repair missing username:', e);
-        return null;
-    }
+    repairInProgress = (async () => {
+        try {
+            const newUsername = await getUniqueUsername();
+            const { data: repaired } = await supabase
+                .from('profiles')
+                .update({ username: newUsername })
+                .eq('id', userId)
+                .select('username')
+                .single();
+
+            return repaired?.username || newUsername;
+        } catch (e) {
+            console.warn('Failed to repair missing username:', e);
+            return null;
+        } finally {
+            repairInProgress = null;
+        }
+    })();
+
+    return repairInProgress;
 }
 
 // Sign up a new user
