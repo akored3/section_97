@@ -98,7 +98,6 @@ function renderPodium(top3) {
                 </div>
                 <div class="lb-avatar-hex">
                     <div class="lb-avatar-hex-inner">${avatarContent}</div>
-                    <div class="lb-avatar-ring"></div>
                 </div>
                 <div class="lb-podium-stats">
                     <div class="lb-podium-stat-row">
