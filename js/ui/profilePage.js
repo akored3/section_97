@@ -345,6 +345,21 @@ function setupAchievementsDropdown() {
     });
 }
 
+// Setup orders dropdown toggle
+function setupOrdersDropdown() {
+    const btn = document.getElementById('orders-toggle');
+    const content = document.getElementById('profile-orders-list');
+    if (!btn || !content) return;
+
+    btn.addEventListener('click', () => {
+        const expanded = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', !expanded);
+        content.setAttribute('aria-hidden', expanded);
+        content.classList.toggle('orders-collapsed', expanded);
+        content.classList.toggle('orders-expanded', !expanded);
+    });
+}
+
 // Setup order row expansion (click to see items)
 function setupOrderExpansion() {
     const container = document.getElementById('profile-orders-list');
@@ -512,6 +527,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     loadProfile(user);
     setupAvatarUpload(user.id);
     setupLogout();
+    setupOrdersDropdown();
     setupOrderExpansion();
     setupAchievementsDropdown();
 

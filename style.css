@@ -3823,6 +3823,171 @@ a.dropdown-item {
     display: none; /* Header replaced by dropdown button */
 }
 
+/* ── Orders dropdown button (blue themed) ── */
+.orders-dropdown-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-xl);
+    background: rgba(74, 158, 255, 0.06);
+    border: none;
+    border-bottom: 1px solid rgba(74, 158, 255, 0.1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    font: var(--text-label-lg);
+    color: #4a9eff;
+    letter-spacing: 0.15em;
+    transition: background var(--duration-short) var(--motion-standard);
+}
+.orders-dropdown-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(74, 158, 255, 0.08), transparent);
+    opacity: 0;
+    transition: opacity var(--duration-short);
+}
+.orders-dropdown-btn:hover::before { opacity: 1; }
+.orders-dropdown-btn:hover {
+    background: rgba(74, 158, 255, 0.1);
+    box-shadow: inset 0 0 0 1px rgba(74, 158, 255, 0.25),
+                0 0 20px rgba(74, 158, 255, 0.08);
+}
+.orders-dropdown-btn svg:first-child {
+    width: 18px;
+    height: 18px;
+    color: #4a9eff;
+    filter: drop-shadow(0 0 4px rgba(74, 158, 255, 0.5));
+}
+:root[data-theme="light"] .orders-dropdown-btn {
+    background: rgba(37, 99, 200, 0.06);
+    color: #2563c8;
+}
+:root[data-theme="light"] .orders-dropdown-btn:hover {
+    background: rgba(37, 99, 200, 0.1);
+}
+:root[data-theme="light"] .orders-dropdown-btn svg:first-child {
+    color: #2563c8;
+    filter: drop-shadow(0 0 3px rgba(37, 99, 200, 0.4));
+}
+.orders-btn-text {
+    flex: 1;
+    text-align: left;
+    position: relative;
+}
+.orders-btn-tag {
+    font: var(--text-label-sm);
+    padding: 2px 8px;
+    background: rgba(74, 158, 255, 0.1);
+    border: 1px solid rgba(74, 158, 255, 0.2);
+    color: #4a9eff;
+    letter-spacing: 0.12em;
+}
+:root[data-theme="light"] .orders-btn-tag {
+    background: rgba(37, 99, 200, 0.08);
+    border-color: rgba(37, 99, 200, 0.2);
+    color: #2563c8;
+}
+.orders-chevron {
+    color: #4a9eff;
+    transition: transform var(--duration-medium) var(--motion-standard);
+    flex-shrink: 0;
+}
+:root[data-theme="light"] .orders-chevron { color: #2563c8; }
+.orders-dropdown-btn[aria-expanded="true"] .orders-chevron {
+    transform: rotate(180deg);
+}
+
+/* Collapsed / expanded states */
+.orders-collapsed {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height var(--duration-medium) var(--motion-standard),
+                padding var(--duration-medium) var(--motion-standard);
+    padding: 0 var(--space-xl);
+}
+.orders-expanded {
+    max-height: 2000px;
+    overflow: hidden;
+    padding: var(--space-lg) var(--space-xl);
+    transition: max-height var(--duration-long) var(--motion-standard),
+                padding var(--duration-medium) var(--motion-standard);
+}
+
+/* ── Leaderboard link on profile page ── */
+.profile-leaderboard-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-xl);
+    background: rgba(0, 212, 255, 0.04);
+    border: 1px solid rgba(0, 212, 255, 0.1);
+    text-decoration: none;
+    font: var(--text-label-lg);
+    color: #00d4ff;
+    letter-spacing: 0.15em;
+    position: relative;
+    overflow: hidden;
+    transition: background var(--duration-short) var(--motion-standard),
+                border-color var(--duration-short) var(--motion-standard);
+}
+.profile-leaderboard-link::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.06), transparent);
+    opacity: 0;
+    transition: opacity var(--duration-short);
+}
+.profile-leaderboard-link:hover::before { opacity: 1; }
+.profile-leaderboard-link:hover {
+    background: rgba(0, 212, 255, 0.08);
+    border-color: rgba(0, 212, 255, 0.25);
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.08);
+}
+.profile-leaderboard-link svg:first-child {
+    color: #00d4ff;
+    filter: drop-shadow(0 0 4px rgba(0, 212, 255, 0.5));
+}
+.profile-leaderboard-text {
+    flex: 1;
+    text-align: left;
+}
+.profile-leaderboard-tag {
+    font: var(--text-label-sm);
+    padding: 2px 8px;
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    color: #00d4ff;
+    letter-spacing: 0.12em;
+}
+.profile-leaderboard-arrow {
+    color: #00d4ff;
+    flex-shrink: 0;
+    transition: transform var(--duration-short) var(--motion-standard);
+}
+.profile-leaderboard-link:hover .profile-leaderboard-arrow {
+    transform: translateX(3px);
+}
+:root[data-theme="light"] .profile-leaderboard-link {
+    background: rgba(0, 153, 204, 0.04);
+    border-color: rgba(0, 153, 204, 0.12);
+    color: #0099cc;
+}
+:root[data-theme="light"] .profile-leaderboard-link:hover {
+    background: rgba(0, 153, 204, 0.08);
+    border-color: rgba(0, 153, 204, 0.25);
+}
+:root[data-theme="light"] .profile-leaderboard-link svg:first-child { color: #0099cc; }
+:root[data-theme="light"] .profile-leaderboard-tag {
+    background: rgba(0, 153, 204, 0.08);
+    border-color: rgba(0, 153, 204, 0.2);
+    color: #0099cc;
+}
+:root[data-theme="light"] .profile-leaderboard-arrow { color: #0099cc; }
+
 .profile-section-title {
     font: var(--text-headline-md);
     letter-spacing: 3px;
@@ -3978,28 +4143,21 @@ a.dropdown-item {
     background: var(--accent-hover);
 }
 
-/* ── Order History card ── */
+/* ── Order History card (dropdown) ── */
 .profile-orders-card {
     position: relative;
     background: rgba(10, 10, 15, 0.92);
-    border: 3px solid rgba(0, 255, 100, 0.12);
-    padding: var(--space-lg) var(--space-xl);
+    border: 1px solid rgba(74, 158, 255, 0.12);
     overflow: hidden;
 }
 
 :root[data-theme="light"] .profile-orders-card {
     background: rgba(255, 255, 255, 0.88);
-    border-width: 2px;
-    border-color: rgba(0, 168, 64, 0.15);
+    border-color: rgba(37, 99, 200, 0.12);
 }
 
 .profile-orders-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--space-lg);
-    position: relative;
-    z-index: 2;
+    display: none; /* Replaced by dropdown button */
 }
 
 /* ── Order history ── */
