@@ -9,6 +9,13 @@ import { initializeMenu } from './menu.js';
 
 const userSvg = `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="32" cy="20" r="12"/><path d="M8 58C8 44 18 36 32 36C46 36 56 44 56 58" stroke-linecap="round"/></svg>`;
 
+// ── Abbreviate currency amounts ──
+function abbreviateAmount(amount) {
+    if (amount >= 1_000_000) return `${(amount / 1_000_000).toFixed(1).replace(/\.0$/, '')}M`;
+    if (amount >= 1_000) return `${Math.round(amount / 1_000)}k`;
+    return String(amount);
+}
+
 // ── Animated counter ──
 function animateCounter(el, target, prefix = '', suffix = '', duration = 1200) {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -57,7 +64,7 @@ function renderPodium(top3) {
         const { level } = calculateLevel(user.total_spent || 0);
         const rankData = getRank(level);
         const pct = ((user.order_count || 0) / maxOrders * 100).toFixed(1);
-        const spent = Math.round(user.total_spent || 0).toLocaleString('en-US');
+        const spent = abbreviateAmount(Math.round(user.total_spent || 0));
         const pulseColor = rank === 1 ? 'rgba(255,215,0,0.3)' :
                           rank === 2 ? 'rgba(255,0,255,0.25)' : 'rgba(0,212,255,0.25)';
 
@@ -127,7 +134,7 @@ function renderTable(users, currentUserId) {
         const { level } = calculateLevel(user.total_spent || 0);
         const rankData = getRank(level);
         const pct = ((user.order_count || 0) / maxOrders * 100).toFixed(1);
-        const spent = Math.round(user.total_spent || 0).toLocaleString('en-US');
+        const spent = abbreviateAmount(Math.round(user.total_spent || 0));
         const isYou = currentUserId && user.id === currentUserId;
 
         const avatarContent = user.avatar_url
@@ -182,7 +189,7 @@ function renderYourRank(allUsers, currentUser) {
     document.getElementById('lb-your-pos').textContent = pos ? `#${pos}` : 'UNRANKED';
     document.getElementById('lb-your-name').textContent = currentUser.username || 'Unknown';
     document.getElementById('lb-your-stats').textContent =
-        `${orderCount} orders · ₦${Math.round(totalSpent).toLocaleString('en-US')} spent · LVL ${level}`;
+        `${orderCount} orders · ₦${abbreviateAmount(Math.round(totalSpent))} spent · LVL ${level}`;
 
     const badge = document.getElementById('lb-your-badge');
     badge.textContent = rankData.name;
