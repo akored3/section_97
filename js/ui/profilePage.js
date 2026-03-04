@@ -7,11 +7,12 @@ import { initializeCart, setupCartDrawer, handleAuthChange } from './cart.js';
 import { initPageLoader } from './progressBar.js';
 
 // ── Level / XP system ──
-// ₦10,000 spent = 1 XP. Levels use quadratic thresholds.
-const LEVEL_THRESHOLDS = [0, 2, 6, 12, 20, 32, 48, 70, 100, 140, 190];
+// ₦100,000 spent = 1 XP. Levels use quadratic thresholds.
+// With avg order ~₦30k–₦60k, it takes ~2-3 orders per XP.
+const LEVEL_THRESHOLDS = [0, 3, 8, 16, 28, 45, 68, 100, 140, 190, 250];
 
 function calculateLevel(totalSpent) {
-    const xp = Math.floor(totalSpent / 10000);
+    const xp = Math.floor(totalSpent / 100000);
     let level = 1;
     let xpForNext = LEVEL_THRESHOLDS[1] || 5;
     let xpForCurrent = 0;
@@ -66,44 +67,44 @@ const ACHIEVEMENTS = [
     {
         id: 'big-spender',
         name: 'Big Spender',
-        desc: 'Spend over ₦50k',
+        desc: 'Spend over ₦500k',
         color: '#ffd700',  // gold
         icon: '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><circle cx="12" cy="15" r="1.5"/>',
         check: (orders) => {
             const total = orders.reduce((sum, o) => sum + parseFloat(o.total || 0), 0);
-            return total > 50000;
+            return total > 500000;
         },
         progress: (orders) => {
             const total = Math.round(orders.reduce((sum, o) => sum + parseFloat(o.total || 0), 0) / 1000);
-            return { current: total, target: 50, unit: 'k' };
+            return { current: total, target: 500, unit: 'k' };
         }
     },
     {
         id: 'hype-beast',
         name: 'Hype Beast',
-        desc: 'Complete 15 orders',
+        desc: 'Complete 20 orders',
         icon: '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
         color: '#a78bfa',  // purple
-        check: (orders) => orders.length >= 15,
-        progress: (orders) => ({ current: orders.length, target: 15 })
+        check: (orders) => orders.length >= 20,
+        progress: (orders) => ({ current: orders.length, target: 20 })
     },
     {
         id: 'collector',
         name: 'Collector',
-        desc: 'Buy 5+ items worth ₦30k+',
+        desc: 'Buy 5+ items worth ₦25k+',
         color: '#00ffd5',  // cyan
         icon: '<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>',
         check: (orders) => {
             let count = 0;
             orders.forEach(o => (o.order_items || []).forEach(i => {
-                if (parseFloat(i.price || 0) >= 30000) count++;
+                if (parseFloat(i.price || 0) >= 25000) count++;
             }));
             return count >= 5;
         },
         progress: (orders) => {
             let count = 0;
             orders.forEach(o => (o.order_items || []).forEach(i => {
-                if (parseFloat(i.price || 0) >= 30000) count++;
+                if (parseFloat(i.price || 0) >= 25000) count++;
             }));
             return { current: count, target: 5 };
         }
