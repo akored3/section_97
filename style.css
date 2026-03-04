@@ -2595,7 +2595,6 @@
     min-width: 18px;
     height: 18px;
     border-radius: var(--shape-full);
-    display: flex;
     align-items: center;
     justify-content: center;
     font-family: var(--font-mono);
