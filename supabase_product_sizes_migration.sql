@@ -1,7 +1,7 @@
 -- SECTION-97 Product Sizes Migration
 -- Splits each product's total stock across realistic size variants
 -- Size stocks SUM to the product's total stock (single source of truth)
--- Run this in Supabase SQL Editor
+-- Run this in Supabase SQL Editor AFTER the products migration
 
 -- Drop existing table if any
 DROP TABLE IF EXISTS product_sizes CASCADE;
@@ -37,218 +37,218 @@ INSERT INTO product_sizes (product_id, size, stock) VALUES
 
 -- ==================== SUPREME ====================
 
--- 1: Red Supreme Hoodie (stock: 23)
-(1, 'S', 5), (1, 'M', 7), (1, 'L', 8), (1, 'XL', 3),
+-- 1: Red Supreme Hoodie (stock: 120)
+(1, 'S', 24), (1, 'M', 36), (1, 'L', 42), (1, 'XL', 18),
 
--- 2: Black Supreme Hoodie (stock: 18)
-(2, 'S', 4), (2, 'M', 5), (2, 'L', 6), (2, 'XL', 3),
+-- 2: Black Supreme Hoodie (stock: 95)
+(2, 'S', 19), (2, 'M', 29), (2, 'L', 33), (2, 'XL', 14),
 
--- 3: Blue Supreme Hoodie (stock: 31)
-(3, 'S', 6), (3, 'M', 9), (3, 'L', 11), (3, 'XL', 5),
+-- 3: Blue Supreme Hoodie (stock: 150)
+(3, 'S', 30), (3, 'M', 45), (3, 'L', 53), (3, 'XL', 22),
 
--- 4: Supreme Hoodie (stock: 12)
-(4, 'S', 2), (4, 'M', 4), (4, 'L', 4), (4, 'XL', 2),
+-- 4: Supreme Hoodie (stock: 80)
+(4, 'S', 16), (4, 'M', 24), (4, 'L', 28), (4, 'XL', 12),
 
--- 5: Brown Supreme Hoodie (stock: 27)
-(5, 'S', 5), (5, 'M', 8), (5, 'L', 10), (5, 'XL', 4),
+-- 5: Brown Supreme Hoodie (stock: 130)
+(5, 'S', 26), (5, 'M', 39), (5, 'L', 46), (5, 'XL', 19),
 
--- 6: Blue Supreme Hoodie (stock: 9)
-(6, 'S', 2), (6, 'M', 3), (6, 'L', 3), (6, 'XL', 1),
+-- 6: Blue Supreme Hoodie (stock: 65)
+(6, 'S', 13), (6, 'M', 20), (6, 'L', 23), (6, 'XL', 9),
 
--- 7: Supreme Triple Hoodie (stock: 45)
-(7, 'S', 9), (7, 'M', 14), (7, 'L', 15), (7, 'XL', 7),
+-- 7: Supreme Triple Hoodie (stock: 200)
+(7, 'S', 40), (7, 'M', 60), (7, 'L', 70), (7, 'XL', 30),
 
--- 8: Black Supreme Jacket (stock: 14)
-(8, 'S', 3), (8, 'M', 4), (8, 'L', 5), (8, 'XL', 2),
+-- 8: Black Supreme Jacket (stock: 75)
+(8, 'S', 15), (8, 'M', 23), (8, 'L', 26), (8, 'XL', 11),
 
--- 9: Supreme Skull Shirt (stock: 36)
-(9, 'S', 7), (9, 'M', 11), (9, 'L', 13), (9, 'XL', 5),
+-- 9: Supreme Skull Shirt (stock: 180)
+(9, 'S', 36), (9, 'M', 54), (9, 'L', 63), (9, 'XL', 27),
 
--- 10: Brown Supreme Shirt (stock: 21)
-(10, 'S', 4), (10, 'M', 6), (10, 'L', 8), (10, 'XL', 3),
+-- 10: Brown Supreme Shirt (stock: 110)
+(10, 'S', 22), (10, 'M', 33), (10, 'L', 39), (10, 'XL', 16),
 
--- 11: Supreme Triple Shirts (stock: 8)
-(11, 'S', 2), (11, 'M', 2), (11, 'L', 3), (11, 'XL', 1),
+-- 11: Supreme Triple Shirts (stock: 60)
+(11, 'S', 12), (11, 'M', 18), (11, 'L', 21), (11, 'XL', 9),
 
--- 12: Red Supreme Shirt (stock: 33)
-(12, 'S', 7), (12, 'M', 10), (12, 'L', 11), (12, 'XL', 5),
+-- 12: Red Supreme Shirt (stock: 160)
+(12, 'S', 32), (12, 'M', 48), (12, 'L', 56), (12, 'XL', 24),
 
--- 13: Green Supreme Shirt (stock: 19)
-(13, 'S', 4), (13, 'M', 6), (13, 'L', 6), (13, 'XL', 3),
+-- 13: Green Supreme Shirt (stock: 100)
+(13, 'S', 20), (13, 'M', 30), (13, 'L', 35), (13, 'XL', 15),
 
--- 14: Black Supreme Shirt (stock: 42)
-(14, 'S', 8), (14, 'M', 13), (14, 'L', 15), (14, 'XL', 6),
+-- 14: Black Supreme Shirt (stock: 200)
+(14, 'S', 40), (14, 'M', 60), (14, 'L', 70), (14, 'XL', 30),
 
--- 15: Black Supreme Pants (stock: 16)
-(15, 'S', 3), (15, 'M', 5), (15, 'L', 6), (15, 'XL', 2),
+-- 15: Black Supreme Pants (stock: 85)
+(15, 'S', 17), (15, 'M', 26), (15, 'L', 30), (15, 'XL', 12),
 
--- 16: Supreme Shorts (stock: 28)
-(16, 'S', 6), (16, 'M', 8), (16, 'L', 10), (16, 'XL', 4),
+-- 16: Supreme Shorts (stock: 140)
+(16, 'S', 28), (16, 'M', 42), (16, 'L', 49), (16, 'XL', 21),
 
--- 17: Supreme Board (stock: 7)
-(17, 'One Size', 7),
+-- 17: Supreme Board (stock: 45)
+(17, 'One Size', 45),
 
--- 18: Supreme Caps (stock: 50)
-(18, 'One Size', 50),
+-- 18: Supreme Caps (stock: 250)
+(18, 'One Size', 250),
 
 -- ==================== CORTEIZ ====================
 
--- 19: Green Corteiz Hoodie (stock: 24)
-(19, 'S', 5), (19, 'M', 7), (19, 'L', 8), (19, 'XL', 4),
+-- 19: Green Corteiz Hoodie (stock: 115)
+(19, 'S', 23), (19, 'M', 35), (19, 'L', 40), (19, 'XL', 17),
 
--- 20: White Corteiz Hoodie (stock: 11)
-(20, 'S', 2), (20, 'M', 3), (20, 'L', 4), (20, 'XL', 2),
+-- 20: White Corteiz Hoodie (stock: 70)
+(20, 'S', 14), (20, 'M', 21), (20, 'L', 25), (20, 'XL', 10),
 
--- 21: White Corteiz Hoodie (stock: 38)
-(21, 'S', 8), (21, 'M', 11), (21, 'L', 13), (21, 'XL', 6),
+-- 21: White Corteiz Hoodie (stock: 180)
+(21, 'S', 36), (21, 'M', 54), (21, 'L', 63), (21, 'XL', 27),
 
--- 22: Black Corteiz Hoodie (stock: 15)
-(22, 'S', 3), (22, 'M', 5), (22, 'L', 5), (22, 'XL', 2),
+-- 22: Black Corteiz Hoodie (stock: 80)
+(22, 'S', 16), (22, 'M', 24), (22, 'L', 28), (22, 'XL', 12),
 
--- 23: Black Corteiz Jacket (stock: 6)
-(23, 'S', 1), (23, 'M', 2), (23, 'L', 2), (23, 'XL', 1),
+-- 23: Black Corteiz Jacket (stock: 50)
+(23, 'S', 10), (23, 'M', 15), (23, 'L', 18), (23, 'XL', 7),
 
--- 24: Corteiz Denim Jacket (stock: 29)
-(24, 'S', 6), (24, 'M', 9), (24, 'L', 10), (24, 'XL', 4),
+-- 24: Corteiz Denim Jacket (stock: 140)
+(24, 'S', 28), (24, 'M', 42), (24, 'L', 49), (24, 'XL', 21),
 
--- 25: White Corteiz Shirt (stock: 47)
-(25, 'S', 9), (25, 'M', 14), (25, 'L', 17), (25, 'XL', 7),
+-- 25: White Corteiz Shirt (stock: 220)
+(25, 'S', 44), (25, 'M', 66), (25, 'L', 77), (25, 'XL', 33),
 
--- 26: Green Corteiz Pants (stock: 13)
-(26, 'S', 3), (26, 'M', 4), (26, 'L', 4), (26, 'XL', 2),
+-- 26: Green Corteiz Pants (stock: 75)
+(26, 'S', 15), (26, 'M', 23), (26, 'L', 26), (26, 'XL', 11),
 
--- 27: Corteiz Denim Pants (stock: 35)
-(27, 'S', 7), (27, 'M', 11), (27, 'L', 12), (27, 'XL', 5),
+-- 27: Corteiz Denim Pants (stock: 170)
+(27, 'S', 34), (27, 'M', 51), (27, 'L', 60), (27, 'XL', 25),
 
--- 28: White Corteiz Pants (stock: 22)
-(28, 'S', 4), (28, 'M', 7), (28, 'L', 8), (28, 'XL', 3),
+-- 28: White Corteiz Pants (stock: 110)
+(28, 'S', 22), (28, 'M', 33), (28, 'L', 39), (28, 'XL', 16),
 
--- 29: Black Corteiz Pants (stock: 40)
-(29, 'S', 8), (29, 'M', 12), (29, 'L', 14), (29, 'XL', 6),
+-- 29: Black Corteiz Pants (stock: 190)
+(29, 'S', 38), (29, 'M', 57), (29, 'L', 67), (29, 'XL', 28),
 
 -- ==================== BALENCIAGA NBA ====================
 
--- 30: Black Balenciaga NBA Jersey (stock: 10)
-(30, 'S', 2), (30, 'M', 3), (30, 'L', 3), (30, 'XL', 2),
+-- 30: Black Balenciaga NBA Jersey (stock: 65)
+(30, 'S', 13), (30, 'M', 20), (30, 'L', 23), (30, 'XL', 9),
 
--- 31: Black Balenciaga NBA Boots (stock: 5) — SHOES
-(31, '8', 1), (31, '9', 1), (31, '10', 1), (31, '11', 1), (31, '12', 1),
+-- 31: Black Balenciaga NBA Boots (stock: 40) — SHOES
+(31, '7', 4), (31, '8', 6), (31, '9', 10), (31, '10', 10), (31, '11', 6), (31, '12', 4),
 
--- 32: Red Balenciaga NBA Jacket (stock: 8)
-(32, 'S', 2), (32, 'M', 2), (32, 'L', 3), (32, 'XL', 1),
+-- 32: Red Balenciaga NBA Jacket (stock: 55)
+(32, 'S', 11), (32, 'M', 17), (32, 'L', 19), (32, 'XL', 8),
 
--- 33: White Balenciaga NBA Jacket (stock: 17)
-(33, 'S', 3), (33, 'M', 5), (33, 'L', 6), (33, 'XL', 3),
+-- 33: White Balenciaga NBA Jacket (stock: 90)
+(33, 'S', 18), (33, 'M', 27), (33, 'L', 32), (33, 'XL', 13),
 
--- 34: Balenciaga NBA Slides (stock: 44) — SHOES
-(34, '7', 5), (34, '8', 7), (34, '9', 10), (34, '10', 10), (34, '11', 7), (34, '12', 5),
+-- 34: Balenciaga NBA Slides (stock: 200) — SHOES
+(34, '7', 20), (34, '8', 30), (34, '9', 50), (34, '10', 50), (34, '11', 30), (34, '12', 20),
 
--- 35: Balenciaga NBA Backpack (stock: 12) — BAG
-(35, 'One Size', 12),
+-- 35: Balenciaga NBA Backpack (stock: 70) — BAG
+(35, 'One Size', 70),
 
--- 36: Blue Balenciaga NBA Shirt (stock: 26)
-(36, 'S', 5), (36, 'M', 8), (36, 'L', 9), (36, 'XL', 4),
+-- 36: Blue Balenciaga NBA Shirt (stock: 130)
+(36, 'S', 26), (36, 'M', 39), (36, 'L', 46), (36, 'XL', 19),
 
--- 37: Balenciaga NBA Jacket (stock: 9)
-(37, 'S', 2), (37, 'M', 3), (37, 'L', 3), (37, 'XL', 1),
+-- 37: Balenciaga NBA Jacket (stock: 60)
+(37, 'S', 12), (37, 'M', 18), (37, 'L', 21), (37, 'XL', 9),
 
 -- ==================== STUSSY ====================
 
--- 38: Green Stussy Hoodie (stock: 32)
-(38, 'S', 6), (38, 'M', 10), (38, 'L', 11), (38, 'XL', 5),
+-- 38: Green Stussy Hoodie (stock: 155)
+(38, 'S', 31), (38, 'M', 47), (38, 'L', 54), (38, 'XL', 23),
 
--- 39: Black Stussy Hoodie (stock: 20)
-(39, 'S', 4), (39, 'M', 6), (39, 'L', 7), (39, 'XL', 3),
+-- 39: Black Stussy Hoodie (stock: 100)
+(39, 'S', 20), (39, 'M', 30), (39, 'L', 35), (39, 'XL', 15),
 
--- 40: Black & Blue Stussy Sweatshirt (stock: 37)
-(40, 'S', 7), (40, 'M', 11), (40, 'L', 13), (40, 'XL', 6),
+-- 40: Black & Blue Stussy Sweatshirt (stock: 175)
+(40, 'S', 35), (40, 'M', 53), (40, 'L', 61), (40, 'XL', 26),
 
--- 41: Brown Stussy Sweatshirt (stock: 25)
-(41, 'S', 5), (41, 'M', 8), (41, 'L', 8), (41, 'XL', 4),
+-- 41: Brown Stussy Sweatshirt (stock: 120)
+(41, 'S', 24), (41, 'M', 36), (41, 'L', 42), (41, 'XL', 18),
 
--- 42: Brown Stussy Pants (stock: 14)
-(42, 'S', 3), (42, 'M', 4), (42, 'L', 5), (42, 'XL', 2),
+-- 42: Brown Stussy Pants (stock: 80)
+(42, 'S', 16), (42, 'M', 24), (42, 'L', 28), (42, 'XL', 12),
 
 -- ==================== NIKE ====================
 
--- 43: Green Nike Shirt (stock: 48)
-(43, 'S', 10), (43, 'M', 14), (43, 'L', 17), (43, 'XL', 7),
+-- 43: Green Nike Shirt (stock: 230)
+(43, 'S', 46), (43, 'M', 69), (43, 'L', 81), (43, 'XL', 34),
 
--- 44: Black Nike Shirt (stock: 30)
-(44, 'S', 6), (44, 'M', 9), (44, 'L', 11), (44, 'XL', 4),
+-- 44: Black Nike Shirt (stock: 150)
+(44, 'S', 30), (44, 'M', 45), (44, 'L', 53), (44, 'XL', 22),
 
--- 45: White Nike Shirt (stock: 41)
-(45, 'S', 8), (45, 'M', 12), (45, 'L', 15), (45, 'XL', 6),
+-- 45: White Nike Shirt (stock: 195)
+(45, 'S', 39), (45, 'M', 59), (45, 'L', 68), (45, 'XL', 29),
 
--- 46: Grey Nike x Carhartt Jacket (stock: 11)
-(46, 'S', 2), (46, 'M', 3), (46, 'L', 4), (46, 'XL', 2),
+-- 46: Grey Nike x Carhartt Jacket (stock: 70)
+(46, 'S', 14), (46, 'M', 21), (46, 'L', 25), (46, 'XL', 10),
 
 -- ==================== AIME LEON DORE ====================
 
--- 47: Brown Aime Leon Dore Sweatshirt (stock: 7)
-(47, 'S', 1), (47, 'M', 2), (47, 'L', 3), (47, 'XL', 1),
+-- 47: Brown Aime Leon Dore Sweatshirt (stock: 50)
+(47, 'S', 10), (47, 'M', 15), (47, 'L', 18), (47, 'XL', 7),
 
--- 48: Aime Leon Dore Pants (stock: 19)
-(48, 'S', 4), (48, 'M', 6), (48, 'L', 6), (48, 'XL', 3),
+-- 48: Aime Leon Dore Pants (stock: 95)
+(48, 'S', 19), (48, 'M', 29), (48, 'L', 33), (48, 'XL', 14),
 
 -- ==================== YARD SALE ====================
 
--- 49: Yard Sale Vest (stock: 34)
-(49, 'S', 7), (49, 'M', 10), (49, 'L', 12), (49, 'XL', 5),
+-- 49: Yard Sale Vest (stock: 165)
+(49, 'S', 33), (49, 'M', 50), (49, 'L', 58), (49, 'XL', 24),
 
--- 50: White Yard Sale Hoodie (stock: 16)
-(50, 'S', 3), (50, 'M', 5), (50, 'L', 6), (50, 'XL', 2),
+-- 50: White Yard Sale Hoodie (stock: 85)
+(50, 'S', 17), (50, 'M', 26), (50, 'L', 30), (50, 'XL', 12),
 
--- 51: Black Yard Sale Hoodie (stock: 43)
-(51, 'S', 9), (51, 'M', 13), (51, 'L', 15), (51, 'XL', 6),
+-- 51: Black Yard Sale Hoodie (stock: 205)
+(51, 'S', 41), (51, 'M', 62), (51, 'L', 72), (51, 'XL', 30),
 
--- 52: Checkered Yard Sale Hoodie (stock: 28)
-(52, 'S', 6), (52, 'M', 8), (52, 'L', 10), (52, 'XL', 4),
+-- 52: Checkered Yard Sale Hoodie (stock: 135)
+(52, 'S', 27), (52, 'M', 41), (52, 'L', 47), (52, 'XL', 20),
 
--- 53: Blue Denim Yard Sale Hoodie (stock: 13)
-(53, 'S', 3), (53, 'M', 4), (53, 'L', 4), (53, 'XL', 2),
+-- 53: Blue Denim Yard Sale Hoodie (stock: 75)
+(53, 'S', 15), (53, 'M', 23), (53, 'L', 26), (53, 'XL', 11),
 
--- 54: Purple Yard Sale Hoodie (stock: 39)
-(54, 'S', 8), (54, 'M', 12), (54, 'L', 13), (54, 'XL', 6),
+-- 54: Purple Yard Sale Hoodie (stock: 185)
+(54, 'S', 37), (54, 'M', 56), (54, 'L', 65), (54, 'XL', 27),
 
--- 55: Beige Yard Sale Hoodie (stock: 22)
-(55, 'S', 4), (55, 'M', 7), (55, 'L', 8), (55, 'XL', 3),
+-- 55: Beige Yard Sale Hoodie (stock: 110)
+(55, 'S', 22), (55, 'M', 33), (55, 'L', 39), (55, 'XL', 16),
 
--- 56: Purple Yard Sale Hoodie (stock: 31)
-(56, 'S', 6), (56, 'M', 9), (56, 'L', 11), (56, 'XL', 5),
+-- 56: Purple Yard Sale Hoodie (stock: 150)
+(56, 'S', 30), (56, 'M', 45), (56, 'L', 53), (56, 'XL', 22),
 
--- 57: Checkered Yard Sale Hoodie (stock: 8)
-(57, 'S', 2), (57, 'M', 2), (57, 'L', 3), (57, 'XL', 1),
+-- 57: Checkered Yard Sale Hoodie (stock: 55)
+(57, 'S', 11), (57, 'M', 17), (57, 'L', 19), (57, 'XL', 8),
 
--- 58: Blue Yard Sale Hoodie (stock: 46)
-(58, 'S', 9), (58, 'M', 14), (58, 'L', 16), (58, 'XL', 7),
+-- 58: Blue Yard Sale Hoodie (stock: 215)
+(58, 'S', 43), (58, 'M', 65), (58, 'L', 75), (58, 'XL', 32),
 
--- 59: Yard Sale Shirt (stock: 50)
-(59, 'S', 10), (59, 'M', 15), (59, 'L', 18), (59, 'XL', 7),
+-- 59: Yard Sale Shirt (stock: 240)
+(59, 'S', 48), (59, 'M', 72), (59, 'L', 84), (59, 'XL', 36),
 
--- 60: Red Yard Sale Shirt (stock: 17)
-(60, 'S', 3), (60, 'M', 5), (60, 'L', 6), (60, 'XL', 3),
+-- 60: Red Yard Sale Shirt (stock: 90)
+(60, 'S', 18), (60, 'M', 27), (60, 'L', 32), (60, 'XL', 13),
 
--- 61: Black Yard Sale Shirt (stock: 24)
-(61, 'S', 5), (61, 'M', 7), (61, 'L', 8), (61, 'XL', 4),
+-- 61: Black Yard Sale Shirt (stock: 120)
+(61, 'S', 24), (61, 'M', 36), (61, 'L', 42), (61, 'XL', 18),
 
--- 62: White Yard Sale Shirt (stock: 36)
-(62, 'S', 7), (62, 'M', 11), (62, 'L', 13), (62, 'XL', 5),
+-- 62: White Yard Sale Shirt (stock: 175)
+(62, 'S', 35), (62, 'M', 53), (62, 'L', 61), (62, 'XL', 26),
 
--- 63: Black Yard Sale Shirt (stock: 12)
-(63, 'S', 2), (63, 'M', 4), (63, 'L', 4), (63, 'XL', 2),
+-- 63: Black Yard Sale Shirt (stock: 70)
+(63, 'S', 14), (63, 'M', 21), (63, 'L', 25), (63, 'XL', 10),
 
--- 64: Grey Yard Sale Shirt (stock: 29)
-(64, 'S', 6), (64, 'M', 9), (64, 'L', 10), (64, 'XL', 4),
+-- 64: Grey Yard Sale Shirt (stock: 145)
+(64, 'S', 29), (64, 'M', 44), (64, 'L', 51), (64, 'XL', 21),
 
--- 65: Black Yard Sale Shirt (stock: 41)
-(65, 'S', 8), (65, 'M', 12), (65, 'L', 15), (65, 'XL', 6),
+-- 65: Black Yard Sale Shirt (stock: 195)
+(65, 'S', 39), (65, 'M', 59), (65, 'L', 68), (65, 'XL', 29),
 
--- 66: Yard Sale Bag (stock: 15) — BAG
-(66, 'One Size', 15),
+-- 66: Yard Sale Bag (stock: 80) — BAG
+(66, 'One Size', 80),
 
--- 67: Brown Yard Sale Cargo Pants (stock: 33)
-(67, 'S', 7), (67, 'M', 10), (67, 'L', 11), (67, 'XL', 5);
+-- 67: Brown Yard Sale Cargo Pants (stock: 160)
+(67, 'S', 32), (67, 'M', 48), (67, 'L', 56), (67, 'XL', 24);
 
 -- ============================================================
 -- VERIFICATION: Confirm every product's size stock sums to its total
