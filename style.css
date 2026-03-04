@@ -2402,6 +2402,52 @@
             transform: translateY(-2px);
         }
 
+        /* Stock limit toast */
+        .cart-stock-toast {
+            position: absolute;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--error);
+            color: #fff;
+            font: var(--text-label);
+            letter-spacing: 0.03em;
+            padding: 8px 18px;
+            border-radius: var(--shape-full);
+            white-space: nowrap;
+            z-index: 10;
+            animation: toast-in 0.3s var(--motion-standard), toast-out 0.3s var(--motion-standard) 2.2s forwards;
+            pointer-events: none;
+        }
+
+        @keyframes toast-in {
+            from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+            to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        @keyframes toast-out {
+            from { opacity: 1; }
+            to   { opacity: 0; }
+        }
+
+        /* Shake animation for + button at stock limit */
+        .cart-drawer-qty button.shake {
+            animation: btn-shake 0.4s ease;
+        }
+
+        @keyframes btn-shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-3px); }
+            40% { transform: translateX(3px); }
+            60% { transform: translateX(-2px); }
+            80% { transform: translateX(2px); }
+        }
+
+        /* Disabled + button at stock limit */
+        .cart-drawer-qty button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
         /* Iridescent edge glow on open */
         .cart-drawer::before {
             content: '';

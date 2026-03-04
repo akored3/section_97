@@ -151,7 +151,8 @@ function setupAddToCart() {
             name: currentProduct.name,
             price: currentProduct.price,
             image: currentProduct.imageSrc,
-            size: selectedSize
+            size: selectedSize,
+            stock: selectedSizeStock
         });
 
         openCartDrawer();

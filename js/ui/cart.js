@@ -89,7 +89,8 @@ function renderDrawer() {
                     <div class="cart-drawer-qty">
                         <button data-action="dec" data-key="${escapeHtml(item.cartKey)}" aria-label="Decrease quantity">−</button>
                         <span>${item.quantity}</span>
-                        <button data-action="inc" data-key="${escapeHtml(item.cartKey)}" aria-label="Increase quantity">+</button>
+                        <button data-action="inc" data-key="${escapeHtml(item.cartKey)}" aria-label="Increase quantity"
+                            ${item.maxStock && item.quantity >= item.maxStock ? 'disabled' : ''}>+</button>
                     </div>
                     <button class="cart-drawer-remove" data-action="remove" data-key="${escapeHtml(item.cartKey)}">Remove</button>
                 </div>
@@ -123,6 +124,41 @@ function updateItemInPlace(key, qty) {
     return true;
 }
 
+// ─── Stock Limit Feedback ────────────────────────
+
+function showStockToast(item) {
+    const drawer = document.getElementById('cart-drawer');
+    if (!drawer) return;
+
+    // Remove any existing toast
+    drawer.querySelector('.cart-stock-toast')?.remove();
+
+    const sizeLabel = item.size ? ` in size ${item.size}` : '';
+    const toast = document.createElement('div');
+    toast.className = 'cart-stock-toast';
+    toast.textContent = `Only ${item.maxStock} available${sizeLabel}`;
+    drawer.appendChild(toast);
+
+    // Shake the + button
+    const el = document.querySelector(`.cart-drawer-item[data-key="${CSS.escape(item.cartKey)}"]`);
+    const incBtn = el?.querySelector('[data-action="inc"]');
+    if (incBtn) {
+        incBtn.classList.add('shake');
+        incBtn.addEventListener('animationend', () => incBtn.classList.remove('shake'), { once: true });
+    }
+
+    setTimeout(() => toast.remove(), 2500);
+}
+
+// Disable/enable the + button based on stock limit
+function updateIncButton(key, qty, maxStock) {
+    const el = document.querySelector(`.cart-drawer-item[data-key="${CSS.escape(key)}"]`);
+    const incBtn = el?.querySelector('[data-action="inc"]');
+    if (incBtn) {
+        incBtn.disabled = maxStock ? qty >= maxStock : false;
+    }
+}
+
 // ─── Drawer Open / Close ─────────────────────────
 
 export function openCartDrawer() {
@@ -145,6 +181,15 @@ export function addToCart(product) {
     const existing = cart.find(i => i.cartKey === key);
 
     if (existing) {
+        // Update maxStock if a fresh value was passed
+        if (product.stock != null) existing.maxStock = product.stock;
+
+        // Block if at stock limit
+        if (existing.maxStock && existing.quantity >= existing.maxStock) {
+            showStockToast(existing);
+            return;
+        }
+
         existing.quantity += 1;
         saveLocal();
         updateBadge();
@@ -157,6 +202,7 @@ export function addToCart(product) {
             image: product.image,
             size: product.size || null,
             quantity: 1,
+            maxStock: product.stock || null,
             cartKey: key
         });
         saveLocal();
@@ -208,12 +254,19 @@ export function updateQuantity(key, qty) {
     const item = cart.find(i => i.cartKey === key);
     if (!item) return;
 
+    // Block if exceeding stock limit
+    if (item.maxStock && qty > item.maxStock) {
+        showStockToast(item);
+        return;
+    }
+
     item.quantity = qty;
     saveLocal();
     updateBadge();
 
     // In-place DOM update (no re-animation flicker)
     if (!updateItemInPlace(key, qty)) renderDrawer();
+    updateIncButton(key, qty, item.maxStock);
 
     if (currentUserId && useSupabase) syncUpdate(item);
 }
@@ -270,25 +323,30 @@ async function syncUpdate(item) {
     }
 }
 
-// Load full cart from Supabase (joined with products table)
+// Load full cart from Supabase (joined with products + product_sizes)
 async function loadFromSupabase() {
     try {
         const { data, error } = await supabase
             .from('cart_items')
-            .select('product_id, size, quantity, products (name, price, image_front)')
+            .select('product_id, size, quantity, products (name, price, image_front, product_sizes (size, stock))')
             .eq('user_id', currentUserId);
 
         if (error) throw error;
 
-        return (data || []).map(row => ({
-            id: String(row.product_id),
-            name: row.products?.name || 'Unknown',
-            price: parseFloat(row.products?.price || 0),
-            image: row.products?.image_front || '',
-            size: row.size || null,
-            quantity: row.quantity,
-            cartKey: makeKey(row.product_id, row.size)
-        }));
+        return (data || []).map(row => {
+            // Find stock for this specific size
+            const sizeData = (row.products?.product_sizes || []).find(s => s.size === row.size);
+            return {
+                id: String(row.product_id),
+                name: row.products?.name || 'Unknown',
+                price: parseFloat(row.products?.price || 0),
+                image: row.products?.image_front || '',
+                size: row.size || null,
+                quantity: row.quantity,
+                maxStock: sizeData?.stock || null,
+                cartKey: makeKey(row.product_id, row.size)
+            };
+        });
     } catch (e) {
         console.warn('Failed to load cart from Supabase:', e);
         return null;
@@ -389,7 +447,7 @@ export function setupAddToCartButtons() {
                 return;
             }
             if (sizes.length === 1 && sizes[0].stock > 0) {
-                addToCart({ id: btn.dataset.id, name: btn.dataset.name, price: btn.dataset.price, image: btn.dataset.image, size: sizes[0].size });
+                addToCart({ id: btn.dataset.id, name: btn.dataset.name, price: btn.dataset.price, image: btn.dataset.image, size: sizes[0].size, stock: sizes[0].stock });
                 showAddedFeedback(btn);
                 return;
             }
@@ -425,12 +483,14 @@ export function setupAddToCartButtons() {
                     const chip = ev.target.closest('.card-size-chip:not([disabled])');
                     if (!chip) return;
 
+                    const sizeData = sizes.find(s => s.size === chip.dataset.size);
                     addToCart({
                         id: btn.dataset.id,
                         name: btn.dataset.name,
                         price: btn.dataset.price,
                         image: btn.dataset.image,
-                        size: chip.dataset.size
+                        size: chip.dataset.size,
+                        stock: sizeData?.stock || null
                     });
 
                     closeAllPickers();
