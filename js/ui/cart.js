@@ -323,33 +323,56 @@ async function syncUpdate(item) {
     }
 }
 
-// Load full cart from Supabase (joined with products + product_sizes)
+// Load full cart from Supabase (joined with products table)
 async function loadFromSupabase() {
     try {
         const { data, error } = await supabase
             .from('cart_items')
-            .select('product_id, size, quantity, products (name, price, image_front, product_sizes (size, stock))')
+            .select('product_id, size, quantity, products (name, price, image_front)')
             .eq('user_id', currentUserId);
 
         if (error) throw error;
 
-        return (data || []).map(row => {
-            // Find stock for this specific size
-            const sizeData = (row.products?.product_sizes || []).find(s => s.size === row.size);
-            return {
-                id: String(row.product_id),
-                name: row.products?.name || 'Unknown',
-                price: parseFloat(row.products?.price || 0),
-                image: row.products?.image_front || '',
-                size: row.size || null,
-                quantity: row.quantity,
-                maxStock: sizeData?.stock || null,
-                cartKey: makeKey(row.product_id, row.size)
-            };
-        });
+        const items = (data || []).map(row => ({
+            id: String(row.product_id),
+            name: row.products?.name || 'Unknown',
+            price: parseFloat(row.products?.price || 0),
+            image: row.products?.image_front || '',
+            size: row.size || null,
+            quantity: row.quantity,
+            cartKey: makeKey(row.product_id, row.size)
+        }));
+
+        // Fetch stock limits separately (non-blocking, won't break cart if it fails)
+        attachStockLimits(items);
+
+        return items;
     } catch (e) {
         console.warn('Failed to load cart from Supabase:', e);
         return null;
+    }
+}
+
+// Attach maxStock to cart items from product_sizes (fire-and-forget)
+async function attachStockLimits(items) {
+    try {
+        const productIds = [...new Set(items.map(i => parseInt(i.id)))];
+        if (productIds.length === 0) return;
+
+        const { data } = await supabase
+            .from('product_sizes')
+            .select('product_id, size, stock')
+            .in('product_id', productIds);
+
+        if (!data) return;
+
+        for (const item of items) {
+            const match = data.find(s => s.product_id === parseInt(item.id) && s.size === item.size);
+            if (match) item.maxStock = match.stock;
+        }
+        saveLocal(); // persist maxStock to localStorage
+    } catch (e) {
+        console.warn('Failed to fetch stock limits:', e);
     }
 }
 
