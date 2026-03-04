@@ -45,19 +45,30 @@ function startGlitch() {
     loop();
 }
 
-// ── Render podium (top 3) ──
+// ── Render podium (top 1–3) ──
 function renderPodium(top3) {
     const podium = document.getElementById('lb-podium');
-    if (top3.length < 3) {
+    if (top3.length === 0) {
         podium.innerHTML = '';
         return;
     }
 
     const maxOrders = Math.max(...top3.map(u => u.order_count || 0), 1);
-    // Display order: #2, #1, #3
-    const displayOrder = [top3[1], top3[0], top3[2]];
-    const rankNums = [2, 1, 3];
-    const rankLabels = ['II', 'I', 'III'];
+    // Display order: #2, #1, #3 (only include positions that exist)
+    let displayOrder, rankNums, rankLabels;
+    if (top3.length === 1) {
+        displayOrder = [top3[0]];
+        rankNums = [1];
+        rankLabels = ['I'];
+    } else if (top3.length === 2) {
+        displayOrder = [top3[1], top3[0]];
+        rankNums = [2, 1];
+        rankLabels = ['II', 'I'];
+    } else {
+        displayOrder = [top3[1], top3[0], top3[2]];
+        rankNums = [2, 1, 3];
+        rankLabels = ['II', 'I', 'III'];
+    }
 
     podium.innerHTML = displayOrder.map((user, i) => {
         const rank = rankNums[i];
@@ -119,8 +130,8 @@ function renderPodium(top3) {
     }, 600);
 }
 
-// ── Render table rows (positions 4+) ──
-function renderTable(users, currentUserId) {
+// ── Render table rows ──
+function renderTable(users, currentUserId, startPos = 4) {
     const body = document.getElementById('lb-table-body');
     if (users.length === 0) {
         body.innerHTML = '';
@@ -130,7 +141,7 @@ function renderTable(users, currentUserId) {
     const maxOrders = Math.max(...users.map(u => u.order_count || 0), 1);
 
     body.innerHTML = users.map((user, i) => {
-        const pos = i + 4;
+        const pos = i + startPos;
         const { level } = calculateLevel(user.total_spent || 0);
         const rankData = getRank(level);
         const pct = ((user.order_count || 0) / maxOrders * 100).toFixed(1);
@@ -288,15 +299,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             animateCounter(document.getElementById('lb-total-orders'), totalOrders);
             animateCounter(document.getElementById('lb-total-volume'), Math.round(totalVolume), '₦');
 
-            // Render podium (top 3)
+            // Render podium (top users)
             const top3 = active.slice(0, 3);
-            if (top3.length >= 3) {
-                renderPodium(top3);
-            }
+            renderPodium(top3);
 
-            // Render table (positions 4+)
+            // Render table (remaining positions)
             const rest = active.slice(3);
-            renderTable(rest, currentUser?.id);
+            renderTable(rest, currentUser?.id, 4);
 
             // Your rank
             if (currentUser) {
