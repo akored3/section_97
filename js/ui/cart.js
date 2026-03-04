@@ -387,12 +387,12 @@ export async function handleAuthChange(userId) {
         useSupabase = true;
 
         const serverCart = await loadFromSupabase() || [];
+        const localCart = [...cart]; // snapshot before overwrite
 
-        if (hasGuestActivity && cart.length > 0) {
+        if (hasGuestActivity && localCart.length > 0) {
             // Guest added items this session, then logged in — merge
-            const guestCart = [...cart];
             const merged = [...serverCart];
-            for (const guest of guestCart) {
+            for (const guest of localCart) {
                 const match = merged.find(m => m.cartKey === guest.cartKey);
                 if (match) {
                     match.quantity += guest.quantity;
@@ -407,8 +407,25 @@ export async function handleAuthChange(userId) {
             // Push merged state to Supabase (replace all)
             try {
                 await supabase.from('cart_items').delete().eq('user_id', userId);
+                if (cart.length > 0) {
+                    await supabase.from('cart_items').insert(
+                        cart.map(item => ({
+                            user_id: userId,
+                            product_id: parseInt(item.id),
+                            size: item.size || null,
+                            quantity: item.quantity
+                        }))
+                    );
+                }
+            } catch (e) {
+                console.warn('Failed to sync merged cart:', e);
+            }
+        } else if (serverCart.length === 0 && localCart.length > 0) {
+            // Server empty but local has items — sync failed earlier, re-push
+            cart = localCart;
+            try {
                 await supabase.from('cart_items').insert(
-                    cart.map(item => ({
+                    localCart.map(item => ({
                         user_id: userId,
                         product_id: parseInt(item.id),
                         size: item.size || null,
@@ -416,10 +433,10 @@ export async function handleAuthChange(userId) {
                     }))
                 );
             } catch (e) {
-                console.warn('Failed to sync merged cart:', e);
+                console.warn('Failed to re-sync local cart:', e);
             }
         } else {
-            // Normal page load: server is source of truth
+            // Normal: server is source of truth
             cart = serverCart;
         }
 
