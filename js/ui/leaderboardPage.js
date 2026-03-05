@@ -80,7 +80,7 @@ function renderPodium(top3) {
                           rank === 2 ? 'rgba(255,0,255,0.25)' : 'rgba(0,212,255,0.25)';
 
         const avatarContent = user.avatar_url
-            ? `<img src="${escapeHtml(user.avatar_url)}" alt="${escapeHtml(user.username)}" onerror="this.outerHTML='${userSvg.replace(/'/g, "\\'")}'"/>`
+            ? `<img src="${escapeHtml(user.avatar_url)}" alt="${escapeHtml(user.username)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/><div class="lb-avatar-fallback" style="display:none">${userSvg}</div>`
             : userSvg;
 
         return `
@@ -148,7 +148,7 @@ function renderTable(users, currentUserId, startPos = 4) {
         const isYou = currentUserId && user.id === currentUserId;
 
         const avatarContent = user.avatar_url
-            ? `<img src="${escapeHtml(user.avatar_url)}" alt="${escapeHtml(user.username)}" onerror="this.outerHTML='${userSvg.replace(/'/g, "\\'")}'"/>`
+            ? `<img src="${escapeHtml(user.avatar_url)}" alt="${escapeHtml(user.username)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/><div class="lb-avatar-fallback" style="display:none">${userSvg}</div>`
             : userSvg;
 
         return `

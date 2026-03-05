@@ -6665,6 +6665,12 @@ a.dropdown-item {
     border-radius: 50%;
 }
 .lb-avatar-ring { display: none; }
+.lb-avatar-fallback {
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+}
 
 /* Podium stats */
 .lb-podium-stats {
