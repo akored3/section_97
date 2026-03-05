@@ -20,32 +20,16 @@ Deno.serve(async (req) => {
             );
         }
 
-        // ─── Auth check ───────────────────────────────
-        const authHeader = req.headers.get('Authorization');
-        if (!authHeader) {
-            return new Response(
-                JSON.stringify({ error: 'Unauthorized' }),
-                { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-            );
-        }
-
-        // Create Supabase client with the user's JWT (respects RLS)
-        const supabaseUser = createClient(
-            Deno.env.get('SUPABASE_URL')!,
-            Deno.env.get('SUPABASE_ANON_KEY')!,
-            { global: { headers: { Authorization: authHeader } } }
-        );
-
-        // Service role client for updating order status (bypasses RLS)
+        // Service role client (bypasses RLS — used for all order lookups + updates)
         const supabaseAdmin = createClient(
             Deno.env.get('SUPABASE_URL')!,
             Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
         );
 
-        // ─── Verify the order belongs to the user ────
-        const { data: order, error: orderError } = await supabaseUser
+        // ─── Look up the order ──────────────────────
+        const { data: order, error: orderError } = await supabaseAdmin
             .from('orders')
-            .select('id, total, status, payment_reference')
+            .select('id, total, status, payment_reference, user_id')
             .eq('id', order_id)
             .single();
 
@@ -54,6 +38,31 @@ Deno.serve(async (req) => {
                 JSON.stringify({ error: 'Order not found' }),
                 { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
             );
+        }
+
+        // ─── Ownership check ────────────────────────
+        // For authenticated orders, verify the caller is the order owner.
+        // For guest orders (user_id is null), the payment reference match below is sufficient.
+        if (order.user_id) {
+            const authHeader = req.headers.get('Authorization');
+            if (!authHeader) {
+                return new Response(
+                    JSON.stringify({ error: 'Unauthorized' }),
+                    { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+                );
+            }
+            const supabaseUser = createClient(
+                Deno.env.get('SUPABASE_URL')!,
+                Deno.env.get('SUPABASE_ANON_KEY')!,
+                { global: { headers: { Authorization: authHeader } } }
+            );
+            const { data: { user } } = await supabaseUser.auth.getUser();
+            if (!user || user.id !== order.user_id) {
+                return new Response(
+                    JSON.stringify({ error: 'Order does not belong to this user' }),
+                    { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+                );
+            }
         }
 
         // Don't re-verify already completed orders

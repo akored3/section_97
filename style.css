@@ -6157,6 +6157,24 @@ a.dropdown-item {
     border-radius: 50%;
 }
 
+/* ── Guest Checkout Banner ── */
+
+.checkout-guest-banner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    background: var(--glass-bg);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--shape-sm);
+    font: var(--text-body-sm);
+    color: var(--text-secondary);
+    margin-bottom: var(--space-lg);
+}
+.checkout-guest-banner svg { flex-shrink: 0; color: var(--accent); }
+.checkout-guest-banner a { color: var(--accent); text-decoration: underline; }
+
 /* ── Error States ── */
 
 .checkout-error-state {

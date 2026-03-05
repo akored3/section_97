@@ -219,6 +219,7 @@ function renderOrderSummary() {
 
 function validateShipping() {
     const fields = {
+        email: document.getElementById('checkout-email'),
         name: document.getElementById('checkout-name'),
         address: document.getElementById('checkout-address'),
         city: document.getElementById('checkout-city'),
@@ -230,6 +231,18 @@ function validateShipping() {
 
     // Clear previous errors
     Object.values(fields).forEach(f => f?.closest('.form-group')?.classList.remove('invalid'));
+
+    // Email (guests only — field is hidden for logged-in users)
+    const emailGroup = document.getElementById('checkout-email-group');
+    if (emailGroup && !emailGroup.classList.contains('hidden')) {
+        const email = fields.email.value.trim();
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            fields.email.closest('.form-group').classList.add('invalid');
+            valid = false;
+        } else {
+            data.email = email.slice(0, 254);
+        }
+    }
 
     // Name (max 100 chars)
     if (!fields.name.value.trim()) {
@@ -303,7 +316,7 @@ function initiatePaystack(email, amountKobo, metadata) {
 
 // ─── Order Creation ──────────────────────────────
 
-async function createOrder(userId, cart, reference, shippingData) {
+async function createOrder(cart, reference, shippingData) {
     // Server-side validated order: prices are looked up from the products table,
     // never trusted from the client. Total is calculated server-side.
     const items = cart.map(item => ({
@@ -312,11 +325,21 @@ async function createOrder(userId, cart, reference, shippingData) {
         quantity: item.quantity
     }));
 
-    const { data: orderId, error } = await supabase.rpc('create_validated_order', {
+    const rpcParams = {
         p_items: items,
         p_shipping_address: `${shippingData.address}, ${shippingData.city}`,
-        p_payment_reference: reference
-    });
+        p_payment_reference: reference,
+        p_shipping_name: shippingData.name,
+        p_shipping_phone: shippingData.phone,
+        p_shipping_city: shippingData.city
+    };
+
+    // Guest checkout: pass email (RPC uses auth.uid() for logged-in users)
+    if (!currentUser) {
+        rpcParams.p_guest_email = shippingData.email;
+    }
+
+    const { data: orderId, error } = await supabase.rpc('create_validated_order', rpcParams);
 
     if (error) throw error;
     return orderId;
@@ -362,9 +385,7 @@ function showError(type) {
     document.querySelector('.checkout-stepper')?.classList.add('hidden');
     document.querySelector('.checkout-header')?.classList.add('hidden');
 
-    if (type === 'auth') {
-        document.getElementById('checkout-error-auth').classList.remove('hidden');
-    } else if (type === 'empty') {
+    if (type === 'empty') {
         document.getElementById('checkout-error-empty').classList.remove('hidden');
     }
 }
@@ -401,12 +422,13 @@ async function handleAction() {
             // Show payment step on stepper (visual only — Paystack popup overlays the page)
             updateStepper(3);
 
-            // Open Paystack popup
-            const reference = await initiatePaystack(currentUser.email, amountKobo, shippingData);
+            // Open Paystack popup (use guest email if not logged in)
+            const paystackEmail = currentUser ? currentUser.email : shippingData.email;
+            const reference = await initiatePaystack(paystackEmail, amountKobo, shippingData);
 
             // Payment succeeded — create order
             btn.textContent = 'CREATING ORDER...';
-            const orderId = await createOrder(currentUser.id, cart, reference, shippingData);
+            const orderId = await createOrder(cart, reference, shippingData);
 
             // Verify payment server-side (Edge Function checks Paystack + amount match)
             btn.textContent = 'VERIFYING PAYMENT...';
@@ -487,13 +509,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const user = await getCurrentUser();
 
-    // Auth guard
-    if (!user) return showError('auth');
-
-    currentUser = user;
-
-    // Sync cart with Supabase
-    await handleAuthChange(user.id);
+    if (user) {
+        currentUser = user;
+        // Sync cart with Supabase
+        await handleAuthChange(user.id);
+    } else {
+        // Guest checkout: show email field and info banner
+        document.getElementById('checkout-email-group')?.classList.remove('hidden');
+        document.getElementById('checkout-guest-banner')?.classList.remove('hidden');
+    }
 
     const cart = getCart();
 
