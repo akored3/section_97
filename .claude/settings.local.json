@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push)",
+      "WebFetch(domain:m3.material.io)",
+      "Bash(FILTER_BRANCH_SQUELCH_WARNING=1 git filter-branch:*)",
+      "Bash(curl -s https://js.paystack.co/v1/inline.js)",
+      "Bash(openssl dgst -sha384 -binary)",
+      "Bash(openssl base64 -A)",
+      "Bash(ipconfig)",
+      "Bash(ffmpeg -version)",
+      "Bash(where.exe ffmpeg)",
+      "Bash(sed \"s/''//g\")"
+    ]
+  }
+}

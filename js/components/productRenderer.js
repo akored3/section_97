@@ -10,28 +10,6 @@ export function escapeHtml(str) {
 // Size data stored in JS (avoids HTML attribute escaping issues)
 export const productSizesMap = new Map();
 
-export function showSkeletons(count = 8) {
-    const productContainer = document.getElementById("product-container");
-    if (!productContainer) return;
-
-    const html = Array.from({ length: count }, () => `
-        <div class="product-card skeleton-card">
-            <div class="product-image skeleton-image"></div>
-            <div class="product-footer">
-                <div class="product-info">
-                    <div class="skeleton-title"></div>
-                    <div class="skeleton-price"></div>
-                </div>
-                <div class="product-actions">
-                    <div class="skeleton-button"></div>
-                </div>
-            </div>
-        </div>
-    `).join('');
-
-    productContainer.innerHTML = html;
-}
-
 export function renderProducts(productsToRender) {
     const productContainer = document.getElementById("product-container");
 

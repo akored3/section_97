@@ -38,10 +38,21 @@ A cyberpunk streetwear e-commerce store with real payments. Built from scratch w
 
 ### Checkout (Paystack Integration)
 - 4-step single-page flow: Cart → Shipping → Payment → Confirm
+- **Guest checkout** — no account required, just provide an email
 - Real payment processing via Paystack Inline (card + bank transfer)
+- Full shipping details persisted to database (name, phone, address, city)
 - Order creation in Supabase with payment reference tracking
 - Order ID format: `S97-XXXX-XXXX`
 - Delivery timeline visualization on confirmation
+
+### Leaderboard
+- Top 50 spenders ranked by total spend
+- Podium cards for top 3 (works with 1-3 users)
+- Table for positions 4-50
+- Abbreviated spend amounts (₦250k, ₦1.5M)
+- Level/rank badges from XP system
+- "Your Position" section for logged-in users
+- Real-time stats (total spenders, orders, volume)
 
 ### Profile
 - Avatar upload with rotating ring animation
@@ -85,8 +96,9 @@ new_web/
 ├── product.html                      # Product detail page
 ├── auth.html                         # Login / signup
 ├── profile.html                      # User profile
-├── checkout.html                     # 4-step checkout
-├── style.css                         # All styling (~4000 lines)
+├── checkout.html                     # 4-step checkout (guest + auth)
+├── leaderboard.html                  # Top spenders leaderboard
+├── style.css                         # All styling
 ├── js/
 │   ├── main.js                       # Entry point
 │   ├── config/
@@ -95,6 +107,7 @@ new_web/
 │   │   └── auth.js                   # Signup, login, logout, session
 │   ├── data/
 │   │   ├── products.js               # Product data with Supabase fallback
+│   │   ├── ranks.js                  # Shared level/rank calculations
 │   │   └── usernames.json            # Word pools for username generation
 │   ├── components/
 │   │   ├── productRenderer.js        # Product card rendering
@@ -103,15 +116,16 @@ new_web/
 │       ├── theme.js                  # Dark/light mode
 │       ├── menu.js                   # Mobile navigation drawer
 │       ├── cart.js                   # Cart logic (Supabase + localStorage)
-│       ├── checkout.js               # Checkout flow + Paystack
+│       ├── checkout.js               # Checkout flow + Paystack (guest + auth)
 │       ├── productPage.js            # Product detail page
 │       ├── profilePage.js            # Profile page
-│       └── lazyLoad.js              # IntersectionObserver lazy loading
-├── supabase_migration.sql            # Products table + seed data
-├── supabase_cart_migration.sql       # Cart table + RLS policies
-├── supabase_orders_migration.sql     # Orders + order_items tables
-├── supabase_checkout_migration.sql   # payment_reference column
-├── supabase_security_migration.sql   # CHECK constraints + validated order RPC
+│       ├── leaderboardPage.js        # Leaderboard page
+│       ├── lazyLoad.js               # IntersectionObserver lazy loading
+│       └── progressBar.js            # HUD progress bar animation
+├── supabase/
+│   └── functions/
+│       └── verify-payment/index.ts   # Payment verification Edge Function
+├── supabase_*.sql                    # 12 migration files (run in order)
 ├── SECURITY.md                       # Security documentation
 └── images/                           # Product images
 ```
@@ -131,12 +145,19 @@ git clone https://github.com/akored3/section_97.git
 cd section_97
 ```
 
-1. **Database** — Run all 4 migration files in your Supabase SQL Editor (in order):
+1. **Database** — Run all migration files in your Supabase SQL Editor (in order):
    - `supabase_migration.sql` — products table + seed data
    - `supabase_cart_migration.sql` — cart table + RLS
    - `supabase_orders_migration.sql` — orders + order_items tables
    - `supabase_checkout_migration.sql` — payment_reference column
    - `supabase_security_migration.sql` — CHECK constraints + server-side order validation
+   - `supabase_payment_verification_migration.sql` — payment verification lockdown
+   - `supabase_profiles_rls_migration.sql` — profile RLS policies
+   - `supabase_payment_replay_migration.sql` — payment replay protection
+   - `supabase_profile_stats_migration.sql` — profile stats trigger
+   - `supabase_product_sizes_migration.sql` — product sizes table
+   - `supabase_leaderboard_migration.sql` — leaderboard RLS
+   - `supabase_guest_checkout_migration.sql` — guest checkout + shipping fields
 
 2. **Config** — Create `js/config/supabase.js`:
    ```js
@@ -170,8 +191,12 @@ Use Paystack's test card: `4084 0840 8408 4081`, any future expiry, CVV `408`.
 - [x] Checkout flow with Paystack payments
 - [x] Size selection on store page cards
 - [x] Mobile navigation drawer redesign
+- [x] Leaderboard (top 50 spenders, podium, rank badges)
+- [x] Guest checkout (email-based, no account required)
+- [x] Full shipping details persisted to database
 - [ ] Mobile UI/UX polish
 - [ ] Admin dashboard (order management, product CRUD)
+- [ ] Guest order lookup (by email + order ID)
 - [ ] Currency localization (i18n)
 - [ ] Image optimization (WebP, responsive sizes)
 - [ ] Footer redesign

@@ -614,15 +614,7 @@ export function updateBadgeIfGuest() {
 // ─── Public Getters ──────────────────────────────
 
 export function getCart() { return cart; }
-export function getCartCount() { return cart.reduce((s, i) => s + i.quantity, 0); }
 export function getCartTotal() { return cart.reduce((s, i) => s + i.price * i.quantity, 0); }
-
-export function clearCart() {
-    cart = [];
-    saveLocal();
-    updateBadge();
-    renderDrawer();
-}
 
 export async function clearCartFull() {
     if (currentUserId && useSupabase) {
