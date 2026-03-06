@@ -7064,9 +7064,14 @@ a.dropdown-item {
 /* ── Responsive ── */
 @media (max-width: 768px) {
     .lb-container { padding: 24px 16px; }
-    .lb-header { flex-direction: column; gap: var(--space-md); }
+    .lb-header { flex-direction: column; gap: var(--space-sm); }
     .lb-header-title { font-size: 1.5rem; }
-    .lb-stats-bar { flex-direction: column; gap: var(--space-xs); }
+    .lb-header-desc { margin-top: 2px; }
+    .lb-back-link { margin-top: var(--space-xs); }
+    .lb-stats-bar { gap: 1px; }
+    .lb-stat-card { padding: 10px var(--space-sm); }
+    .lb-stat-label { font-size: 0.55rem; letter-spacing: 0.1em; }
+    .lb-stat-value { font-size: 0.95rem; }
     .lb-podium { gap: var(--space-sm); }
     .lb-podium-card { padding: 16px 12px; }
     .lb-podium-card:nth-child(2) { padding: 20px 12px; }
@@ -7089,6 +7094,7 @@ a.dropdown-item {
         padding: 10px 12px;
         font-size: 0.85em;
     }
+    .lb-badge { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 70px; }
     .lb-bar { max-width: 50px; }
     .lb-your-rank { padding: var(--space-md); }
     .lb-your-rank-content { flex-direction: column; align-items: flex-start; gap: var(--space-md); }
@@ -7100,7 +7106,8 @@ a.dropdown-item {
     .lb-container { padding: 20px 12px; }
     .lb-header-title { font-size: 1.25rem; }
     .lb-header-desc { font-size: 0.75rem; }
-    .lb-stat-value { font-size: 0.95rem; }
+    .lb-stat-label { font-size: 0.5rem; }
+    .lb-stat-value { font-size: 0.85rem; }
     .lb-podium { gap: 6px; }
     .lb-podium-card { padding: 12px 8px; }
     .lb-podium-card:nth-child(2) { padding: 16px 8px; }
@@ -7134,7 +7141,7 @@ a.dropdown-item {
     .lb-row > :nth-child(4) {
         display: none;
     }
-    .lb-badge { padding: 3px 6px; font-size: 0.55rem; }
+    .lb-badge { padding: 3px 6px; font-size: 0.5rem; max-width: 60px; }
     .lb-avatar-small { width: 28px; height: 28px; }
     .lb-avatar-small svg { width: 12px; height: 12px; }
     .lb-name { font-size: 0.7rem; }
