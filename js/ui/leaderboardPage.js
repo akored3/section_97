@@ -296,7 +296,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             animateCounter(document.getElementById('lb-total-operators'), totalOps);
             animateCounter(document.getElementById('lb-total-orders'), totalOrders);
-            animateCounter(document.getElementById('lb-total-volume'), Math.round(totalVolume), '₦');
+            // Redact volume — show magnitude via comma structure with block characters
+            const redacted = Math.round(totalVolume).toLocaleString('en-US').replace(/\d/g, '■');
+            document.getElementById('lb-total-volume').textContent = `₦${redacted}`;
 
             // Render podium (top users)
             const top3 = active.slice(0, 3);
