@@ -624,5 +624,8 @@ export async function clearCartFull() {
             console.warn('Failed to clear Supabase cart:', e);
         }
     }
-    clearCart();
+    cart = [];
+    saveLocal();
+    updateBadge();
+    renderDrawer();
 }
