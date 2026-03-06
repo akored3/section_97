@@ -151,8 +151,10 @@ function renderTable(users, currentUserId, startPos = 4) {
             ? `<img src="${escapeHtml(user.avatar_url)}" alt="${escapeHtml(user.username)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/><div class="lb-avatar-fallback" style="display:none">${userSvg}</div>`
             : userSvg;
 
+        const rankAttr = pos <= 3 ? ` data-rank="${pos}"` : '';
+
         return `
-            <div class="lb-row ${isYou ? 'lb-row--you' : ''}" style="animation-delay: ${i * 0.06 + 0.6}s">
+            <div class="lb-row ${isYou ? 'lb-row--you' : ''}${pos <= 3 ? ' lb-row--podium' : ''}"${rankAttr} style="animation-delay: ${i * 0.06 + 0.6}s">
                 <span class="lb-rank-num">${String(pos).padStart(2, '0')}</span>
                 <div class="lb-user">
                     <div class="lb-avatar-small">${avatarContent}</div>
@@ -304,9 +306,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             const top3 = active.slice(0, 3);
             renderPodium(top3);
 
-            // Render table (remaining positions)
-            const rest = active.slice(3);
-            renderTable(rest, currentUser?.id, 4);
+            // Render table (all users — top 3 hidden on desktop via CSS, visible on mobile)
+            renderTable(active, currentUser?.id, 1);
 
             // Your rank
             if (currentUser) {

@@ -6930,6 +6930,9 @@ a.dropdown-item {
     letter-spacing: 0.12em;
 }
 
+/* ── Desktop: hide top 3 from table (podium shows them) ── */
+.lb-row--podium { display: none; }
+
 /* ── Your Rank Section ── */
 .lb-your-rank {
     margin-top: var(--space-lg);
@@ -7072,23 +7075,31 @@ a.dropdown-item {
     .lb-stat-card { padding: 10px var(--space-sm); }
     .lb-stat-label { font-size: 0.55rem; letter-spacing: 0.1em; }
     .lb-stat-value { font-size: 0.95rem; }
-    .lb-podium { gap: var(--space-sm); }
-    .lb-podium-card { padding: 16px 12px; }
-    .lb-podium-card:nth-child(2) { padding: 20px 12px; }
-    .lb-podium-card[data-rank="1"] .lb-avatar-hex-inner { width: 64px; height: 64px; }
-    .lb-podium-card[data-rank="1"] .lb-podium-username { font-size: 0.85rem; }
-    .lb-podium-username { font-size: 0.78rem; }
-    .lb-podium-rank-label { font-size: 0.6rem; }
-    .lb-rank-badge { width: 36px; height: 36px; }
-    .lb-rank-badge span { font-size: 0.65rem; }
-    .lb-podium-top { gap: 6px; }
-    .lb-avatar-hex-inner { width: 52px; height: 52px; }
-    .lb-avatar-hex svg { width: 22px; height: 22px; }
-    .lb-podium-stat-label { font-size: 0.55rem; }
-    .lb-podium-orders { font-size: 0.95rem; }
-    [data-rank="1"] .lb-podium-orders { font-size: 1.1rem; }
-    .lb-podium-spent { font-size: 0.7rem; }
-    .lb-status-badge { font-size: 0.55rem; padding: 3px 6px; }
+    /* Hide podium, show top 3 in table instead */
+    .lb-podium { display: none; }
+    .lb-row--podium { display: grid; }
+    /* Top 3 row color effects */
+    .lb-row[data-rank="1"] {
+        background: linear-gradient(90deg, var(--lb-gold-bg), transparent);
+        border-left: 2px solid var(--lb-gold);
+    }
+    .lb-row[data-rank="1"] .lb-rank-num { color: var(--lb-gold); font-weight: 800; }
+    .lb-row[data-rank="1"] .lb-name { color: var(--lb-gold); }
+    .lb-row[data-rank="1"]:hover { background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), transparent); }
+    .lb-row[data-rank="2"] {
+        background: linear-gradient(90deg, var(--lb-magenta-bg), transparent);
+        border-left: 2px solid var(--lb-magenta);
+    }
+    .lb-row[data-rank="2"] .lb-rank-num { color: var(--lb-magenta); font-weight: 800; }
+    .lb-row[data-rank="2"] .lb-name { color: var(--lb-magenta); }
+    .lb-row[data-rank="2"]:hover { background: linear-gradient(90deg, rgba(255, 0, 255, 0.08), transparent); }
+    .lb-row[data-rank="3"] {
+        background: linear-gradient(90deg, var(--lb-cyan-bg), transparent);
+        border-left: 2px solid var(--lb-cyan);
+    }
+    .lb-row[data-rank="3"] .lb-rank-num { color: var(--lb-cyan); font-weight: 800; }
+    .lb-row[data-rank="3"] .lb-name { color: var(--lb-cyan); }
+    .lb-row[data-rank="3"]:hover { background: linear-gradient(90deg, rgba(0, 212, 255, 0.08), transparent); }
     .lb-table-header, .lb-row {
         grid-template-columns: 36px 1.4fr 0.7fr 0.7fr 70px;
         padding: 10px 12px;
@@ -7108,28 +7119,6 @@ a.dropdown-item {
     .lb-header-desc { font-size: 0.75rem; }
     .lb-stat-label { font-size: 0.5rem; }
     .lb-stat-value { font-size: 0.85rem; }
-    .lb-podium { gap: 6px; }
-    .lb-podium-card { padding: 12px 8px; }
-    .lb-podium-card:nth-child(2) { padding: 16px 8px; }
-    .lb-rank-badge { width: 30px; height: 30px; }
-    .lb-rank-badge span { font-size: 0.55rem; }
-    .lb-avatar-hex-inner { width: 42px; height: 42px; }
-    .lb-podium-card[data-rank="1"] .lb-avatar-hex-inner { width: 52px; height: 52px; }
-    .lb-avatar-hex svg { width: 18px; height: 18px; }
-    .lb-podium-card[data-rank="1"] .lb-avatar-hex svg { width: 22px; height: 22px; }
-    .lb-podium-username { font-size: 0.68rem; }
-    .lb-podium-card[data-rank="1"] .lb-podium-username { font-size: 0.78rem; }
-    .lb-podium-rank-label { font-size: 0.5rem; }
-    .lb-podium-top { gap: 4px; margin-bottom: 8px; }
-    .lb-avatar-hex { margin-bottom: 8px; }
-    .lb-podium-stats { gap: 4px; }
-    .lb-podium-stat-label { font-size: 0.5rem; }
-    .lb-podium-stat-label.muted { font-size: 0.45rem; }
-    .lb-podium-orders { font-size: 0.85rem; }
-    [data-rank="1"] .lb-podium-orders { font-size: 1rem; }
-    .lb-podium-spent { font-size: 0.6rem; }
-    .lb-status-badge { font-size: 0.5rem; padding: 2px 4px; letter-spacing: 0.08em; }
-    .lb-cb { width: 10px; height: 10px; }
     .lb-table-header, .lb-row {
         grid-template-columns: 30px 1fr 60px;
         padding: 10px;
@@ -7151,15 +7140,6 @@ a.dropdown-item {
 @media (max-width: 360px) {
     .lb-container { padding: 16px 10px; }
     .lb-header-title { font-size: 1.1rem; }
-    .lb-podium { gap: 4px; }
-    .lb-podium-card { padding: 10px 6px; }
-    .lb-podium-card:nth-child(2) { padding: 14px 6px; }
-    .lb-rank-badge { width: 26px; height: 26px; }
-    .lb-rank-badge span { font-size: 0.5rem; }
-    .lb-avatar-hex-inner { width: 36px; height: 36px; }
-    .lb-podium-card[data-rank="1"] .lb-avatar-hex-inner { width: 44px; height: 44px; }
-    .lb-podium-username { font-size: 0.6rem; }
-    .lb-podium-card[data-rank="1"] .lb-podium-username { font-size: 0.7rem; }
     .lb-stat-card { padding: 10px 12px; }
     .lb-stat-label { font-size: 0.55rem; }
     .lb-stat-value { font-size: 0.85rem; }
