@@ -51,14 +51,14 @@ const ACHIEVEMENTS = [
         check: (orders) => {
             let count = 0;
             orders.forEach(o => (o.order_items || []).forEach(i => {
-                if (parseFloat(i.price || 0) >= 25000) count++;
+                if (parseFloat(i.product_price || 0) >= 25000) count++;
             }));
             return count >= 5;
         },
         progress: (orders) => {
             let count = 0;
             orders.forEach(o => (o.order_items || []).forEach(i => {
-                if (parseFloat(i.price || 0) >= 25000) count++;
+                if (parseFloat(i.product_price || 0) >= 25000) count++;
             }));
             return { current: count, target: 5 };
         }
@@ -209,7 +209,7 @@ async function loadOrders(userId) {
                     product_image,
                     size,
                     quantity,
-                    price
+                    product_price
                 )
             `)
             .eq('user_id', userId)
@@ -254,7 +254,7 @@ function renderOrders(orders) {
                     <span class="profile-order-item-name">${escapeHtml(item.product_name || 'Item')}</span>
                     <span class="profile-order-item-meta">${item.size ? `Size: ${escapeHtml(item.size)}` : ''}${item.size && item.quantity ? ' · ' : ''}${item.quantity ? `Qty: ${item.quantity}` : ''}</span>
                 </div>
-                <span class="profile-order-item-price">₦${Math.round(parseFloat(item.price || 0)).toLocaleString('en-US')}</span>
+                <span class="profile-order-item-price">₦${Math.round(parseFloat(item.product_price || 0)).toLocaleString('en-US')}</span>
             </div>
         `).join('');
 
