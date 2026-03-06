@@ -4549,22 +4549,63 @@ a.dropdown-item {
         justify-content: center;
     }
 
+    .orders-collapsed { padding: 0 var(--space-md); }
+    .orders-expanded { padding: var(--space-sm) var(--space-md); }
+    .achievements-collapsed { padding: 0 var(--space-md); }
+    .achievements-expanded { padding: var(--space-sm) var(--space-md); }
+
+    .profile-orders-list { gap: 0.5rem; }
+
     .profile-order-row-header {
         flex-wrap: wrap;
-        gap: var(--space-sm);
+        gap: var(--space-xs);
+        padding: var(--space-sm);
     }
 
     .profile-order-row-icon {
-        display: none;
+        width: 32px;
+        height: 32px;
+    }
+
+    .profile-order-row-icon svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .profile-order-row-name {
+        font-size: 0.75rem;
+        white-space: normal;
+    }
+
+    .profile-order-row-meta {
+        font-size: 0.5rem;
     }
 
     .profile-order-status {
-        font-size: 0.55rem;
-        padding: 2px 6px;
+        font-size: 0.5rem;
+        padding: 2px 5px;
     }
 
     .profile-order-row-price {
         font-size: 0.8rem;
+    }
+
+    .profile-order-item {
+        gap: var(--space-sm);
+        padding: var(--space-xs) var(--space-sm);
+    }
+
+    .profile-order-item-img {
+        width: 32px;
+        height: 32px;
+    }
+
+    .profile-order-item-name {
+        font-size: 0.7rem;
+    }
+
+    .profile-order-item-price {
+        font-size: 0.65rem;
     }
 
     .profile-achievement {
