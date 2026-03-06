@@ -3192,15 +3192,20 @@ a.dropdown-item {
 .profile-card {
     position: relative;
     background: rgba(10, 10, 15, 0.92);
-    border: 3px solid rgba(0, 255, 100, 0.15);
+    border: 3px solid rgba(0, 255, 100, 0.2);
     padding: var(--space-lg) var(--space-xl);
     overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 255, 100, 0.08),
+                0 0 60px rgba(0, 255, 100, 0.03),
+                inset 0 0 30px rgba(0, 255, 100, 0.02);
 }
 
 :root[data-theme="light"] .profile-card {
     background: rgba(255, 255, 255, 0.88);
     border-width: 2px;
-    border-color: rgba(0, 168, 64, 0.2);
+    border-color: rgba(0, 168, 64, 0.25);
+    box-shadow: 0 2px 20px rgba(0, 168, 64, 0.08),
+                0 0 40px rgba(0, 168, 64, 0.03);
 }
 
 /* ── Profile scanlines ── */
@@ -3465,28 +3470,46 @@ a.dropdown-item {
 
 .profile-xp-bar {
     flex: 1;
-    height: 6px;
-    background: rgba(0, 255, 100, 0.1);
-    border: 1px solid rgba(0, 255, 100, 0.15);
+    height: 10px;
+    background: rgba(0, 255, 100, 0.08);
+    border: 1px solid rgba(0, 255, 100, 0.2);
     overflow: hidden;
     position: relative;
 }
 
 :root[data-theme="light"] .profile-xp-bar {
-    background: rgba(0, 168, 64, 0.08);
-    border-color: rgba(0, 168, 64, 0.15);
+    background: rgba(0, 168, 64, 0.06);
+    border-color: rgba(0, 168, 64, 0.18);
 }
 
 .profile-xp-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--accent-dim), var(--accent), var(--accent-bright));
-    box-shadow: 0 0 8px rgba(0, 255, 100, 0.4);
+    background: linear-gradient(90deg, #00ff64 0%, #00ffd5 40%, #00d4ff 65%, #ff00ff 100%);
+    box-shadow: 0 0 12px rgba(0, 255, 100, 0.5), 0 0 4px rgba(0, 255, 100, 0.8);
     transition: width 1s var(--motion-emphasized);
+    position: relative;
+}
+
+/* Bright edge tick at the end of the fill */
+.profile-xp-fill::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 3px;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
 }
 
 :root[data-theme="light"] .profile-xp-fill {
-    background: linear-gradient(90deg, var(--accent-hover), var(--accent), var(--accent-hover));
-    box-shadow: 0 0 6px rgba(0, 168, 64, 0.3);
+    background: linear-gradient(90deg, #00a842 0%, #00b89c 40%, #0099cc 65%, #cc00cc 100%);
+    box-shadow: 0 0 8px rgba(0, 168, 64, 0.4);
+}
+
+:root[data-theme="light"] .profile-xp-fill::after {
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 0 4px rgba(0, 168, 64, 0.5);
 }
 
 .profile-xp-text {
@@ -3514,22 +3537,29 @@ a.dropdown-item {
     text-align: center;
     position: relative;
     background: rgba(10, 10, 15, 0.92);
-    border: 1px solid rgba(0, 255, 100, 0.12);
+    border: 2px solid rgba(0, 255, 100, 0.15);
     overflow: hidden;
-    transition: border-color var(--duration-medium) var(--motion-standard);
+    transition: border-color var(--duration-medium) var(--motion-standard),
+                box-shadow var(--duration-medium) var(--motion-standard);
+    box-shadow: 0 0 15px rgba(0, 255, 100, 0.05),
+                inset 0 0 20px rgba(0, 255, 100, 0.02);
 }
 
 :root[data-theme="light"] .profile-stat-card {
     background: rgba(255, 255, 255, 0.88);
-    border-color: rgba(0, 168, 64, 0.15);
+    border-color: rgba(0, 168, 64, 0.2);
+    box-shadow: 0 2px 12px rgba(0, 168, 64, 0.06);
 }
 
 .profile-stat-card:hover {
-    border-color: rgba(0, 255, 100, 0.3);
+    border-color: rgba(0, 255, 100, 0.35);
+    box-shadow: 0 0 25px rgba(0, 255, 100, 0.1),
+                inset 0 0 30px rgba(0, 255, 100, 0.03);
 }
 
 :root[data-theme="light"] .profile-stat-card:hover {
-    border-color: rgba(0, 168, 64, 0.35);
+    border-color: rgba(0, 168, 64, 0.4);
+    box-shadow: 0 2px 20px rgba(0, 168, 64, 0.1);
 }
 
 .profile-stat-icon {
@@ -3567,13 +3597,14 @@ a.dropdown-item {
     gap: var(--space-sm);
     padding: 0.6rem 2rem;
     background: rgba(255, 60, 60, 0.08);
-    border: 1px solid rgba(255, 100, 100, 0.2);
+    border: 2px solid rgba(255, 100, 100, 0.2);
     color: var(--error-hover);
     font-family: var(--font-mono);
     font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: 2px;
     cursor: pointer;
+    box-shadow: 0 0 12px rgba(255, 60, 60, 0.05);
     transition: background var(--duration-short) var(--motion-standard),
                 border-color var(--duration-short) var(--motion-standard),
                 box-shadow var(--duration-short) var(--motion-standard);
@@ -3603,12 +3634,16 @@ a.dropdown-item {
     border: 3px solid rgba(255, 215, 0, 0.2);
     padding: 0;
     overflow: hidden;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.06),
+                0 0 50px rgba(255, 215, 0, 0.02),
+                inset 0 0 25px rgba(255, 215, 0, 0.02);
 }
 
 :root[data-theme="light"] .profile-achievements-card {
     background: rgba(255, 255, 255, 0.88);
     border-width: 2px;
-    border-color: rgba(184, 150, 12, 0.2);
+    border-color: rgba(184, 150, 12, 0.25);
+    box-shadow: 0 2px 18px rgba(184, 150, 12, 0.06);
 }
 
 /* Achievements dropdown button */
@@ -3923,15 +3958,18 @@ a.dropdown-item {
     gap: var(--space-md);
     padding: var(--space-md) var(--space-xl);
     background: rgba(255, 68, 204, 0.04);
-    border: 1px solid rgba(255, 68, 204, 0.1);
+    border: 2px solid rgba(255, 68, 204, 0.15);
     text-decoration: none;
     font: var(--text-label-lg);
     color: #ff44cc;
     letter-spacing: 0.15em;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 0 15px rgba(255, 68, 204, 0.05),
+                inset 0 0 20px rgba(255, 68, 204, 0.02);
     transition: background var(--duration-short) var(--motion-standard),
-                border-color var(--duration-short) var(--motion-standard);
+                border-color var(--duration-short) var(--motion-standard),
+                box-shadow var(--duration-short) var(--motion-standard);
 }
 .profile-leaderboard-link::before {
     content: '';
@@ -4147,13 +4185,16 @@ a.dropdown-item {
 .profile-orders-card {
     position: relative;
     background: rgba(10, 10, 15, 0.92);
-    border: 1px solid rgba(74, 158, 255, 0.12);
+    border: 2px solid rgba(74, 158, 255, 0.18);
     overflow: hidden;
+    box-shadow: 0 0 18px rgba(74, 158, 255, 0.06),
+                inset 0 0 25px rgba(74, 158, 255, 0.02);
 }
 
 :root[data-theme="light"] .profile-orders-card {
     background: rgba(255, 255, 255, 0.88);
-    border-color: rgba(37, 99, 200, 0.12);
+    border-color: rgba(37, 99, 200, 0.18);
+    box-shadow: 0 2px 15px rgba(37, 99, 200, 0.06);
 }
 
 .profile-orders-header {
@@ -7022,27 +7063,64 @@ a.dropdown-item {
 
 /* ── Responsive ── */
 @media (max-width: 768px) {
-    .lb-podium { flex-direction: column; }
+    .lb-container { padding: 24px 16px; }
+    .lb-header { flex-direction: column; gap: var(--space-md); }
+    .lb-header-title { font-size: 1.5rem; }
+    .lb-stats-bar { flex-direction: column; gap: var(--space-xs); }
+    .lb-podium { flex-direction: column; gap: var(--space-sm); }
     .lb-podium-card { order: unset !important; }
-    .lb-podium-card:nth-child(2) { order: -1 !important; }
+    .lb-podium-card:nth-child(2) { order: -1 !important; flex: 1; padding: 22px var(--space-md); }
+    .lb-podium-card[data-rank="1"] .lb-avatar-hex-inner { width: 64px; height: 64px; }
+    .lb-podium-card[data-rank="1"] .lb-podium-username { font-size: 0.85rem; }
     .lb-table-header, .lb-row {
-        grid-template-columns: 40px 1.2fr 0.8fr 0.8fr 80px;
-        padding: 10px var(--space-md);
+        grid-template-columns: 36px 1.4fr 0.7fr 0.7fr 70px;
+        padding: 10px 12px;
         font-size: 0.85em;
     }
-    .lb-stats-bar { flex-direction: column; gap: var(--space-xs); }
-    .lb-header { flex-direction: column; gap: var(--space-md); }
+    .lb-bar { max-width: 50px; }
+    .lb-your-rank { padding: var(--space-md); }
     .lb-your-rank-content { flex-direction: column; align-items: flex-start; gap: var(--space-md); }
     .lb-your-rank-badge { margin-left: 0; }
+    .lb-your-rank-pos { font-size: 1.5rem; }
+    .lb-footer { flex-direction: column; gap: var(--space-xs); align-items: flex-start; }
 }
 @media (max-width: 480px) {
+    .lb-container { padding: 20px 12px; }
+    .lb-header-title { font-size: 1.25rem; }
+    .lb-header-desc { font-size: 0.75rem; }
+    .lb-stat-value { font-size: 0.95rem; }
+    .lb-podium-card { padding: 16px 14px; }
+    .lb-rank-badge { width: 36px; height: 36px; }
+    .lb-rank-badge span { font-size: 0.65rem; }
+    .lb-avatar-hex-inner { width: 52px; height: 52px; }
+    .lb-podium-username { font-size: 0.78rem; }
+    .lb-podium-rank-label { font-size: 0.55rem; }
     .lb-table-header, .lb-row {
-        grid-template-columns: 35px 1fr 0.7fr 80px;
+        grid-template-columns: 30px 1fr 60px;
+        padding: 10px;
     }
+    /* Hide ORDERS and SPENT columns on small screens */
+    .lb-table-header span:nth-child(3),
     .lb-table-header span:nth-child(4),
+    .lb-row > :nth-child(3),
     .lb-row > :nth-child(4) {
         display: none;
     }
+    .lb-badge { padding: 3px 6px; font-size: 0.55rem; }
+    .lb-avatar-small { width: 28px; height: 28px; }
+    .lb-avatar-small svg { width: 12px; height: 12px; }
+    .lb-name { font-size: 0.7rem; }
+    .lb-rank-num { font-size: 0.75rem; }
+    .lb-your-rank-stats { font-size: 0.75rem; }
+}
+@media (max-width: 360px) {
+    .lb-container { padding: 16px 10px; }
+    .lb-header-title { font-size: 1.1rem; }
+    .lb-podium-card { padding: 14px 12px; }
+    .lb-stat-card { padding: 10px 12px; }
+    .lb-stat-label { font-size: 0.55rem; }
+    .lb-stat-value { font-size: 0.85rem; }
+    .lb-table-header, .lb-row { padding: 8px; }
 }
 
 /* Reduced motion */
