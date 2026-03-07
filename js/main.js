@@ -15,28 +15,21 @@ let isLoggedIn = false;
 // Default user SVG icon markup (used to restore when logged out)
 const defaultUserSvg = `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><circle cx="32" cy="20" r="12"/><path d="M8 58C8 44 18 36 32 36C46 36 56 44 56 58"/><path d="M24 20H40" stroke-width="0.5" stroke-dasharray="2 2" opacity="0.3"/></svg>`;
 
-// Generate a default avatar SVG with user's initial
-function generateInitialAvatar(username) {
-    const initial = (username || '?')[0].toUpperCase();
-    return `data:image/svg+xml,${encodeURIComponent(
-        `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="50" fill="#1a1a1a"/><text x="50" y="56" text-anchor="middle" dominant-baseline="middle" font-family="sans-serif" font-size="42" font-weight="700" fill="#00ff00">${initial}</text></svg>`
-    )}`;
-}
-
-// Swap the SVG icon in an auth element with the user's avatar photo
+// Swap the SVG icon with the user's avatar photo (only if they have one)
 function swapAuthIcon(el, user) {
-    if (!el) return;
-    // Don't swap twice
+    if (!el || !user.avatar) return;
     if (el.querySelector('.auth-avatar')) return;
     const svg = el.querySelector('svg');
     if (svg) {
         const img = document.createElement('img');
         img.className = 'auth-avatar';
         img.alt = `${user.username}'s avatar`;
-        img.src = user.avatar || generateInitialAvatar(user.username);
+        img.src = user.avatar;
         img.onerror = () => {
             img.onerror = null;
-            img.src = generateInitialAvatar(user.username);
+            const temp = document.createElement('template');
+            temp.innerHTML = defaultUserSvg.trim();
+            img.replaceWith(temp.content.firstChild);
         };
         svg.replaceWith(img);
     }
