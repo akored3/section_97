@@ -34,12 +34,37 @@
             document.addEventListener('DOMContentLoaded', () => {
                 const authText = document.getElementById('auth-text');
                 if (authText) authText.textContent = cachedUser;
+
+                // Swap SVG icon for cached avatar photo
+                const cachedAvatar = localStorage.getItem('section97-avatar');
+                const initial = cachedUser[0].toUpperCase();
+                const fallbackSrc = `data:image/svg+xml,${encodeURIComponent(
+                    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="50" fill="#1a1a1a"/><text x="50" y="56" text-anchor="middle" dominant-baseline="middle" font-family="sans-serif" font-size="42" font-weight="700" fill="#00ff00">${initial}</text></svg>`
+                )}`;
+                function swapIcon(el) {
+                    if (!el) return;
+                    const svg = el.querySelector('svg');
+                    if (svg) {
+                        const img = document.createElement('img');
+                        img.className = 'auth-avatar';
+                        img.alt = cachedUser;
+                        img.src = cachedAvatar || fallbackSrc;
+                        img.onerror = () => { img.onerror = null; img.src = fallbackSrc; };
+                        svg.replaceWith(img);
+                    }
+                }
+                const authBtn = document.getElementById('auth-btn');
+                swapIcon(authBtn);
+
                 const mobileLogin = document.getElementById('mobile-login-btn');
                 const mobileUserInfo = document.getElementById('mobile-user-info');
                 const mobileUsername = document.getElementById('mobile-username');
                 const mobileLogout = document.getElementById('mobile-logout-btn');
                 if (mobileLogin) mobileLogin.classList.add('hidden');
-                if (mobileUserInfo) mobileUserInfo.classList.remove('hidden');
+                if (mobileUserInfo) {
+                    mobileUserInfo.classList.remove('hidden');
+                    swapIcon(mobileUserInfo);
+                }
                 if (mobileUsername) mobileUsername.textContent = cachedUser;
                 if (mobileLogout) mobileLogout.classList.remove('hidden');
             });

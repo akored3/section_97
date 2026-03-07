@@ -384,6 +384,19 @@
             stroke-width: 2.5;
         }
 
+        .auth-avatar {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .mobile-user-link .auth-avatar {
+            width: 20px;
+            height: 20px;
+        }
+
         #auth-text {
             max-width: 100px;
             overflow: hidden;
