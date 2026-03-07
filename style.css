@@ -385,15 +385,15 @@
         }
 
         .auth-avatar {
-            width: 22px;
-            height: 22px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             object-fit: cover;
             flex-shrink: 0;
         }
 
         .mobile-user-link .auth-avatar {
-            width: 20px;
+            width: 28px;
             height: 20px;
         }
 
