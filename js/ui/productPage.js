@@ -93,46 +93,56 @@ function renderProduct(product) {
 function renderPdpChips(product, sizes, sizesContainer, stockEl, addBtn) {
     const cartItems = getCart();
 
-    sizesContainer.innerHTML = sizes.map(s => {
+    // Filter to only sizes with remaining stock
+    const available = sizes.filter(s => {
         const cartItem = cartItems.find(i => String(i.id) === String(product.id) && i.size === s.size);
-        const inCart = cartItem ? cartItem.quantity : 0;
-        const remaining = s.stock - inCart;
-        const sold = remaining <= 0;
-        const low = !sold && remaining <= 5;
-        const cls = sold ? 'out-of-stock' : low ? 'low-stock' : '';
-        const attrs = sold ? 'disabled' : '';
+        return s.stock - (cartItem ? cartItem.quantity : 0) > 0;
+    });
+
+    if (available.length === 0) {
+        sizesContainer.innerHTML = '';
+        stockEl.textContent = 'Out of stock';
+        stockEl.className = 'pdp-stock-info out-of-stock';
+        addBtn.disabled = true;
+        addBtn.textContent = 'SOLD OUT';
+        selectedSize = null;
+        selectedSizeStock = null;
+        return;
+    }
+
+    sizesContainer.innerHTML = available.map(s => {
+        const cartItem = cartItems.find(i => String(i.id) === String(product.id) && i.size === s.size);
+        const remaining = s.stock - (cartItem ? cartItem.quantity : 0);
+        const low = remaining <= 5;
+        const cls = low ? 'low-stock' : '';
         const stockLabel = low ? `data-stock-label="${remaining} LEFT"` : '';
         return `<button class="pdp-size-chip ${cls}"
             data-size="${escapeHtml(s.size)}"
             data-stock="${s.stock}"
             data-remaining="${remaining}"
-            ${stockLabel} ${attrs}>
+            ${stockLabel}>
             ${escapeHtml(s.size)}
         </button>`;
     }).join('');
 
-    // Auto-select if single size (e.g., bags = ONE SIZE)
-    if (sizes.length === 1) {
-        const remaining = sizes[0].stock - (cartItems.find(i => String(i.id) === String(product.id) && i.size === sizes[0].size)?.quantity || 0);
-        if (remaining > 0) {
-            const chip = sizesContainer.querySelector('.pdp-size-chip');
-            chip.classList.add('active');
-            selectedSize = sizes[0].size;
-            selectedSizeStock = sizes[0].stock;
-            addBtn.disabled = false;
-            addBtn.textContent = `Add to bag — Size ${selectedSize}`;
-        }
+    // Auto-select if single available size
+    if (available.length === 1) {
+        const chip = sizesContainer.querySelector('.pdp-size-chip');
+        chip.classList.add('active');
+        selectedSize = available[0].size;
+        selectedSizeStock = available[0].stock;
+        addBtn.disabled = false;
+        addBtn.textContent = `Add to bag — Size ${selectedSize}`;
     }
 
     // Re-select the previously selected size if still available
-    if (selectedSize) {
-        const activeChip = sizesContainer.querySelector(`.pdp-size-chip[data-size="${CSS.escape(selectedSize)}"]:not([disabled])`);
+    if (selectedSize && available.length > 1) {
+        const activeChip = sizesContainer.querySelector(`.pdp-size-chip[data-size="${CSS.escape(selectedSize)}"]`);
         if (activeChip) {
             activeChip.classList.add('active');
             addBtn.disabled = false;
             addBtn.textContent = `Add to bag — Size ${selectedSize}`;
         } else {
-            // Selected size is now sold out
             selectedSize = null;
             selectedSizeStock = null;
             addBtn.disabled = true;
@@ -141,7 +151,7 @@ function renderPdpChips(product, sizes, sizesContainer, stockEl, addBtn) {
     }
 
     // Size selection handlers
-    sizesContainer.querySelectorAll('.pdp-size-chip:not([disabled])').forEach(chip => {
+    sizesContainer.querySelectorAll('.pdp-size-chip').forEach(chip => {
         chip.addEventListener('click', () => {
             sizesContainer.querySelectorAll('.pdp-size-chip').forEach(c => c.classList.remove('active'));
             chip.classList.add('active');
@@ -154,7 +164,7 @@ function renderPdpChips(product, sizes, sizesContainer, stockEl, addBtn) {
 
             // Update stock display for selected size
             stockEl.className = 'pdp-stock-info';
-            if (remaining <= 5 && remaining > 0) {
+            if (remaining <= 5) {
                 stockEl.textContent = `Only ${remaining} left in size ${selectedSize}`;
                 stockEl.classList.add('low-stock');
             } else {
@@ -162,18 +172,6 @@ function renderPdpChips(product, sizes, sizesContainer, stockEl, addBtn) {
             }
         });
     });
-
-    // Product-level out of stock (all remaining gone)
-    const totalRemaining = sizes.reduce((sum, s) => {
-        const cartItem = cartItems.find(i => String(i.id) === String(product.id) && i.size === s.size);
-        return sum + Math.max(0, s.stock - (cartItem ? cartItem.quantity : 0));
-    }, 0);
-    if (totalRemaining === 0) {
-        stockEl.textContent = 'Out of stock';
-        stockEl.classList.add('out-of-stock');
-        addBtn.disabled = true;
-        addBtn.textContent = 'SOLD OUT';
-    }
 }
 
 // Setup PDP add-to-cart button

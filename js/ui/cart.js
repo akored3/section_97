@@ -475,22 +475,28 @@ document.addEventListener('click', (e) => {
 
 // Refresh size chip states based on remaining stock (db stock - cart qty)
 function updatePickerChips(picker, productId, sizes) {
-    picker.innerHTML = `
-        <span class="card-size-label">SELECT SIZE</span>
-        <div class="card-size-chips">
-            ${sizes.map(s => {
-                const cartItem = cart.find(i => i.id === String(productId) && i.size === s.size);
-                const inCart = cartItem ? cartItem.quantity : 0;
-                const remaining = s.stock - inCart;
-                const sold = remaining <= 0;
-                const low = !sold && remaining <= 5;
-                const cls = sold ? 'out-of-stock' : low ? 'low-stock' : '';
-                const attrs = sold ? 'disabled' : '';
-                const stockLabel = low ? `data-stock-label="${remaining} LEFT"` : '';
-                return `<button type="button" class="card-size-chip ${cls}"
-                    data-size="${escapeHtml(s.size)}" ${stockLabel} ${attrs}>${escapeHtml(s.size)}</button>`;
-            }).join('')}
-        </div>`;
+    const available = sizes.filter(s => {
+        const cartItem = cart.find(i => i.id === String(productId) && i.size === s.size);
+        return s.stock - (cartItem ? cartItem.quantity : 0) > 0;
+    });
+
+    if (available.length === 0) {
+        picker.innerHTML = `<span class="card-size-label">SOLD OUT</span>`;
+    } else {
+        picker.innerHTML = `
+            <span class="card-size-label">SELECT SIZE</span>
+            <div class="card-size-chips">
+                ${available.map(s => {
+                    const cartItem = cart.find(i => i.id === String(productId) && i.size === s.size);
+                    const remaining = s.stock - (cartItem ? cartItem.quantity : 0);
+                    const low = remaining <= 5;
+                    const cls = low ? 'low-stock' : '';
+                    const stockLabel = low ? `data-stock-label="${remaining} LEFT"` : '';
+                    return `<button type="button" class="card-size-chip ${cls}"
+                        data-size="${escapeHtml(s.size)}" ${stockLabel}>${escapeHtml(s.size)}</button>`;
+                }).join('')}
+            </div>`;
+    }
 }
 
 export function setupAddToCartButtons() {
