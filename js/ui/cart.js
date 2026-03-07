@@ -473,6 +473,26 @@ document.addEventListener('click', (e) => {
     if (!e.target.closest('.product-card')) closeAllPickers();
 });
 
+// Refresh size chip states based on remaining stock (db stock - cart qty)
+function updatePickerChips(picker, productId, sizes) {
+    picker.innerHTML = `
+        <span class="card-size-label">SELECT SIZE</span>
+        <div class="card-size-chips">
+            ${sizes.map(s => {
+                const cartItem = cart.find(i => i.id === String(productId) && i.size === s.size);
+                const inCart = cartItem ? cartItem.quantity : 0;
+                const remaining = s.stock - inCart;
+                const sold = remaining <= 0;
+                const low = !sold && remaining <= 5;
+                const cls = sold ? 'out-of-stock' : low ? 'low-stock' : '';
+                const attrs = sold ? 'disabled' : '';
+                const stockLabel = low ? `data-stock-label="${remaining} LEFT"` : '';
+                return `<button type="button" class="card-size-chip ${cls}"
+                    data-size="${escapeHtml(s.size)}" ${stockLabel} ${attrs}>${escapeHtml(s.size)}</button>`;
+            }).join('')}
+        </div>`;
+}
+
 export function setupAddToCartButtons() {
     document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -509,19 +529,6 @@ export function setupAddToCartButtons() {
             if (!picker) {
                 picker = document.createElement('div');
                 picker.className = 'card-size-picker';
-                picker.innerHTML = `
-                    <span class="card-size-label">SELECT SIZE</span>
-                    <div class="card-size-chips">
-                        ${sizes.map(s => {
-                            const sold = s.stock <= 0;
-                            const low = !sold && s.stock <= 5;
-                            const cls = sold ? 'out-of-stock' : low ? 'low-stock' : '';
-                            const attrs = sold ? 'disabled' : '';
-                            const stockLabel = low ? `data-stock-label="${s.stock} LEFT"` : '';
-                            return `<button type="button" class="card-size-chip ${cls}"
-                                data-size="${escapeHtml(s.size)}" ${stockLabel} ${attrs}>${escapeHtml(s.size)}</button>`;
-                        }).join('')}
-                    </div>`;
                 imageContainer.appendChild(picker);
 
                 // Size chip click handler
@@ -540,10 +547,14 @@ export function setupAddToCartButtons() {
                         stock: sizeData?.stock || null
                     });
 
-                    closeAllPickers();
+                    // Refresh chips to reflect updated remaining stock
+                    updatePickerChips(picker, btn.dataset.id, sizes);
                     showAddedFeedback(btn);
                 });
             }
+
+            // Always refresh chip states when opening (accounts for cart changes)
+            updatePickerChips(picker, btn.dataset.id, sizes);
 
             // Open the picker + blur the image
             picker.classList.add('open');
