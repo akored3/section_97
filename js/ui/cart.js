@@ -513,7 +513,7 @@ export function setupAddToCartButtons() {
                     <span class="card-size-label">SELECT SIZE</span>
                     <div class="card-size-chips">
                         ${sizes.map(s => `<button type="button" class="card-size-chip ${s.stock <= 0 ? 'out-of-stock' : ''}"
-                            data-size="${escapeHtml(s.size)}" ${s.stock <= 0 ? 'disabled' : ''}>${escapeHtml(s.size)}</button>`).join('')}
+                            data-size="${escapeHtml(s.size)}" ${s.stock <= 0 ? `disabled title="Size ${escapeHtml(s.size)} — Sold Out"` : ''}>${escapeHtml(s.size)}</button>`).join('')}
                     </div>`;
                 imageContainer.appendChild(picker);
 

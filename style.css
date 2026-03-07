@@ -1445,9 +1445,29 @@
         }
 
         .card-size-chip.out-of-stock {
-            opacity: 0.2;
+            opacity: 0.3;
             text-decoration: line-through;
             cursor: not-allowed;
+            position: relative;
+        }
+
+        .card-size-chip.out-of-stock:hover::after {
+            content: 'SOLD OUT';
+            position: absolute;
+            bottom: calc(100% + 6px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--error);
+            color: #fff;
+            font-family: var(--font-mono);
+            font-size: 0.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            padding: 3px 6px;
+            border-radius: var(--shape-xs);
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 10;
         }
 
         .add-to-cart-btn.added-flash {
@@ -2915,6 +2935,26 @@
     opacity: 0.3;
     text-decoration: line-through;
     cursor: not-allowed;
+    position: relative;
+}
+
+.pdp-size-chip.out-of-stock:hover::after {
+    content: 'SOLD OUT';
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--error);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 3px 8px;
+    border-radius: var(--shape-xs);
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 10;
 }
 
 .pdp-no-sizes {

@@ -84,7 +84,7 @@ function renderProduct(product) {
             return `<button class="pdp-size-chip ${outOfStock ? 'out-of-stock' : ''}"
                 data-size="${escapeHtml(s.size)}"
                 data-stock="${s.stock}"
-                ${outOfStock ? 'disabled' : ''}>
+                ${outOfStock ? `disabled title="Size ${escapeHtml(s.size)} — Sold Out"` : ''}>
                 ${escapeHtml(s.size)}
             </button>`;
         }).join('');
