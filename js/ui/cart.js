@@ -512,8 +512,15 @@ export function setupAddToCartButtons() {
                 picker.innerHTML = `
                     <span class="card-size-label">SELECT SIZE</span>
                     <div class="card-size-chips">
-                        ${sizes.map(s => `<button type="button" class="card-size-chip ${s.stock <= 0 ? 'out-of-stock' : ''}"
-                            data-size="${escapeHtml(s.size)}" ${s.stock <= 0 ? `disabled title="Size ${escapeHtml(s.size)} — Sold Out"` : ''}>${escapeHtml(s.size)}</button>`).join('')}
+                        ${sizes.map(s => {
+                            const sold = s.stock <= 0;
+                            const low = !sold && s.stock <= 5;
+                            const cls = sold ? 'out-of-stock' : low ? 'low-stock' : '';
+                            const attrs = sold ? 'disabled' : '';
+                            const stockLabel = low ? `data-stock-label="${s.stock} LEFT"` : '';
+                            return `<button type="button" class="card-size-chip ${cls}"
+                                data-size="${escapeHtml(s.size)}" ${stockLabel} ${attrs}>${escapeHtml(s.size)}</button>`;
+                        }).join('')}
                     </div>`;
                 imageContainer.appendChild(picker);
 

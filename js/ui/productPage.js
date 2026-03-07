@@ -80,11 +80,15 @@ function renderProduct(product) {
         sizesContainer.innerHTML = '<span class="pdp-no-sizes">Sizes unavailable</span>';
     } else {
         sizesContainer.innerHTML = sizes.map(s => {
-            const outOfStock = s.stock <= 0;
-            return `<button class="pdp-size-chip ${outOfStock ? 'out-of-stock' : ''}"
+            const sold = s.stock <= 0;
+            const low = !sold && s.stock <= 5;
+            const cls = sold ? 'out-of-stock' : low ? 'low-stock' : '';
+            const attrs = sold ? 'disabled' : '';
+            const stockLabel = low ? `data-stock-label="${s.stock} LEFT"` : '';
+            return `<button class="pdp-size-chip ${cls}"
                 data-size="${escapeHtml(s.size)}"
                 data-stock="${s.stock}"
-                ${outOfStock ? `disabled title="Size ${escapeHtml(s.size)} — Sold Out"` : ''}>
+                ${stockLabel} ${attrs}>
                 ${escapeHtml(s.size)}
             </button>`;
         }).join('');
