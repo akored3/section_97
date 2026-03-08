@@ -387,14 +387,14 @@
         .auth-avatar {
             width: 30px;
             height: 30px;
-            border-radius: 50%;
+            border-radius: var(--shape-full);
             object-fit: cover;
             flex-shrink: 0;
         }
 
         .mobile-user-link .auth-avatar {
             width: 28px;
-            height: 20px;
+            height: 28px;
         }
 
         #auth-text {
