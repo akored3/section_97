@@ -4447,17 +4447,41 @@ a.dropdown-item {
     font-size: 0.6rem;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: var(--accent);
     padding: 3px 8px;
+    white-space: nowrap;
+    color: var(--accent);
     background: rgba(0, 255, 100, 0.08);
     border: 1px solid rgba(0, 255, 100, 0.15);
-    white-space: nowrap;
+}
+.profile-order-status[data-status="pending"] {
+    color: #ffaa00; background: rgba(255, 170, 0, 0.08); border-color: rgba(255, 170, 0, 0.25);
+}
+.profile-order-status[data-status="processing"] {
+    color: #ff00ff; background: rgba(255, 0, 255, 0.06); border-color: rgba(255, 0, 255, 0.25);
+}
+.profile-order-status[data-status="shipped"] {
+    color: #00d4ff; background: rgba(0, 212, 255, 0.06); border-color: rgba(0, 212, 255, 0.25);
+}
+.profile-order-status[data-status="cancelled"] {
+    color: var(--error); background: rgba(255, 59, 48, 0.06); border-color: rgba(255, 59, 48, 0.25);
 }
 
 :root[data-theme="light"] .profile-order-status {
     color: var(--accent-hover);
     background: rgba(0, 168, 64, 0.08);
     border-color: rgba(0, 168, 64, 0.2);
+}
+:root[data-theme="light"] .profile-order-status[data-status="pending"] {
+    color: #cc8800; background: rgba(204, 136, 0, 0.06); border-color: rgba(204, 136, 0, 0.2);
+}
+:root[data-theme="light"] .profile-order-status[data-status="processing"] {
+    color: #cc00cc; background: rgba(204, 0, 204, 0.05); border-color: rgba(204, 0, 204, 0.2);
+}
+:root[data-theme="light"] .profile-order-status[data-status="shipped"] {
+    color: #0099cc; background: rgba(0, 153, 204, 0.05); border-color: rgba(0, 153, 204, 0.2);
+}
+:root[data-theme="light"] .profile-order-status[data-status="cancelled"] {
+    color: #cc2233; background: rgba(204, 34, 51, 0.05); border-color: rgba(204, 34, 51, 0.2);
 }
 
 .profile-order-row-price {

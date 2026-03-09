@@ -244,7 +244,8 @@ function renderOrders(orders) {
         const items = order.order_items || [];
         const firstName = items.length > 0 ? escapeHtml(items[0].product_name || 'Item') : 'Order';
         const extra = items.length > 1 ? ` +${items.length - 1} more` : '';
-        const status = escapeHtml(order.status || 'completed').toUpperCase();
+        const statusRaw = order.status || 'completed';
+        const status = escapeHtml(statusRaw).toUpperCase();
         const orderId = `ORD-${String(order.id).slice(-4).padStart(4, '0')}`;
 
         const itemsHtml = items.map(item => `
@@ -271,7 +272,7 @@ function renderOrders(orders) {
                         <div class="profile-order-row-name">${firstName}${extra}</div>
                         <div class="profile-order-row-meta">${escapeHtml(orderId)} · ${escapeHtml(date)}</div>
                     </div>
-                    <span class="profile-order-status">${status}</span>
+                    <span class="profile-order-status" data-status="${escapeHtml(statusRaw)}">${status}</span>
                     <span class="profile-order-row-price">₦${escapeHtml(total)}</span>
                     <svg class="profile-order-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true">
                         <polyline points="6 9 12 15 18 9"/>
