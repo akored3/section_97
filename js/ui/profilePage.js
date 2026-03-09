@@ -259,6 +259,41 @@ function renderOrders(orders) {
             </div>
         `).join('');
 
+        // Status tracker pipeline
+        const PIPELINE = ['pending', 'processing', 'shipped', 'delivered'];
+        const PIPELINE_LABELS = ['Ordered', 'Processing', 'Shipped', 'Delivered'];
+        const PIPELINE_ICONS = [
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>',
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>',
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+        ];
+        const isCancelled = statusRaw === 'cancelled';
+        const pipelineIdx = PIPELINE.indexOf(statusRaw);
+        // completed = fully done, treat like delivered for pipeline display
+        const effectiveIdx = statusRaw === 'completed' ? 3 : pipelineIdx;
+
+        const trackerHtml = isCancelled
+            ? `<div class="order-tracker">
+                <div class="order-tracker-cancelled">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                    ORDER CANCELLED
+                </div>
+               </div>`
+            : `<div class="order-tracker">
+                ${PIPELINE.map((step, i) => {
+                    const done = i < effectiveIdx;
+                    const current = i === effectiveIdx;
+                    const cls = done ? 'done' : current ? 'current' : '';
+                    return `
+                        ${i > 0 ? `<div class="order-tracker-line ${done ? 'done' : ''}"></div>` : ''}
+                        <div class="order-tracker-step ${cls}">
+                            <div class="order-tracker-dot ${cls}">${PIPELINE_ICONS[i]}</div>
+                            <span class="order-tracker-label">${PIPELINE_LABELS[i]}</span>
+                        </div>`;
+                }).join('')}
+               </div>`;
+
         return `
             <div class="profile-order-row">
                 <div class="profile-order-row-header">
@@ -278,7 +313,10 @@ function renderOrders(orders) {
                         <polyline points="6 9 12 15 18 9"/>
                     </svg>
                 </div>
-                ${items.length > 0 ? `<div class="profile-order-items" aria-hidden="true">${itemsHtml}</div>` : ''}
+                <div class="profile-order-items" aria-hidden="true">
+                    ${trackerHtml}
+                    ${itemsHtml}
+                </div>
             </div>
         `;
     }).join('');

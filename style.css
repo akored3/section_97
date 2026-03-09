@@ -4333,12 +4333,90 @@ a.dropdown-item {
 }
 
 .profile-order-row.expanded .profile-order-items {
-    max-height: 500px;
+    max-height: 700px;
     border-top-width: 1px;
 }
 
 :root[data-theme="light"] .profile-order-row.expanded .profile-order-items {
     border-top-color: rgba(0, 168, 64, 0.08);
+}
+
+/* Order status tracker pipeline */
+.order-tracker {
+    display: flex;
+    align-items: flex-start;
+    padding: var(--space-md) var(--space-md) var(--space-sm);
+    gap: 0;
+}
+.order-tracker-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    z-index: 1;
+}
+.order-tracker-dot {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid var(--text-muted);
+    color: var(--text-muted);
+    background: var(--bg);
+    transition: all 0.3s;
+}
+.order-tracker-dot.done {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(0, 255, 100, 0.06);
+}
+.order-tracker-dot.current {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(0, 255, 100, 0.06);
+    box-shadow: 0 0 12px rgba(0, 255, 100, 0.25);
+    animation: tracker-pulse 2s ease-in-out infinite;
+}
+@keyframes tracker-pulse {
+    0%, 100% { box-shadow: 0 0 8px rgba(0, 255, 100, 0.15); }
+    50% { box-shadow: 0 0 18px rgba(0, 255, 100, 0.35); }
+}
+.order-tracker-label {
+    font-family: var(--font-mono);
+    font-size: 0.45rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    transition: color 0.3s;
+}
+.order-tracker-step.done .order-tracker-label,
+.order-tracker-step.current .order-tracker-label {
+    color: var(--accent);
+}
+.order-tracker-line {
+    flex: 1;
+    height: 1.5px;
+    background: var(--outline-variant);
+    margin-top: 15px;
+    min-width: 12px;
+}
+.order-tracker-line.done {
+    background: var(--accent);
+    box-shadow: 0 0 4px rgba(0, 255, 100, 0.2);
+}
+.order-tracker-cancelled {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    justify-content: center;
+    padding: var(--space-sm) 0;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    color: var(--error);
 }
 
 .profile-order-item {
