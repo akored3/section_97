@@ -7186,6 +7186,10 @@ a.dropdown-item {
     0%, 100% { opacity: 0.5; }
     50% { opacity: 1; }
 }
+@keyframes lb-row-shimmer {
+    0% { left: -100%; }
+    40%, 100% { left: 200%; }
+}
 
 /* ── Responsive ── */
 @media (max-width: 768px) {
@@ -7220,12 +7224,43 @@ a.dropdown-item {
     .lb-row[data-rank="3"] .lb-rank-num { color: var(--lb-cyan); font-weight: 800; }
     .lb-row[data-rank="3"] .lb-name { color: var(--lb-cyan); }
     .lb-row[data-rank="3"]:hover { background: linear-gradient(90deg, rgba(0, 212, 255, 0.08), transparent); }
+    /* Shimmer sweep on top 3 rows */
+    .lb-row[data-rank="1"],
+    .lb-row[data-rank="2"],
+    .lb-row[data-rank="3"] {
+        overflow: hidden;
+    }
+    .lb-row[data-rank="1"]::after,
+    .lb-row[data-rank="2"]::after,
+    .lb-row[data-rank="3"]::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 60%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+        animation: lb-row-shimmer 4s ease-in-out infinite;
+        pointer-events: none;
+        z-index: 3;
+    }
+    .lb-row[data-rank="1"]::after {
+        background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.12), transparent);
+    }
+    .lb-row[data-rank="2"]::after {
+        background: linear-gradient(90deg, transparent, rgba(255, 0, 255, 0.12), transparent);
+        animation-delay: 1.3s;
+    }
+    .lb-row[data-rank="3"]::after {
+        background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.12), transparent);
+        animation-delay: 2.6s;
+    }
     .lb-table-header, .lb-row {
-        grid-template-columns: 36px 1.4fr 0.7fr 0.7fr 70px;
+        grid-template-columns: 36px 1.2fr 0.7fr 0.7fr auto;
         padding: 10px 12px;
         font-size: 0.85em;
     }
-    .lb-badge { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 70px; }
+    .lb-badge { white-space: nowrap; }
     .lb-bar { max-width: 50px; }
     .lb-your-rank { padding: var(--space-md); }
     .lb-your-rank-content { flex-direction: column; align-items: flex-start; gap: var(--space-md); }
@@ -7237,7 +7272,7 @@ a.dropdown-item {
     .lb-header-desc { font-size: 0.75rem; }
     .lb-stat-label { font-size: 0.5rem; }
     .lb-table-header, .lb-row {
-        grid-template-columns: 30px 1fr 60px;
+        grid-template-columns: 30px 1fr auto;
         padding: 10px;
     }
     /* Hide ORDERS and SPENT columns on small screens */
@@ -7247,7 +7282,7 @@ a.dropdown-item {
     .lb-row > :nth-child(4) {
         display: none;
     }
-    .lb-badge { padding: 3px 6px; font-size: 0.5rem; max-width: 60px; }
+    .lb-badge { padding: 3px 6px; font-size: 0.55rem; }
     .lb-avatar-small { width: 28px; height: 28px; }
     .lb-avatar-small svg { width: 12px; height: 12px; }
     .lb-name { font-size: 0.7rem; }
@@ -7272,4 +7307,5 @@ a.dropdown-item {
     .lb-your-rank { animation: none; opacity: 1; }
     .lb-footer { animation: none; opacity: 1; }
     .lb-skeleton-bar, .lb-skeleton-card, .lb-skeleton-row { animation: none; }
+    .lb-row[data-rank]::after { animation: none; display: none; }
 }
