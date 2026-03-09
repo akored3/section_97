@@ -40,6 +40,8 @@ const STATUS_ICONS = {
 };
 
 function nextStatus(current) {
+    // Legacy 'completed' orders can be moved to 'processing' to enter the pipeline
+    if (current === 'completed') return 'processing';
     const idx = STATUS_FLOW.indexOf(current);
     return idx >= 0 && idx < STATUS_FLOW.length - 1 ? STATUS_FLOW[idx + 1] : null;
 }
@@ -136,7 +138,7 @@ async function fetchOrders() {
 // ─── Overview Stats ──────────────────────────────
 function renderOverview(orders) {
     const total = orders.length;
-    const pending = orders.filter(o => o.status === 'pending').length;
+    const pending = orders.filter(o => o.status === 'pending' || o.status === 'completed').length;
     const shipped = orders.filter(o => o.status === 'shipped').length;
     const processing = orders.filter(o => o.status === 'processing').length;
     const revenue = orders
@@ -160,7 +162,7 @@ function renderOverview(orders) {
 // ─── Filter Counts ───────────────────────────────
 function renderFilterCounts(orders) {
     document.getElementById('countAll').textContent = orders.length;
-    document.getElementById('countPending').textContent = orders.filter(o => o.status === 'pending').length;
+    document.getElementById('countPending').textContent = orders.filter(o => o.status === 'pending' || o.status === 'completed').length;
     document.getElementById('countProcessing').textContent = orders.filter(o => o.status === 'processing').length;
     document.getElementById('countShipped').textContent = orders.filter(o => o.status === 'shipped').length;
     document.getElementById('countDelivered').textContent = orders.filter(o => o.status === 'delivered').length;
@@ -170,9 +172,13 @@ function renderFilterCounts(orders) {
 function applyFilters() {
     let result = allOrders;
 
-    // Status filter
+    // Status filter — pending filter also catches legacy 'completed' orders
     if (currentFilter !== 'all') {
-        result = result.filter(o => o.status === currentFilter);
+        if (currentFilter === 'pending') {
+            result = result.filter(o => o.status === 'pending' || o.status === 'completed');
+        } else {
+            result = result.filter(o => o.status === currentFilter);
+        }
     }
 
     // Search
@@ -326,11 +332,12 @@ function openDetail(order) {
     const next = nextStatus(order.status);
     const isFinal = order.status === 'delivered' || order.status === 'cancelled';
 
-    // Pipeline
+    // Pipeline — 'completed' legacy orders show as fully done (payment verified, needs processing)
     const pipelineHtml = STATUS_FLOW.map((step, i) => {
-        const stepIdx = STATUS_FLOW.indexOf(order.status);
-        const isDone = i < stepIdx;
-        const isCurrent = i === stepIdx;
+        const isCompleted = order.status === 'completed';
+        const stepIdx = isCompleted ? -1 : STATUS_FLOW.indexOf(order.status);
+        const isDone = isCompleted ? false : i < stepIdx;
+        const isCurrent = isCompleted ? false : i === stepIdx;
         const nodeClass = isDone ? 'done' : isCurrent ? 'current' : '';
         const labelClass = isDone ? 'done' : isCurrent ? 'current' : '';
 

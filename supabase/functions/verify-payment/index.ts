@@ -65,10 +65,10 @@ Deno.serve(async (req) => {
             }
         }
 
-        // Don't re-verify already completed orders
-        if (order.status === 'completed') {
+        // Don't re-verify already verified orders
+        if (order.status !== 'pending') {
             return new Response(
-                JSON.stringify({ verified: true, status: 'completed' }),
+                JSON.stringify({ verified: true, status: order.status }),
                 { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
             );
         }
@@ -134,22 +134,11 @@ Deno.serve(async (req) => {
             );
         }
 
-        // ─── All checks passed — mark as completed ────
-        const { error: updateError } = await supabaseAdmin
-            .from('orders')
-            .update({ status: 'completed' })
-            .eq('id', order_id);
-
-        if (updateError) {
-            console.error('Failed to update order status:', updateError.message);
-            return new Response(
-                JSON.stringify({ error: 'Failed to update order' }),
-                { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-            );
-        }
-
+        // ─── All checks passed — payment verified, order stays pending for admin processing ────
+        // Status remains 'pending' — admin advances it through the pipeline:
+        // pending → processing → shipped → delivered
         return new Response(
-            JSON.stringify({ verified: true, status: 'completed' }),
+            JSON.stringify({ verified: true, status: 'pending' }),
             { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
 

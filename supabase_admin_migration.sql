@@ -83,7 +83,7 @@ BEGIN
         RAISE EXCEPTION 'Order not found';
     END IF;
 
-    -- Validate status transitions (no going backwards, no changing delivered/cancelled)
+    -- Validate status transitions (no changing delivered/cancelled)
     IF v_current_status = 'delivered' THEN
         RAISE EXCEPTION 'Cannot change status of delivered order';
     END IF;
@@ -91,6 +91,9 @@ BEGIN
     IF v_current_status = 'cancelled' THEN
         RAISE EXCEPTION 'Cannot change status of cancelled order';
     END IF;
+
+    -- Allow 'completed' orders to be moved into the pipeline (legacy status)
+    -- completed → pending/processing/shipped/delivered are all valid
 
     -- Update the order status
     UPDATE orders
