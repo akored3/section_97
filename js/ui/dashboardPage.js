@@ -517,7 +517,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 1. Check auth
     const user = await getCurrentUser();
+    console.log('[DASH] Current user:', user);
     if (!user) {
+        console.log('[DASH] No user found — redirecting');
         skeleton.classList.add('hidden');
         authGate.classList.remove('hidden');
         setTimeout(() => { window.location.href = 'store.html'; }, 2000);
@@ -527,13 +529,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 2. Check admin role
     try {
         const { data: isAdmin, error } = await supabase.rpc('is_admin');
+        console.log('[DASH] is_admin RPC result:', { isAdmin, error });
         if (error || !isAdmin) {
+            console.log('[DASH] Not admin — redirecting');
             skeleton.classList.add('hidden');
             authGate.classList.remove('hidden');
             setTimeout(() => { window.location.href = 'store.html'; }, 2000);
             return;
         }
-    } catch {
+    } catch (e) {
+        console.error('[DASH] is_admin RPC threw:', e);
         skeleton.classList.add('hidden');
         authGate.classList.remove('hidden');
         setTimeout(() => { window.location.href = 'store.html'; }, 2000);
