@@ -1116,6 +1116,225 @@
         <div class="tw-hint">HINT: THE ACCESS CODE IS THE BRAND NAME (NO DASH)</div>
     </div>
 
+    <!-- Terminal veil logic — runs inline to avoid module-loading race conditions -->
+    <script>
+    (function() {
+        var veil = document.getElementById('terminalVeil');
+        if (!veil) return;
+
+        // Promise that the module can await
+        var _resolve;
+        window.__s97VeilDone = new Promise(function(r) { _resolve = r; });
+
+        // Skip veil if already authenticated this session
+        if (sessionStorage.getItem('s97_admin_auth') === '1') {
+            veil.style.display = 'none';
+            _resolve();
+            return;
+        }
+
+        var twBody = document.getElementById('twBody');
+        var win = document.getElementById('termWindow');
+        var beam = document.getElementById('tvBeam');
+        var flash = document.getElementById('tvFlash');
+        var dot = document.getElementById('twDot');
+        var footerStatus = document.getElementById('twFooterStatus');
+        var attemptsMeta = document.getElementById('twAttempts');
+        var attempts = 0;
+        var authBusy = false;
+        // Obfuscated access code (cosmetic veil — real security is Supabase RLS)
+        var _k = atob('U0VDVElPTjk3');
+
+        var BOOT = [
+            { text: 'SECTION-97 TERMINAL v4.2.1', cls: 'tw-info', delay: 0 },
+            { text: '\u2550'.repeat(44), cls: 'tw-sep', delay: 80 },
+            { text: 'INITIALIZING NEURAL INTERFACE...', cls: 'tw-info', delay: 200 },
+            { ok: true, msg: ' CORE SYSTEMS ONLINE', delay: 500 },
+            { ok: true, msg: ' ENCRYPTION LAYER: AES-256-GCM', delay: 700 },
+            { ok: true, msg: ' FIREWALL STATUS: ACTIVE', delay: 850 },
+            { ok: true, msg: ' BIOMETRIC SCANNERS: STANDBY', delay: 1000 },
+            { ok: true, msg: ' THREAT LEVEL: NOMINAL', delay: 1150 },
+            { text: '\u2550'.repeat(44), cls: 'tw-sep', delay: 1350 },
+            { text: 'AWAITING OPERATOR AUTHENTICATION...', cls: 'tw-info', delay: 1550 },
+        ];
+
+        function addLine(item) {
+            var div = document.createElement('div');
+            div.className = 'tw-line ' + (item.cls || '');
+            if (item.ok) {
+                div.innerHTML = '<span class="tw-ok">[OK]</span><span class="tw-msg">' + item.msg + '</span>';
+            } else {
+                div.textContent = item.text;
+            }
+            twBody.appendChild(div);
+            twBody.scrollTop = twBody.scrollHeight;
+        }
+
+        function addResult(text, cls) {
+            var div = document.createElement('div');
+            div.className = 'tw-result ' + cls;
+            div.textContent = text;
+            twBody.appendChild(div);
+            twBody.scrollTop = twBody.scrollHeight;
+        }
+
+        function showInput() {
+            var line = document.createElement('div');
+            line.className = 'tw-input';
+            line.innerHTML = '<span class="tw-prompt">ENTER ACCESS CODE &gt;&gt;</span><input type="password" id="twPassInput" maxlength="24" autocomplete="off" spellcheck="false">';
+            twBody.appendChild(line);
+            twBody.scrollTop = twBody.scrollHeight;
+            var inp = document.getElementById('twPassInput');
+            inp.focus();
+            inp.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !authBusy) handleAuth(inp.value.trim().toUpperCase());
+            });
+        }
+
+        // Boot sequence
+        BOOT.forEach(function(item) {
+            setTimeout(function() { addLine(item); }, item.delay);
+        });
+        setTimeout(showInput, 1900);
+
+        // Glitch pulses
+        var glitchTimer = setInterval(function() {
+            if (Math.random() > 0.7 && !authBusy) {
+                flash.classList.add('flash-active');
+                setTimeout(function() { flash.classList.remove('flash-active'); }, 200);
+            }
+        }, 3000);
+
+        function handleAuth(value) {
+            if (!value) return;
+            authBusy = true;
+            attempts++;
+
+            var inp = document.getElementById('twPassInput');
+            if (inp) inp.disabled = true;
+
+            addResult('> ' + '*'.repeat(value.length), '');
+
+            var verifyDiv = document.createElement('div');
+            verifyDiv.className = 'tw-verify';
+            verifyDiv.textContent = 'VERIFYING CREDENTIALS...';
+            twBody.appendChild(verifyDiv);
+
+            var glyphDiv = document.createElement('div');
+            glyphDiv.className = 'tw-glyphs';
+            twBody.appendChild(glyphDiv);
+            twBody.scrollTop = twBody.scrollHeight;
+
+            var glyphChars = '\u2588\u2593\u2592\u2591\u2580\u2584\u258C\u2590\u25A0\u25B2\u25BC\u25C6\u2666\u00A7\u2302\u03A9';
+            var glyphInterval = setInterval(function() {
+                var s = '';
+                for (var i = 0; i < 40; i++) s += glyphChars[Math.floor(Math.random() * glyphChars.length)];
+                glyphDiv.textContent = s;
+            }, 50);
+
+            var barDiv = document.createElement('div');
+            barDiv.className = 'tw-line';
+            barDiv.style.color = '#00ff64';
+            barDiv.style.letterSpacing = '0.08em';
+            twBody.appendChild(barDiv);
+
+            var barLen = 0;
+            var barInterval = setInterval(function() {
+                barLen++;
+                barDiv.textContent = '[' + '\u2588'.repeat(barLen) + '\u2591'.repeat(20 - barLen) + '] ' + (barLen * 5) + '%';
+                twBody.scrollTop = twBody.scrollHeight;
+                if (barLen >= 20) {
+                    clearInterval(barInterval);
+                    clearInterval(glyphInterval);
+                    glyphDiv.remove();
+                    verifyDiv.remove();
+                    barDiv.remove();
+                    finishAuth(value === _k);
+                }
+            }, 60);
+
+            footerStatus.textContent = 'PROCESSING...';
+            dot.style.background = '#ffaa00';
+            dot.style.boxShadow = '0 0 6px #ffaa00';
+        }
+
+        function finishAuth(granted) {
+            if (granted) {
+                flash.classList.remove('flash-denied');
+                flash.classList.add('flash-active');
+                beam.classList.remove('denied-beam');
+                win.classList.remove('tw-denied');
+                win.classList.add('tw-granted');
+                dot.style.background = '#00ff64';
+                dot.style.boxShadow = '0 0 6px #00ff64';
+                footerStatus.textContent = 'ACCESS GRANTED';
+
+                var grantedLines = [
+                    '\u2554' + '\u2550'.repeat(39) + '\u2557',
+                    '\u2551   \u2588\u2588  ACCESS GRANTED  \u2588\u2588             \u2551',
+                    '\u2551   WELCOME BACK, OPERATOR             \u2551',
+                    '\u2551   CLEARANCE: SUPER_ADMIN             \u2551',
+                    '\u255A' + '\u2550'.repeat(39) + '\u255D',
+                ];
+                grantedLines.forEach(function(line, i) {
+                    setTimeout(function() { addResult(line, 'tw-res-granted'); }, i * 60);
+                });
+
+                var postLines = [
+                    '[SYS] DECRYPTING ADMIN INTERFACE...',
+                    '[SYS] LOADING ORDER COMMAND CENTER...',
+                    '[SYS] ESTABLISHING SECURE TUNNEL...',
+                    '[SYS] ALL SYSTEMS NOMINAL',
+                    '',
+                    'ENTERING SECTION-97 ADMIN TERMINAL...',
+                ];
+                var offset = grantedLines.length * 60 + 400;
+                postLines.forEach(function(line, i) {
+                    setTimeout(function() { addResult(line, 'tw-res-sys'); }, offset + i * 120);
+                });
+
+                setTimeout(function() {
+                    clearInterval(glitchTimer);
+                    sessionStorage.setItem('s97_admin_auth', '1');
+                    veil.classList.add('dismissed');
+                    setTimeout(function() { veil.style.display = 'none'; _resolve(); }, 600);
+                }, offset + postLines.length * 120 + 600);
+
+            } else {
+                flash.classList.add('flash-denied', 'flash-active');
+                beam.classList.add('denied-beam');
+                win.classList.add('tw-denied', 'tw-shake');
+                dot.style.background = '#ff3344';
+                dot.style.boxShadow = '0 0 6px #ff3344';
+                footerStatus.textContent = 'ACCESS DENIED';
+                attemptsMeta.textContent = 'ATTEMPTS: ' + attempts;
+
+                var deniedLines = [
+                    '\u2554' + '\u2550'.repeat(39) + '\u2557',
+                    '\u2551   \u2588\u2588  ACCESS DENIED  \u2588\u2588              \u2551',
+                    '\u2551   CREDENTIAL MISMATCH DETECTED       \u2551',
+                    '\u2551   LOGGING INTRUSION ATTEMPT...       \u2551',
+                    '\u255A' + '\u2550'.repeat(39) + '\u255D',
+                ];
+                deniedLines.forEach(function(line, i) {
+                    setTimeout(function() { addResult(line, 'tw-res-denied'); }, i * 60);
+                });
+
+                setTimeout(function() {
+                    flash.classList.remove('flash-active', 'flash-denied');
+                    win.classList.remove('tw-shake', 'tw-denied');
+                    beam.classList.remove('denied-beam');
+                    dot.style.background = '#00ff64';
+                    dot.style.boxShadow = '0 0 6px #00ff64';
+                    footerStatus.textContent = 'AWAITING INPUT';
+                    authBusy = false;
+                    showInput();
+                }, deniedLines.length * 60 + 1200);
+            }
+        }
+    })();
+    </script>
+
     <div class="grid-bg"></div>
     <div class="scan-beam"></div>
 
