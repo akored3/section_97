@@ -257,12 +257,14 @@
         font-weight: 700;
     }
     .sidebar-footer {
-        padding: 14px 18px;
+        padding: 18px;
         border-top: 1px solid var(--sw-divider);
-        display: flex; align-items: center; gap: 10px;
+        display: flex; align-items: center; gap: 12px;
+        flex-shrink: 0;
     }
     .admin-avatar {
-        width: 32px; height: 32px;
+        width: 36px; height: 36px;
+        flex-shrink: 0;
         clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
         background: linear-gradient(135deg, var(--sw-accent-glow-wide), var(--sw-accent-glow));
         display: flex; align-items: center; justify-content: center;
@@ -270,17 +272,22 @@
         font-size: 0.6rem; font-weight: 800;
         color: var(--sw-accent);
     }
+    .admin-info { min-width: 0; overflow: hidden; }
     .admin-info-name {
         font-family: 'Orbitron', sans-serif;
         font-size: 0.7rem; font-weight: 700;
         color: var(--sw-text);
         letter-spacing: 0.06em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
     .admin-info-role {
         font-family: 'Share Tech Mono', monospace;
         font-size: 0.6rem;
         color: var(--sw-accent);
         letter-spacing: 0.12em;
+        margin-top: 2px;
     }
     .main { flex: 1; margin-left: 240px; }
     /* Topbar */
@@ -1389,7 +1396,7 @@
             </nav>
             <div class="sidebar-footer">
                 <div class="admin-avatar" id="adminInitials">OP</div>
-                <div>
+                <div class="admin-info">
                     <div class="admin-info-name" id="adminName">OPERATOR</div>
                     <div class="admin-info-role">GRANDMASTER</div>
                 </div>
