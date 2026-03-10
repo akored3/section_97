@@ -341,7 +341,7 @@
     /* Overview cards */
     .overview-grid {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(5, 1fr);
         gap: 12px;
         margin-bottom: 24px;
     }
@@ -916,6 +916,9 @@
         letter-spacing: 0.1em;
     }
     /* Responsive */
+    @media (max-width: 1280px) {
+        .overview-grid { grid-template-columns: repeat(3, 1fr); }
+    }
     @media (max-width: 1024px) {
         .overview-grid { grid-template-columns: repeat(2, 1fr); }
     }
@@ -1466,6 +1469,16 @@
                         <div class="ov-card-label">Total Revenue</div>
                         <div class="ov-card-value" style="color:var(--sw-secondary);" id="ovRevenue">—</div>
                         <div class="ov-card-delta delta-neutral" id="ovRevenueDelta">ALL TIME</div>
+                    </div>
+                    <div class="ov-card cb">
+                        <div class="cb-b"></div><div class="scanlines"></div><div class="shine" style="animation-delay:9s;"></div>
+                        <span class="ov-card-code">OV_05</span>
+                        <div class="ov-card-icon">
+                            <div class="ov-icon-box" style="border-color: var(--sw-tertiary); color: var(--sw-tertiary);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+                        </div>
+                        <div class="ov-card-label">Total Users</div>
+                        <div class="ov-card-value" style="color:var(--sw-tertiary);" id="ovUsers">—</div>
+                        <div class="ov-card-delta delta-neutral" id="ovUsersDelta">LOADING...</div>
                     </div>
                 </div>
 

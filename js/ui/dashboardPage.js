@@ -159,6 +159,45 @@ function renderOverview(orders) {
     document.getElementById('navOrderCount').textContent = pending;
 }
 
+// ─── User Count (realtime) ───────────────────────
+async function fetchAndSubscribeUsers() {
+    // Initial count
+    const { count, error } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true });
+
+    const el = document.getElementById('ovUsers');
+    const delta = document.getElementById('ovUsersDelta');
+
+    if (error) {
+        el.textContent = '—';
+        delta.textContent = 'FETCH ERROR';
+        console.error('Failed to fetch user count:', error);
+        return;
+    }
+
+    let userCount = count || 0;
+    el.textContent = userCount;
+    delta.textContent = 'REGISTERED';
+
+    // Realtime subscription — listen for new signups
+    supabase
+        .channel('admin-user-count')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'profiles' }, () => {
+            userCount++;
+            el.textContent = userCount;
+            delta.textContent = 'JUST UPDATED';
+            setTimeout(() => { delta.textContent = 'REGISTERED'; }, 3000);
+        })
+        .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'profiles' }, () => {
+            userCount = Math.max(0, userCount - 1);
+            el.textContent = userCount;
+            delta.textContent = 'JUST UPDATED';
+            setTimeout(() => { delta.textContent = 'REGISTERED'; }, 3000);
+        })
+        .subscribe();
+}
+
 // ─── Filter Counts ───────────────────────────────
 function renderFilterCounts(orders) {
     document.getElementById('countAll').textContent = orders.length;
@@ -565,6 +604,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     layout.classList.remove('hidden');
 
     renderOverview(allOrders);
+    fetchAndSubscribeUsers();
     renderFilterCounts(allOrders);
     setupFilters();
     renderTable();
