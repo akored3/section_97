@@ -944,6 +944,276 @@
     ::-webkit-scrollbar-thumb { background: var(--sw-card-border); }
     ::-webkit-scrollbar-thumb:hover { background: var(--sw-accent); }
     .hidden { display: none !important; }
+    /* ── Product Management ─────────────────────── */
+    .section-panel { display: none; }
+    .section-panel.active { display: block; }
+    .products-header {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 20px;
+    }
+    .products-header-title {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1rem; font-weight: 700;
+        color: var(--sw-text);
+        letter-spacing: 0.1em;
+        display: flex; align-items: center; gap: 10px;
+    }
+    .products-header-title .ph-bar {
+        width: 3px; height: 16px;
+        background: var(--sw-accent);
+        box-shadow: 0 0 6px var(--sw-accent-glow);
+    }
+    .products-count {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.75rem;
+        color: var(--sw-text-muted);
+        letter-spacing: 0.1em;
+    }
+    .btn-add-product {
+        padding: 10px 20px;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.8rem; font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        background: var(--sw-accent);
+        border: none;
+        color: var(--sw-bg);
+        cursor: pointer;
+        display: flex; align-items: center; gap: 8px;
+        clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+        transition: all 0.25s;
+    }
+    .btn-add-product:hover { box-shadow: 0 0 20px var(--sw-accent-glow); }
+    /* Product grid */
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 16px;
+    }
+    .prod-card {
+        position: relative;
+        background: var(--sw-card-bg);
+        border: 1px solid var(--sw-card-border);
+        overflow: hidden;
+        transition: all 0.3s;
+    }
+    .prod-card:hover { border-color: var(--sw-card-border-hover); }
+    .prod-card-img {
+        width: 100%; height: 180px;
+        object-fit: cover;
+        display: block;
+        background: var(--sw-input-bg);
+    }
+    .prod-card-body { padding: 14px; }
+    .prod-card-name {
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 1rem; font-weight: 700;
+        color: var(--sw-text);
+        margin-bottom: 4px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .prod-card-meta {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 8px;
+    }
+    .prod-card-brand {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--sw-text-muted);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+    .prod-card-cat {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.65rem;
+        padding: 2px 8px;
+        background: var(--sw-accent-glow-wide);
+        border: 1px solid var(--sw-card-border);
+        color: var(--sw-accent);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+    .prod-card-footer {
+        display: flex; justify-content: space-between; align-items: center;
+    }
+    .prod-card-price {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.9rem; font-weight: 700;
+        color: var(--sw-accent);
+    }
+    .prod-card-stock {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--sw-text-secondary);
+        letter-spacing: 0.06em;
+    }
+    .prod-card-stock.low { color: var(--sw-danger); }
+    .prod-card-actions {
+        display: flex; gap: 6px;
+        position: absolute; top: 8px; right: 8px;
+    }
+    .prod-action-btn {
+        width: 30px; height: 30px;
+        display: flex; align-items: center; justify-content: center;
+        background: var(--sw-card-bg);
+        border: 1px solid var(--sw-card-border);
+        color: var(--sw-text-muted);
+        cursor: pointer;
+        backdrop-filter: blur(8px);
+        transition: all 0.2s;
+    }
+    .prod-action-btn:hover { border-color: var(--sw-accent); color: var(--sw-accent); }
+    .prod-action-btn.danger:hover { border-color: var(--sw-danger); color: var(--sw-danger); }
+    /* Add/Edit product modal */
+    .modal-overlay {
+        position: fixed; inset: 0;
+        background: var(--sw-overlay-bg);
+        z-index: 150;
+        display: flex; align-items: center; justify-content: center;
+        opacity: 0; pointer-events: none;
+        transition: opacity 0.3s;
+        backdrop-filter: blur(6px);
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+        width: 560px; max-width: 95vw; max-height: 90vh;
+        background: var(--sw-card-bg);
+        border: 1px solid var(--sw-card-border);
+        backdrop-filter: blur(24px);
+        box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+        display: flex; flex-direction: column;
+        overflow: hidden;
+    }
+    .modal-header {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 18px 22px;
+        border-bottom: 1px solid var(--sw-divider);
+    }
+    .modal-title {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.85rem; font-weight: 700;
+        color: var(--sw-text);
+        letter-spacing: 0.1em;
+    }
+    .modal-close {
+        background: none; border: 1px solid var(--sw-input-border);
+        width: 32px; height: 32px;
+        display: flex; align-items: center; justify-content: center;
+        color: var(--sw-text-muted);
+        cursor: pointer; transition: all 0.2s;
+    }
+    .modal-close:hover { border-color: var(--sw-accent); color: var(--sw-accent); }
+    .modal-body {
+        padding: 22px;
+        overflow-y: auto;
+        flex: 1;
+    }
+    .form-group { margin-bottom: 16px; }
+    .form-label {
+        display: block;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.75rem;
+        color: var(--sw-text-secondary);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+    }
+    .form-input, .form-select, .form-textarea {
+        width: 100%;
+        padding: 10px 14px;
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 0.95rem; font-weight: 600;
+        color: var(--sw-text);
+        background: var(--sw-input-bg);
+        border: 1px solid var(--sw-input-border);
+        outline: none;
+        transition: border-color 0.2s;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+        border-color: var(--sw-accent);
+        box-shadow: 0 0 10px var(--sw-accent-glow-wide);
+    }
+    .form-input::placeholder { color: var(--sw-text-muted); font-weight: 400; }
+    .form-select {
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23808080' stroke-width='1.5'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        padding-right: 36px;
+    }
+    .form-select option { background: var(--sw-bg); color: var(--sw-text); }
+    .form-textarea { resize: vertical; min-height: 60px; }
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    .form-hint {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.65rem;
+        color: var(--sw-text-muted);
+        margin-top: 4px;
+    }
+    /* Sizes grid in form */
+    .sizes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 8px;
+    }
+    .size-field {
+        display: flex; align-items: center; gap: 6px;
+        padding: 6px 10px;
+        background: var(--sw-input-bg);
+        border: 1px solid var(--sw-input-border);
+    }
+    .size-label {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--sw-accent);
+        min-width: 28px;
+        letter-spacing: 0.06em;
+    }
+    .size-input {
+        width: 100%;
+        background: none; border: none; outline: none;
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 0.9rem; font-weight: 600;
+        color: var(--sw-text);
+        text-align: right;
+    }
+    .size-input::placeholder { color: var(--sw-text-muted); font-weight: 400; }
+    .modal-footer {
+        padding: 16px 22px;
+        border-top: 1px solid var(--sw-divider);
+        display: flex; justify-content: flex-end; gap: 10px;
+    }
+    .btn-cancel {
+        padding: 10px 20px;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.75rem;
+        letter-spacing: 0.1em;
+        background: none;
+        border: 1px solid var(--sw-input-border);
+        color: var(--sw-text-secondary);
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .btn-cancel:hover { border-color: var(--sw-text-secondary); color: var(--sw-text); }
+    .btn-submit {
+        padding: 10px 24px;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.75rem; font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        background: var(--sw-accent);
+        border: none;
+        color: var(--sw-bg);
+        cursor: pointer;
+        transition: all 0.25s;
+    }
+    .btn-submit:hover { box-shadow: 0 0 16px var(--sw-accent-glow); }
+    .btn-submit:disabled { opacity: 0.5; cursor: default; }
 
     /* ═══════════════════════════════════════════════
        TERMINAL AUTH VEIL
@@ -1382,10 +1652,14 @@
             </div>
             <nav class="sidebar-nav">
                 <div class="nav-section-label">OPERATIONS</div>
-                <a class="nav-item active" href="dashboard.html">
+                <a class="nav-item active" data-section="orders" href="#orders">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18"/></svg>
                     Orders
                     <span class="nav-badge" id="navOrderCount">0</span>
+                </a>
+                <a class="nav-item" data-section="products" href="#products">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                    Products
                 </a>
                 <a class="nav-item" href="store.html">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -1482,61 +1756,155 @@
                     </div>
                 </div>
 
-                <!-- Filter Bar -->
-                <div class="filter-bar" id="filterBar">
-                    <div class="filter-label"><div class="filter-label-bar"></div>FILTER //</div>
-                    <button class="filter-btn active" data-filter="all">
-                        ALL <span class="filter-count" id="countAll">0</span>
-                    </button>
-                    <button class="filter-btn" data-filter="pending">
-                        <span class="f-dot" style="background:var(--status-pending);"></span>
-                        PENDING <span class="filter-count" id="countPending">0</span>
-                    </button>
-                    <button class="filter-btn" data-filter="processing">
-                        <span class="f-dot" style="background:var(--status-processing);"></span>
-                        PROCESSING <span class="filter-count" id="countProcessing">0</span>
-                    </button>
-                    <button class="filter-btn" data-filter="shipped">
-                        <span class="f-dot" style="background:var(--status-shipped);"></span>
-                        SHIPPED <span class="filter-count" id="countShipped">0</span>
-                    </button>
-                    <button class="filter-btn" data-filter="delivered">
-                        <span class="f-dot" style="background:var(--status-delivered);"></span>
-                        DELIVERED <span class="filter-count" id="countDelivered">0</span>
-                    </button>
-                    <div class="search-box">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                        <input class="search-input" type="text" placeholder="SEARCH ORDERS..." id="searchInput">
+                <!-- ═══ ORDERS SECTION ═══ -->
+                <div class="section-panel active" id="sectionOrders">
+                    <!-- Filter Bar -->
+                    <div class="filter-bar" id="filterBar">
+                        <div class="filter-label"><div class="filter-label-bar"></div>FILTER //</div>
+                        <button class="filter-btn active" data-filter="all">
+                            ALL <span class="filter-count" id="countAll">0</span>
+                        </button>
+                        <button class="filter-btn" data-filter="pending">
+                            <span class="f-dot" style="background:var(--status-pending);"></span>
+                            PENDING <span class="filter-count" id="countPending">0</span>
+                        </button>
+                        <button class="filter-btn" data-filter="processing">
+                            <span class="f-dot" style="background:var(--status-processing);"></span>
+                            PROCESSING <span class="filter-count" id="countProcessing">0</span>
+                        </button>
+                        <button class="filter-btn" data-filter="shipped">
+                            <span class="f-dot" style="background:var(--status-shipped);"></span>
+                            SHIPPED <span class="filter-count" id="countShipped">0</span>
+                        </button>
+                        <button class="filter-btn" data-filter="delivered">
+                            <span class="f-dot" style="background:var(--status-delivered);"></span>
+                            DELIVERED <span class="filter-count" id="countDelivered">0</span>
+                        </button>
+                        <div class="search-box">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            <input class="search-input" type="text" placeholder="SEARCH ORDERS..." id="searchInput">
+                        </div>
+                    </div>
+
+                    <!-- Orders Table -->
+                    <div class="orders-panel cb">
+                        <div class="cb-b"></div>
+                        <div class="scanlines"></div>
+                        <div class="table-header-bar">
+                            <div class="table-title"><div class="table-title-bar"></div>ACTIVE ORDERS</div>
+                            <div class="table-meta" id="tableMeta">SHOWING 0 RECORDS</div>
+                        </div>
+                        <div style="overflow-x: auto;">
+                            <table class="orders-table">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Customer</th>
+                                        <th>Items</th>
+                                        <th>Date</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
+                                        <th style="width:40px;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ordersBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="pagination">
+                            <div class="pagination-info" id="paginationInfo">PAGE 1 OF 1 // 0 RECORDS</div>
+                            <div class="pagination-btns" id="paginationBtns"></div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Orders Table -->
-                <div class="orders-panel cb">
-                    <div class="cb-b"></div>
-                    <div class="scanlines"></div>
-                    <div class="table-header-bar">
-                        <div class="table-title"><div class="table-title-bar"></div>ACTIVE ORDERS</div>
-                        <div class="table-meta" id="tableMeta">SHOWING 0 RECORDS</div>
+                <!-- ═══ PRODUCTS SECTION ═══ -->
+                <div class="section-panel" id="sectionProducts">
+                    <div class="products-header">
+                        <div>
+                            <div class="products-header-title"><div class="ph-bar"></div>PRODUCT CATALOG</div>
+                            <div class="products-count" id="productsCount">0 PRODUCTS</div>
+                        </div>
+                        <button class="btn-add-product" id="btnAddProduct">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            ADD PRODUCT
+                        </button>
                     </div>
-                    <div style="overflow-x: auto;">
-                        <table class="orders-table">
-                            <thead>
-                                <tr>
-                                    <th>Order ID</th>
-                                    <th>Customer</th>
-                                    <th>Items</th>
-                                    <th>Date</th>
-                                    <th>Total</th>
-                                    <th>Status</th>
-                                    <th style="width:40px;"></th>
-                                </tr>
-                            </thead>
-                            <tbody id="ordersBody"></tbody>
-                        </table>
+                    <div class="products-grid" id="productsGrid"></div>
+                </div>
+            </div>
+
+            <!-- Add/Edit Product Modal -->
+            <div class="modal-overlay" id="productModalOverlay">
+                <div class="modal">
+                    <div class="modal-header">
+                        <div class="modal-title" id="productModalTitle">ADD NEW PRODUCT</div>
+                        <button class="modal-close" id="productModalClose">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        </button>
                     </div>
-                    <div class="pagination">
-                        <div class="pagination-info" id="paginationInfo">PAGE 1 OF 1 // 0 RECORDS</div>
-                        <div class="pagination-btns" id="paginationBtns"></div>
+                    <div class="modal-body">
+                        <form id="productForm" autocomplete="off">
+                            <div class="form-group">
+                                <label class="form-label">Product Name</label>
+                                <input class="form-input" type="text" id="pf_name" placeholder="e.g. Black Supreme Hoodie" required>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Price (₦)</label>
+                                    <input class="form-input" type="number" id="pf_price" placeholder="e.g. 20000" min="1" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Brand</label>
+                                    <select class="form-select" id="pf_brand" required>
+                                        <option value="">Select brand...</option>
+                                        <option value="Supreme">Supreme</option>
+                                        <option value="Corteiz">Corteiz</option>
+                                        <option value="Balenciaga">Balenciaga</option>
+                                        <option value="Stussy">Stussy</option>
+                                        <option value="Nike">Nike</option>
+                                        <option value="Aime Leon Dore">Aime Leon Dore</option>
+                                        <option value="Yard Sale">Yard Sale</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Category</label>
+                                    <select class="form-select" id="pf_category" required>
+                                        <option value="">Select category...</option>
+                                        <option value="hoodies">Hoodies</option>
+                                        <option value="tshirts">T-Shirts</option>
+                                        <option value="pants">Pants</option>
+                                        <option value="jackets">Jackets</option>
+                                        <option value="shoes">Shoes</option>
+                                        <option value="bags">Bags</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Total Stock</label>
+                                    <input class="form-input" type="number" id="pf_stock" placeholder="e.g. 120" min="0" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Front Image URL</label>
+                                <input class="form-input" type="text" id="pf_image_front" placeholder="images/product_front.jpeg" required>
+                                <div class="form-hint">Path relative to site root, e.g. images/black_hoodie.jpeg</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Back Image URL (optional)</label>
+                                <input class="form-input" type="text" id="pf_image_back" placeholder="images/product_back.jpeg">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Available Sizes & Stock</label>
+                                <div class="form-hint" style="margin-bottom:8px;">Stock per size. Leave 0 for unavailable sizes. Updates based on category.</div>
+                                <div class="sizes-grid" id="sizesGrid"></div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn-cancel" id="productModalCancel" type="button">CANCEL</button>
+                        <button class="btn-submit" id="productModalSubmit" type="button">DEPLOY PRODUCT</button>
                     </div>
                 </div>
             </div>

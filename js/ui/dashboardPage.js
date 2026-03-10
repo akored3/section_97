@@ -550,6 +550,260 @@ function setupDetailPanel() {
     });
 }
 
+// ─── Section Switching ──────────────────────────
+function setupSectionNav() {
+    const navItems = document.querySelectorAll('.nav-item[data-section]');
+    const sections = document.querySelectorAll('.section-panel');
+
+    navItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = item.dataset.section;
+
+            navItems.forEach(n => n.classList.remove('active'));
+            item.classList.add('active');
+
+            sections.forEach(s => s.classList.remove('active'));
+            const el = document.getElementById('section' + target.charAt(0).toUpperCase() + target.slice(1));
+            if (el) el.classList.add('active');
+
+            // Lazy-load products on first visit
+            if (target === 'products' && !productsLoaded) loadProducts();
+        });
+    });
+}
+
+// ─── Product Management ─────────────────────────
+let productsLoaded = false;
+let allProducts = [];
+let editingProductId = null;
+
+const CLOTHING_SIZES = ['S', 'M', 'L', 'XL'];
+const SHOE_SIZES = ['7', '8', '9', '10', '11', '12'];
+const ONE_SIZE = ['One Size'];
+
+function getSizesForCategory(cat) {
+    if (cat === 'shoes') return SHOE_SIZES;
+    if (cat === 'bags' || cat === 'other') return ONE_SIZE;
+    return CLOTHING_SIZES;
+}
+
+function renderSizesGrid(category) {
+    const grid = document.getElementById('sizesGrid');
+    const sizes = getSizesForCategory(category || 'hoodies');
+    grid.innerHTML = sizes.map(s =>
+        `<div class="size-field">
+            <span class="size-label">${s}</span>
+            <input class="size-input" type="number" min="0" value="0" data-size="${s}" placeholder="0">
+        </div>`
+    ).join('');
+}
+
+async function loadProducts() {
+    const grid = document.getElementById('productsGrid');
+    grid.innerHTML = '<div class="empty-state"><p>LOADING CATALOG...</p></div>';
+
+    const { data, error } = await supabase
+        .from('products')
+        .select('*, product_sizes (size, stock)')
+        .order('id', { ascending: false });
+
+    if (error) {
+        grid.innerHTML = '<div class="empty-state"><p>FAILED TO LOAD PRODUCTS</p></div>';
+        showToast('FAILED TO LOAD PRODUCTS', true);
+        return;
+    }
+
+    allProducts = data || [];
+    productsLoaded = true;
+    document.getElementById('productsCount').textContent = `${allProducts.length} PRODUCTS`;
+    renderProductsGrid();
+}
+
+function renderProductsGrid() {
+    const grid = document.getElementById('productsGrid');
+    if (allProducts.length === 0) {
+        grid.innerHTML = '<div class="empty-state"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg><p>NO PRODUCTS IN CATALOG</p></div>';
+        return;
+    }
+
+    grid.innerHTML = allProducts.map(p => {
+        const totalStock = (p.product_sizes || []).reduce((sum, s) => sum + s.stock, 0) || p.stock || 0;
+        const stockClass = totalStock < 20 ? ' low' : '';
+        return `<div class="prod-card cb">
+            <div class="cb-b"></div>
+            <div class="prod-card-actions">
+                <button class="prod-action-btn" onclick="window.__editProduct(${p.id})" title="Edit">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </button>
+                <button class="prod-action-btn danger" onclick="window.__deleteProduct(${p.id})" title="Delete">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                </button>
+            </div>
+            <img class="prod-card-img" src="${escHtml(p.image_front)}" alt="${escHtml(p.name)}" onerror="this.style.display='none'">
+            <div class="prod-card-body">
+                <div class="prod-card-name">${escHtml(p.name)}</div>
+                <div class="prod-card-meta">
+                    <span class="prod-card-brand">${escHtml(p.brand || '—')}</span>
+                    <span class="prod-card-cat">${escHtml(p.category)}</span>
+                </div>
+                <div class="prod-card-footer">
+                    <span class="prod-card-price">${formatPrice(p.price)}</span>
+                    <span class="prod-card-stock${stockClass}">STOCK: ${totalStock}</span>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function openProductModal(product = null) {
+    editingProductId = product ? product.id : null;
+    const overlay = document.getElementById('productModalOverlay');
+    const title = document.getElementById('productModalTitle');
+    const submitBtn = document.getElementById('productModalSubmit');
+
+    title.textContent = product ? 'EDIT PRODUCT' : 'ADD NEW PRODUCT';
+    submitBtn.textContent = product ? 'UPDATE PRODUCT' : 'DEPLOY PRODUCT';
+
+    document.getElementById('pf_name').value = product ? product.name : '';
+    document.getElementById('pf_price').value = product ? product.price : '';
+    document.getElementById('pf_brand').value = product ? product.brand || '' : '';
+    document.getElementById('pf_category').value = product ? product.category : '';
+    document.getElementById('pf_stock').value = product ? product.stock || 0 : '';
+    document.getElementById('pf_image_front').value = product ? product.image_front || '' : '';
+    document.getElementById('pf_image_back').value = product ? product.image_back || '' : '';
+
+    const cat = product ? product.category : document.getElementById('pf_category').value;
+    renderSizesGrid(cat);
+
+    // Fill in existing size stock values
+    if (product && product.product_sizes) {
+        product.product_sizes.forEach(ps => {
+            const inp = document.querySelector(`.size-input[data-size="${ps.size}"]`);
+            if (inp) inp.value = ps.stock;
+        });
+    }
+
+    overlay.classList.add('open');
+}
+
+function closeProductModal() {
+    document.getElementById('productModalOverlay').classList.remove('open');
+    document.getElementById('productForm').reset();
+    editingProductId = null;
+}
+
+async function submitProduct() {
+    const btn = document.getElementById('productModalSubmit');
+    const name = document.getElementById('pf_name').value.trim();
+    const price = parseInt(document.getElementById('pf_price').value);
+    const brand = document.getElementById('pf_brand').value;
+    const category = document.getElementById('pf_category').value;
+    const stock = parseInt(document.getElementById('pf_stock').value) || 0;
+    const imageFront = document.getElementById('pf_image_front').value.trim();
+    const imageBack = document.getElementById('pf_image_back').value.trim() || null;
+
+    if (!name || !price || !brand || !category || !imageFront) {
+        showToast('FILL ALL REQUIRED FIELDS', true);
+        return;
+    }
+
+    // Collect size stocks
+    const sizeInputs = document.querySelectorAll('.size-input');
+    const sizes = [];
+    sizeInputs.forEach(inp => {
+        const qty = parseInt(inp.value) || 0;
+        if (qty > 0) sizes.push({ size: inp.dataset.size, stock: qty });
+    });
+
+    btn.disabled = true;
+    btn.textContent = 'DEPLOYING...';
+
+    try {
+        if (editingProductId) {
+            // Update existing product
+            const { error } = await supabase
+                .from('products')
+                .update({ name, price, brand, category, stock, image_front: imageFront, image_back: imageBack })
+                .eq('id', editingProductId);
+            if (error) throw error;
+
+            // Delete old sizes and re-insert
+            await supabase.from('product_sizes').delete().eq('product_id', editingProductId);
+            if (sizes.length > 0) {
+                const sizeRows = sizes.map(s => ({ product_id: editingProductId, size: s.size, stock: s.stock }));
+                const { error: sErr } = await supabase.from('product_sizes').insert(sizeRows);
+                if (sErr) throw sErr;
+            }
+
+            showToast('PRODUCT UPDATED');
+        } else {
+            // Insert new product
+            const { data: newProd, error } = await supabase
+                .from('products')
+                .insert([{ name, price, brand, category, stock, image_front: imageFront, image_back: imageBack }])
+                .select()
+                .single();
+            if (error) throw error;
+
+            // Insert sizes
+            if (sizes.length > 0) {
+                const sizeRows = sizes.map(s => ({ product_id: newProd.id, size: s.size, stock: s.stock }));
+                const { error: sErr } = await supabase.from('product_sizes').insert(sizeRows);
+                if (sErr) throw sErr;
+            }
+
+            showToast('PRODUCT DEPLOYED');
+        }
+
+        closeProductModal();
+        await loadProducts();
+    } catch (err) {
+        console.error('Product save error:', err);
+        showToast('FAILED TO SAVE PRODUCT', true);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = editingProductId ? 'UPDATE PRODUCT' : 'DEPLOY PRODUCT';
+    }
+}
+
+async function deleteProduct(id) {
+    if (!confirm('DELETE THIS PRODUCT?\n\nThis action cannot be undone.')) return;
+
+    try {
+        // product_sizes will cascade-delete
+        const { error } = await supabase.from('products').delete().eq('id', id);
+        if (error) throw error;
+        showToast('PRODUCT DELETED');
+        await loadProducts();
+    } catch (err) {
+        console.error('Delete error:', err);
+        showToast('FAILED TO DELETE PRODUCT', true);
+    }
+}
+
+function setupProductModal() {
+    document.getElementById('btnAddProduct').addEventListener('click', () => openProductModal());
+    document.getElementById('productModalClose').addEventListener('click', closeProductModal);
+    document.getElementById('productModalCancel').addEventListener('click', closeProductModal);
+    document.getElementById('productModalSubmit').addEventListener('click', submitProduct);
+    document.getElementById('productModalOverlay').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) closeProductModal();
+    });
+
+    // Update sizes grid when category changes
+    document.getElementById('pf_category').addEventListener('change', (e) => {
+        renderSizesGrid(e.target.value);
+    });
+
+    // Expose to inline onclick handlers
+    window.__editProduct = (id) => {
+        const p = allProducts.find(prod => prod.id === id);
+        if (p) openProductModal(p);
+    };
+    window.__deleteProduct = deleteProduct;
+}
+
 // ─── Init ────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
     // Wait for terminal auth veil (runs from inline script in dashboard.html)
@@ -608,4 +862,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderFilterCounts(allOrders);
     setupFilters();
     renderTable();
+
+    // Section nav + product management
+    setupSectionNav();
+    setupProductModal();
 });
