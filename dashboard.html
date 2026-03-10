@@ -37,9 +37,9 @@
         --sw-danger-glow: rgba(255, 51, 68, 0.25);
         --sw-danger-dim: rgba(255, 51, 68, 0.10);
         --sw-success: #00ff64;
-        --sw-text: #e8e8e8;
-        --sw-text-secondary: #888888;
-        --sw-text-muted: #555555;
+        --sw-text: #f0f0f0;
+        --sw-text-secondary: #b0b0b0;
+        --sw-text-muted: #808080;
         --sw-input-bg: rgba(255, 255, 255, 0.03);
         --sw-input-border: rgba(255, 255, 255, 0.08);
         --sw-scanline: rgba(0, 255, 100, 0.03);
@@ -92,9 +92,9 @@
         --sw-danger-glow: rgba(204, 34, 51, 0.15);
         --sw-danger-dim: rgba(204, 34, 51, 0.06);
         --sw-success: #00b848;
-        --sw-text: #1a1a1f;
-        --sw-text-secondary: #666666;
-        --sw-text-muted: #999999;
+        --sw-text: #111115;
+        --sw-text-secondary: #4a4a4a;
+        --sw-text-muted: #707070;
         --sw-input-bg: rgba(0, 0, 0, 0.02);
         --sw-input-border: rgba(0, 0, 0, 0.10);
         --sw-scanline: rgba(0, 184, 72, 0.02);
@@ -127,6 +127,8 @@
     html { scroll-behavior: smooth; }
     body {
         font-family: 'Rajdhani', sans-serif;
+        font-size: 16px;
+        font-weight: 500;
         background: var(--sw-bg);
         color: var(--sw-text);
         min-height: 100vh;
@@ -195,13 +197,13 @@
     .brand-icon .scanlines { opacity: 0.4; }
     .brand-name {
         font-family: 'Orbitron', sans-serif;
-        font-size: 0.75rem; font-weight: 800;
+        font-size: 0.85rem; font-weight: 800;
         color: var(--sw-text);
         letter-spacing: 0.1em;
     }
     .brand-sub {
         font-family: 'Share Tech Mono', monospace;
-        font-size: 0.45rem;
+        font-size: 0.6rem;
         color: var(--sw-accent);
         letter-spacing: 0.15em;
         margin-top: 1px;
@@ -209,7 +211,7 @@
     .sidebar-nav { flex: 1; padding: 12px 0; overflow-y: auto; }
     .nav-section-label {
         font-family: 'Share Tech Mono', monospace;
-        font-size: 0.45rem;
+        font-size: 0.65rem;
         color: var(--sw-text-muted);
         letter-spacing: 0.2em;
         padding: 16px 18px 6px;
@@ -221,7 +223,7 @@
         cursor: pointer;
         color: var(--sw-text-secondary);
         font-family: 'Share Tech Mono', monospace;
-        font-size: 0.7rem;
+        font-size: 0.8rem;
         letter-spacing: 0.08em;
         border-left: 2px solid transparent;
         transition: all 0.2s;
@@ -247,7 +249,7 @@
     .nav-badge {
         margin-left: auto;
         padding: 1px 6px;
-        font-size: 0.5rem;
+        font-size: 0.65rem;
         background: var(--sw-accent-glow-wide);
         border: 1px solid var(--sw-accent);
         color: var(--sw-accent);
@@ -270,13 +272,13 @@
     }
     .admin-info-name {
         font-family: 'Orbitron', sans-serif;
-        font-size: 0.55rem; font-weight: 700;
+        font-size: 0.7rem; font-weight: 700;
         color: var(--sw-text);
         letter-spacing: 0.06em;
     }
     .admin-info-role {
         font-family: 'Share Tech Mono', monospace;
-        font-size: 0.4rem;
+        font-size: 0.6rem;
         color: var(--sw-accent);
         letter-spacing: 0.12em;
     }
@@ -294,13 +296,13 @@
     .topbar-left { display: flex; align-items: center; gap: 12px; }
     .topbar-title {
         font-family: 'Orbitron', sans-serif;
-        font-size: 0.8rem; font-weight: 700;
+        font-size: 1rem; font-weight: 700;
         color: var(--sw-text);
         letter-spacing: 0.1em;
     }
     .topbar-tag {
         font-family: 'Share Tech Mono', monospace;
-        font-size: 0.5rem;
+        font-size: 0.7rem;
         color: var(--sw-text-muted);
         letter-spacing: 0.12em;
     }
@@ -321,7 +323,7 @@
     }
     .topbar-clock {
         font-family: 'Share Tech Mono', monospace;
-        font-size: 0.65rem;
+        font-size: 0.8rem;
         color: var(--sw-accent);
         letter-spacing: 0.1em;
         padding: 4px 10px;
@@ -350,7 +352,7 @@
     .ov-card-code {
         position: absolute; top: 5px; right: 8px;
         font-family: 'Share Tech Mono', monospace;
-        font-size: 0.4rem;
+        font-size: 0.6rem;
         color: var(--sw-text-muted);
         letter-spacing: 0.1em;
     }
@@ -363,20 +365,20 @@
     }
     .ov-card-label {
         font-family: 'Share Tech Mono', monospace;
-        font-size: 0.55rem;
+        font-size: 0.75rem;
         color: var(--sw-text-secondary);
         letter-spacing: 0.12em;
         text-transform: uppercase;
     }
     .ov-card-value {
         font-family: 'Orbitron', sans-serif;
-        font-size: 1.4rem; font-weight: 800;
+        font-size: 1.6rem; font-weight: 800;
         letter-spacing: 0.04em;
         margin-top: 2px;
     }
     .ov-card-delta {
         font-family: 'Share Tech Mono', monospace;
-        font-size: 0.5rem;
+        font-size: 0.7rem;
         margin-top: 6px;
         letter-spacing: 0.08em;
     }
@@ -391,7 +393,7 @@
     }
     .filter-label {
         font-family: 'Share Tech Mono', monospace;
-        font-size: 0.55rem;
+        font-size: 0.75rem;
         color: var(--sw-text-muted);
         letter-spacing: 0.15em;
         margin-right: 4px;
@@ -405,7 +407,7 @@
     .filter-btn {
         padding: 6px 14px;
         font-family: 'Share Tech Mono', monospace;
-        font-size: 0.6rem;
+        font-size: 0.75rem;
         letter-spacing: 0.1em;
         text-transform: uppercase;
         background: transparent;
@@ -425,7 +427,7 @@
     .filter-btn .f-dot { width: 6px; height: 6px; display: inline-block; }
     .filter-count {
         font-family: 'Orbitron', sans-serif;
-        font-size: 0.5rem; font-weight: 700;
+        font-size: 0.65rem; font-weight: 700;
     }
     .search-box {
         margin-left: auto;
@@ -441,7 +443,7 @@
     .search-input {
         background: none; border: none; outline: none;
         font-family: 'Share Tech Mono', monospace;
-        font-size: 0.65rem;
+        font-size: 0.8rem;
         color: var(--sw-text);
         letter-spacing: 0.08em;
         padding: 7px 0;
@@ -464,7 +466,7 @@
     }
     .table-title {
         font-family: 'Orbitron', sans-serif;
-        font-size: 0.65rem; font-weight: 700;
+        font-size: 0.85rem; font-weight: 700;
         color: var(--sw-text);
         letter-spacing: 0.12em;
         display: flex; align-items: center; gap: 8px;
@@ -476,16 +478,17 @@
     }
     .table-meta {
         font-family: 'Share Tech Mono', monospace;
-        font-size: 0.5rem;
+        font-size: 0.7rem;
         color: var(--sw-text-muted);
         letter-spacing: 0.1em;
     }
     .orders-table { width: 100%; border-collapse: collapse; }
     .orders-table thead th {
         font-family: 'Share Tech Mono', monospace;
-        font-size: 0.55rem;
+        font-size: 0.75rem;
         color: var(--sw-text-muted);
         letter-spacing: 0.15em;
+        font-weight: 600;
         text-transform: uppercase;
         text-align: left;
         padding: 10px 16px;
@@ -506,41 +509,42 @@
     }
     .td-order-id {
         font-family: 'Orbitron', sans-serif;
-        font-size: 0.7rem; font-weight: 600;
+        font-size: 0.85rem; font-weight: 700;
         color: var(--sw-accent);
         letter-spacing: 0.06em;
     }
     .td-customer-name {
         font-family: 'Rajdhani', sans-serif;
-        font-size: 0.85rem; font-weight: 600;
+        font-size: 1rem; font-weight: 700;
         color: var(--sw-text);
     }
     .td-customer-email {
         font-family: 'Share Tech Mono', monospace;
-        font-size: 0.5rem;
+        font-size: 0.7rem;
         color: var(--sw-text-muted);
     }
     .td-items {
         font-family: 'Rajdhani', sans-serif;
-        font-size: 0.8rem;
+        font-size: 0.95rem; font-weight: 600;
         color: var(--sw-text-secondary);
     }
     .td-date {
         font-family: 'Share Tech Mono', monospace;
-        font-size: 0.6rem;
+        font-size: 0.75rem;
         color: var(--sw-text-secondary);
         letter-spacing: 0.06em;
     }
     .td-total {
         font-family: 'Orbitron', sans-serif;
-        font-size: 0.8rem; font-weight: 700;
+        font-size: 0.95rem; font-weight: 700;
         color: var(--sw-text);
     }
     .status-pill {
         display: inline-flex; align-items: center; gap: 5px;
-        padding: 3px 10px;
+        padding: 4px 12px;
         font-family: 'Share Tech Mono', monospace;
-        font-size: 0.5rem;
+        font-size: 0.7rem;
+        font-weight: 600;
         letter-spacing: 0.12em;
         text-transform: uppercase;
         transition: all 0.2s;
@@ -572,7 +576,7 @@
     }
     .pagination-info {
         font-family: 'Share Tech Mono', monospace;
-        font-size: 0.55rem;
+        font-size: 0.75rem;
         color: var(--sw-text-muted);
         letter-spacing: 0.1em;
     }
@@ -584,7 +588,7 @@
         color: var(--sw-text-secondary);
         cursor: pointer;
         font-family: 'Orbitron', sans-serif;
-        font-size: 0.55rem; font-weight: 700;
+        font-size: 0.7rem; font-weight: 700;
         transition: all 0.2s;
     }
     .pg-btn:hover { border-color: var(--sw-accent); color: var(--sw-accent); }
@@ -624,13 +628,13 @@
     }
     .detail-top-title {
         font-family: 'Orbitron', sans-serif;
-        font-size: 0.7rem; font-weight: 700;
+        font-size: 0.9rem; font-weight: 700;
         color: var(--sw-text);
         letter-spacing: 0.1em;
     }
     .detail-top-sub {
         font-family: 'Share Tech Mono', monospace;
-        font-size: 0.45rem;
+        font-size: 0.65rem;
         color: var(--sw-text-muted);
         letter-spacing: 0.12em;
         margin-top: 2px;
@@ -685,7 +689,7 @@
     }
     .pipeline-label {
         font-family: 'Share Tech Mono', monospace;
-        font-size: 0.45rem;
+        font-size: 0.65rem;
         letter-spacing: 0.12em;
         margin-top: 8px;
         color: var(--sw-text-muted);
@@ -712,7 +716,7 @@
     .status-action-btn {
         padding: 8px 16px;
         font-family: 'Share Tech Mono', monospace;
-        font-size: 0.6rem;
+        font-size: 0.8rem;
         letter-spacing: 0.1em;
         text-transform: uppercase;
         cursor: pointer;
@@ -752,7 +756,7 @@
     }
     .detail-section-title {
         font-family: 'Orbitron', sans-serif;
-        font-size: 0.55rem; font-weight: 700;
+        font-size: 0.8rem; font-weight: 700;
         color: var(--sw-text);
         letter-spacing: 0.12em;
         margin-bottom: 12px;
@@ -770,19 +774,19 @@
     .info-row:last-child { border-bottom: none; }
     .info-label {
         font-family: 'Share Tech Mono', monospace;
-        font-size: 0.55rem;
+        font-size: 0.75rem;
         color: var(--sw-text-muted);
         letter-spacing: 0.1em;
         text-transform: uppercase;
     }
     .info-value {
         font-family: 'Rajdhani', sans-serif;
-        font-size: 0.85rem; font-weight: 600;
+        font-size: 1rem; font-weight: 700;
         color: var(--sw-text);
     }
     .info-value.mono {
         font-family: 'Share Tech Mono', monospace;
-        font-size: 0.65rem;
+        font-size: 0.8rem;
         color: var(--sw-accent);
         letter-spacing: 0.06em;
     }
@@ -805,19 +809,19 @@
     .di-info { flex: 1; min-width: 0; }
     .di-name {
         font-family: 'Rajdhani', sans-serif;
-        font-size: 0.8rem; font-weight: 600;
+        font-size: 0.95rem; font-weight: 700;
         color: var(--sw-text);
     }
     .di-meta {
         font-family: 'Share Tech Mono', monospace;
-        font-size: 0.5rem;
+        font-size: 0.7rem;
         color: var(--sw-text-muted);
         letter-spacing: 0.08em;
         margin-top: 2px;
     }
     .di-price {
         font-family: 'Orbitron', sans-serif;
-        font-size: 0.7rem; font-weight: 700;
+        font-size: 0.85rem; font-weight: 700;
         color: var(--sw-accent);
         flex-shrink: 0;
     }
@@ -828,7 +832,7 @@
     }
     .detail-totals .total-val {
         font-family: 'Orbitron', sans-serif;
-        font-size: 1rem; font-weight: 800;
+        font-size: 1.2rem; font-weight: 800;
         color: var(--sw-accent);
         text-shadow: 0 0 8px var(--sw-accent-glow);
     }
@@ -848,7 +852,7 @@
     .toast.show { transform: translateY(0); opacity: 1; }
     .toast-text {
         font-family: 'Share Tech Mono', monospace;
-        font-size: 0.65rem;
+        font-size: 0.8rem;
         color: var(--sw-accent);
         letter-spacing: 0.1em;
     }
@@ -868,14 +872,14 @@
     }
     .auth-gate-box h2 {
         font-family: 'Orbitron', sans-serif;
-        font-size: 1rem; font-weight: 700;
+        font-size: 1.2rem; font-weight: 700;
         color: var(--sw-danger);
         letter-spacing: 0.1em;
         margin-bottom: 8px;
     }
     .auth-gate-box p {
         font-family: 'Share Tech Mono', monospace;
-        font-size: 0.65rem;
+        font-size: 0.8rem;
         color: var(--sw-text-muted);
         letter-spacing: 0.08em;
     }
@@ -886,7 +890,7 @@
     }
     .dash-skeleton-text {
         font-family: 'Share Tech Mono', monospace;
-        font-size: 0.7rem;
+        font-size: 0.9rem;
         color: var(--sw-text-muted);
         letter-spacing: 0.15em;
         animation: skeletonPulse 1.5s ease-in-out infinite;
@@ -900,7 +904,7 @@
     .empty-state svg { color: var(--sw-text-muted); margin-bottom: 12px; }
     .empty-state p {
         font-family: 'Orbitron', sans-serif;
-        font-size: 0.7rem; font-weight: 700;
+        font-size: 0.9rem; font-weight: 700;
         color: var(--sw-text-muted);
         letter-spacing: 0.1em;
     }
@@ -923,7 +927,7 @@
     }
     @media (max-width: 480px) {
         .overview-grid { grid-template-columns: 1fr; }
-        .topbar-title { font-size: 0.65rem; }
+        .topbar-title { font-size: 0.85rem; }
     }
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
