@@ -109,6 +109,10 @@
             /* State layer color (accent-tinted) */
             --state-layer: 0, 168, 64;
 
+            /* Glass surfaces */
+            --glass-bg: rgba(255, 255, 255, 0.5);
+            --glass-border: rgba(0, 0, 0, 0.08);
+
             /* Glow (visible in light mode now) */
             --glow-accent: rgba(0, 168, 64, 0.25);
             --glow-accent-strong: rgba(0, 168, 64, 0.45);
@@ -146,6 +150,10 @@
 
             /* State layer color (accent-tinted) */
             --state-layer: 0, 255, 100;
+
+            /* Glass surfaces */
+            --glass-bg: rgba(17, 17, 24, 0.5);
+            --glass-border: rgba(255, 255, 255, 0.08);
 
             /* Glow (prominent in dark mode) */
             --glow-accent: rgba(0, 255, 100, 0.3);
@@ -1238,7 +1246,7 @@
             width: 36px;
             height: 36px;
             border: none;
-            border-radius: 50%;
+            border-radius: var(--shape-full);
             background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(4px);
             cursor: pointer;
@@ -1294,7 +1302,7 @@
         .gallery-dot {
             width: 6px;
             height: 6px;
-            border-radius: 50%;
+            border-radius: var(--shape-full);
             background: rgba(255, 255, 255, 0.4);
             transition: all var(--duration-short) var(--motion-standard);
         }
@@ -2440,7 +2448,7 @@
             transform: translateX(-50%);
             background: var(--error);
             color: #fff;
-            font: var(--text-label);
+            font: var(--text-label-md);
             letter-spacing: 0.03em;
             padding: 8px 18px;
             border-radius: var(--shape-full);
@@ -3194,7 +3202,7 @@ a.dropdown-item {
 .profile-skeleton-avatar {
     width: 120px;
     height: 120px;
-    border-radius: 50%;
+    border-radius: var(--shape-full);
     background: var(--bg-secondary);
     flex-shrink: 0;
 }
@@ -3332,7 +3340,7 @@ a.dropdown-item {
 .profile-avatar-ring {
     position: absolute;
     inset: -8px;
-    border-radius: 50%;
+    border-radius: var(--shape-full);
     border: 2px solid transparent;
     border-top-color: var(--accent);
     border-right-color: var(--accent);
@@ -3375,7 +3383,7 @@ a.dropdown-item {
 .profile-avatar {
     width: 120px;
     height: 120px;
-    border-radius: 50%;
+    border-radius: var(--shape-full);
     object-fit: cover;
     border: 3px solid var(--bg-primary);
     background: var(--bg-primary);
@@ -3398,7 +3406,7 @@ a.dropdown-item {
     transform: translateX(-50%);
     width: 32px;
     height: 32px;
-    border-radius: 50%;
+    border-radius: var(--shape-full);
     background: var(--accent);
     color: var(--on-accent);
     display: flex;
@@ -3452,7 +3460,7 @@ a.dropdown-item {
     margin: -20px 0 0 -20px;
     border: 3px solid transparent;
     border-top-color: var(--accent);
-    border-radius: 50%;
+    border-radius: var(--shape-full);
     animation: profile-spin 0.7s linear infinite;
     z-index: 4;
 }
@@ -3735,7 +3743,7 @@ a.dropdown-item {
     background: rgba(255, 215, 0, 0.04);
     border: none;
     cursor: pointer;
-    font-family: var(--font-heading);
+    font-family: var(--font-display);
     font-size: 1rem;
     font-weight: 700;
     letter-spacing: 3px;
@@ -3876,7 +3884,7 @@ a.dropdown-item {
 
 /* IMPORTANT tag */
 .achievements-btn-tag {
-    font-family: var(--font-heading);
+    font-family: var(--font-display);
     font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: 2px;
@@ -4364,7 +4372,7 @@ a.dropdown-item {
     justify-content: center;
     border: 1.5px solid var(--text-muted);
     color: var(--text-muted);
-    background: var(--bg);
+    background: var(--bg-primary);
     transition: all 0.3s;
 }
 .order-tracker-dot.done {
@@ -5105,7 +5113,7 @@ a.dropdown-item {
 .status-dot {
     width: 6px;
     height: 6px;
-    border-radius: 50%;
+    border-radius: var(--shape-full);
     background: var(--accent);
     box-shadow: 0 0 8px var(--accent);
 }
@@ -5278,7 +5286,7 @@ a.dropdown-item {
     font-size: 0.7rem;
     letter-spacing: 0.03em;
     min-height: 1rem;
-    transition: color var(--duration-fast) var(--motion-standard);
+    transition: color var(--duration-short) var(--motion-standard);
 }
 .field-hint:empty {
     display: none;
@@ -6435,7 +6443,7 @@ a.dropdown-item {
     width: 6px;
     height: 6px;
     background: var(--accent);
-    border-radius: 50%;
+    border-radius: var(--shape-full);
 }
 
 /* ── Guest Checkout Banner ── */
@@ -6932,12 +6940,12 @@ a.dropdown-item {
 .lb-avatar-hex-inner {
     width: 64px;
     height: 64px;
-    border-radius: 50%;
+    border-radius: var(--shape-full);
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    background: var(--surface-dim);
+    background: var(--bg-secondary);
 }
 .lb-podium-card[data-rank="1"] .lb-avatar-hex-inner { width: 80px; height: 80px; }
 .lb-avatar-hex svg { width: 28px; height: 28px; color: var(--text-muted); }
@@ -6946,7 +6954,7 @@ a.dropdown-item {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 50%;
+    border-radius: var(--shape-full);
 }
 .lb-avatar-ring { display: none; }
 .lb-avatar-fallback {
