@@ -278,7 +278,9 @@
             submitBtn.textContent = 'LOGGING IN...';
             loginForm.classList.add('hidden');
             authExtras.forEach(el => el.classList.add('hidden'));
-            document.getElementById('auth-message').textContent = '';
+            const msgEl = document.getElementById('auth-message');
+            msgEl.textContent = '';
+            msgEl.className = 'auth-message';
             const authLoader = document.getElementById('auth-loader');
             authLoader.classList.remove('hidden');
             authLoader.querySelector('.s97-progress__label').textContent = 'LOGGING IN';
