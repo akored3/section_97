@@ -1,6 +1,14 @@
 // Enhanced lazy loading with Intersection Observer and fade-in animations
 
+let currentObserver = null;
+
 export function initializeLazyLoading() {
+    // Disconnect previous observer to prevent memory leaks on re-renders
+    if (currentObserver) {
+        currentObserver.disconnect();
+        currentObserver = null;
+    }
+
     // Check for IntersectionObserver support
     if (!('IntersectionObserver' in window)) {
         // Fallback: load all images immediately
@@ -8,7 +16,7 @@ export function initializeLazyLoading() {
         return;
     }
 
-    const imageObserver = new IntersectionObserver((entries, observer) => {
+    currentObserver = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 const img = entry.target;
@@ -24,7 +32,7 @@ export function initializeLazyLoading() {
 
     // Observe all images with lazy-load class
     const lazyImages = document.querySelectorAll('img.lazy-load');
-    lazyImages.forEach(img => imageObserver.observe(img));
+    lazyImages.forEach(img => currentObserver.observe(img));
 }
 
 function loadImage(img) {
@@ -58,6 +66,7 @@ function loadAllImages() {
     lazyImages.forEach(img => {
         if (img.dataset.src) {
             img.src = img.dataset.src;
+            img.classList.add('loaded');
             img.classList.remove('lazy-load');
         }
     });
