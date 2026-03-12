@@ -9,6 +9,7 @@ import { initPageLoader } from './progressBar.js';
 let currentStep = 1;
 let cartData = [];
 let currentUser = null;
+let isProcessing = false;
 
 
 // ─── Stepper ─────────────────────────────────────
@@ -384,6 +385,7 @@ function showError(type) {
 // ─── Main Action Button Handler ──────────────────
 
 async function handleAction() {
+    if (isProcessing) return;
     const btn = document.getElementById('checkout-action-btn');
 
     if (currentStep === 1) {
@@ -402,6 +404,7 @@ async function handleAction() {
             return;
         }
 
+        isProcessing = true;
         btn.textContent = 'PROCESSING...';
         btn.disabled = true;
 
@@ -434,6 +437,7 @@ async function handleAction() {
 
         } catch (err) {
             // Restore stepper to shipping
+            isProcessing = false;
             updateStepper(2);
             btn.disabled = false;
             btn.textContent = 'PROCEED TO PAYMENT';
