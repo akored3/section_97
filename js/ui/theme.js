@@ -63,7 +63,7 @@ export function initializeTheme() {
 
     if (!themeToggle) return;
 
-    // Check for saved theme or default to light
+    // Check for saved theme or default to dark
     const currentTheme = localStorage.getItem('theme') || 'dark';
     document.documentElement.setAttribute('data-theme', currentTheme);
     updateThemeIcon(currentTheme);

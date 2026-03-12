@@ -29,15 +29,6 @@ export async function fetchProducts() {
         }));
     } catch (error) {
         console.error('Error fetching products from Supabase:', error);
-        // Fallback to local JSON if Supabase fails
-        try {
-            const response = await fetch('./js/data/products.json');
-            if (response.ok) {
-                return await response.json();
-            }
-        } catch (fallbackError) {
-            console.error('Fallback also failed:', fallbackError);
-        }
         return [];
     }
 }
