@@ -6,6 +6,7 @@ import { setupAddToCartButtons } from '../ui/cart.js';
 let currentFilter = 'all';
 let currentSearchTerm = '';
 let allProducts = [];
+let searchTimer = null;
 
 // Apply both category filter and search term
 function applyFilters() {
@@ -183,11 +184,17 @@ export function initializeSearch() {
         });
     }
 
+    // Debounced search to avoid jank on every keystroke
+    function debouncedSearch(term) {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => searchProducts(term), 180);
+    }
+
     // Desktop search input
     if (searchInput) {
         searchInput.addEventListener('input', (e) => {
             const term = e.target.value;
-            searchProducts(term);
+            debouncedSearch(term);
             if (mobileSearchInput) mobileSearchInput.value = term;
         });
     }
@@ -196,7 +203,7 @@ export function initializeSearch() {
     if (mobileSearchInput) {
         mobileSearchInput.addEventListener('input', (e) => {
             const term = e.target.value;
-            searchProducts(term);
+            debouncedSearch(term);
             if (searchInput) searchInput.value = term;
         });
     }

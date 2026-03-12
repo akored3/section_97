@@ -249,9 +249,13 @@ function setupFilters() {
         applyFilters();
     });
 
+    let dashSearchTimer = null;
     document.getElementById('searchInput').addEventListener('input', (e) => {
-        currentSearch = e.target.value.trim();
-        applyFilters();
+        clearTimeout(dashSearchTimer);
+        dashSearchTimer = setTimeout(() => {
+            currentSearch = e.target.value.trim();
+            applyFilters();
+        }, 180);
     });
 }
 
