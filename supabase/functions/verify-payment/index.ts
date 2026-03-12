@@ -2,12 +2,14 @@
 // Verifies that the payment amount matches the order total before marking as completed.
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { corsHeaders } from '../_shared/cors.ts';
+import { getCorsHeaders } from '../_shared/cors.ts';
 
 Deno.serve(async (req) => {
+    const cors = getCorsHeaders(req);
+
     // Handle CORS preflight
     if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders });
+        return new Response('ok', { headers: cors });
     }
 
     try {
@@ -16,7 +18,7 @@ Deno.serve(async (req) => {
         if (!reference || !order_id) {
             return new Response(
                 JSON.stringify({ error: 'Missing reference or order_id' }),
-                { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+                { status: 400, headers: { ...cors, 'Content-Type': 'application/json' } }
             );
         }
 
@@ -36,7 +38,7 @@ Deno.serve(async (req) => {
         if (orderError || !order) {
             return new Response(
                 JSON.stringify({ error: 'Order not found' }),
-                { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+                { status: 404, headers: { ...cors, 'Content-Type': 'application/json' } }
             );
         }
 
@@ -48,7 +50,7 @@ Deno.serve(async (req) => {
             if (!authHeader) {
                 return new Response(
                     JSON.stringify({ error: 'Unauthorized' }),
-                    { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+                    { status: 401, headers: { ...cors, 'Content-Type': 'application/json' } }
                 );
             }
             const supabaseUser = createClient(
@@ -60,16 +62,17 @@ Deno.serve(async (req) => {
             if (!user || user.id !== order.user_id) {
                 return new Response(
                     JSON.stringify({ error: 'Order does not belong to this user' }),
-                    { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+                    { status: 403, headers: { ...cors, 'Content-Type': 'application/json' } }
                 );
             }
         }
 
-        // Don't re-verify already verified orders
+        // Don't re-verify already verified orders — only return true for active statuses
         if (order.status !== 'pending') {
+            const isActive = ['processing', 'shipped', 'delivered'].includes(order.status);
             return new Response(
-                JSON.stringify({ verified: true, status: order.status }),
-                { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+                JSON.stringify({ verified: isActive, status: order.status }),
+                { headers: { ...cors, 'Content-Type': 'application/json' } }
             );
         }
 
@@ -77,7 +80,7 @@ Deno.serve(async (req) => {
         if (order.payment_reference !== reference) {
             return new Response(
                 JSON.stringify({ error: 'Payment reference mismatch' }),
-                { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+                { status: 400, headers: { ...cors, 'Content-Type': 'application/json' } }
             );
         }
 
@@ -87,7 +90,7 @@ Deno.serve(async (req) => {
             console.error('PAYSTACK_SECRET_KEY not configured');
             return new Response(
                 JSON.stringify({ error: 'Payment verification unavailable' }),
-                { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+                { status: 500, headers: { ...cors, 'Content-Type': 'application/json' } }
             );
         }
 
@@ -107,7 +110,7 @@ Deno.serve(async (req) => {
 
             return new Response(
                 JSON.stringify({ verified: false, error: 'Payment not successful', status: 'failed' }),
-                { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+                { status: 400, headers: { ...cors, 'Content-Type': 'application/json' } }
             );
         }
 
@@ -130,7 +133,7 @@ Deno.serve(async (req) => {
 
             return new Response(
                 JSON.stringify({ verified: false, error: 'Amount mismatch', status: 'failed' }),
-                { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+                { status: 400, headers: { ...cors, 'Content-Type': 'application/json' } }
             );
         }
 
@@ -139,14 +142,14 @@ Deno.serve(async (req) => {
         // pending → processing → shipped → delivered
         return new Response(
             JSON.stringify({ verified: true, status: 'pending' }),
-            { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            { headers: { ...cors, 'Content-Type': 'application/json' } }
         );
 
     } catch (err) {
         console.error('Verification error:', err.message);
         return new Response(
             JSON.stringify({ error: 'Internal server error' }),
-            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            { status: 500, headers: { ...cors, 'Content-Type': 'application/json' } }
         );
     }
 });
