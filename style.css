@@ -4740,6 +4740,19 @@ a.dropdown-item {
     .achievements-collapsed { padding: 0 var(--space-md); }
     .achievements-expanded { padding: var(--space-sm) var(--space-md); }
 
+    .achievements-dropdown-btn {
+        padding: var(--space-md);
+        font-size: 0.8rem;
+        letter-spacing: 1.5px;
+        gap: var(--space-xs);
+    }
+    .achievements-btn-tag {
+        font-size: 0.6rem;
+        letter-spacing: 1px;
+        padding: 3px 8px;
+        white-space: nowrap;
+    }
+
     .profile-orders-list { gap: 0.5rem; }
 
     .profile-order-row-header {
@@ -4862,6 +4875,17 @@ a.dropdown-item {
     .profile-achievement-hex svg {
         width: 16px;
         height: 16px;
+    }
+
+    .achievements-dropdown-btn {
+        padding: var(--space-sm) var(--space-md);
+        font-size: 0.7rem;
+        letter-spacing: 1px;
+    }
+    .achievements-btn-tag {
+        font-size: 0.55rem;
+        padding: 2px 6px;
+        letter-spacing: 0.5px;
     }
 }
 
