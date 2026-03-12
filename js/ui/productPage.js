@@ -140,6 +140,7 @@ function renderPdpChips(product, sizes, sizesContainer, stockEl, addBtn) {
         const activeChip = sizesContainer.querySelector(`.pdp-size-chip[data-size="${CSS.escape(selectedSize)}"]`);
         if (activeChip) {
             activeChip.classList.add('active');
+            selectedSizeStock = parseInt(activeChip.dataset.stock);
             addBtn.disabled = false;
             addBtn.textContent = `Add to bag — Size ${selectedSize}`;
         } else {
