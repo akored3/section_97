@@ -99,18 +99,36 @@ function startClock() {
 function setupSidebar() {
     const toggle = document.getElementById('menuToggle');
     const sidebar = document.getElementById('sidebar');
+    const scrim = document.getElementById('sidebarScrim');
+
+    function closeSidebar() {
+        sidebar.classList.remove('mobile-open');
+        if (scrim) scrim.classList.remove('open');
+    }
 
     toggle.addEventListener('click', () => {
+        const opening = !sidebar.classList.contains('mobile-open');
         sidebar.classList.toggle('mobile-open');
+        if (scrim) scrim.classList.toggle('open', opening);
     });
 
-    // Close on overlay tap
+    // Close on scrim tap
+    if (scrim) scrim.addEventListener('click', closeSidebar);
+
+    // Close on outside click
     document.addEventListener('click', (e) => {
         if (sidebar.classList.contains('mobile-open') &&
             !sidebar.contains(e.target) &&
             !toggle.contains(e.target)) {
-            sidebar.classList.remove('mobile-open');
+            closeSidebar();
         }
+    });
+
+    // Close sidebar when a nav item is tapped (mobile)
+    sidebar.querySelectorAll('.nav-item[data-section]').forEach(item => {
+        item.addEventListener('click', () => {
+            if (window.innerWidth <= 768) closeSidebar();
+        });
     });
 }
 
