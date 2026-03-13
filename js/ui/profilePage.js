@@ -286,7 +286,7 @@ function renderOrders(orders) {
                     const current = i === effectiveIdx;
                     const cls = done ? 'done' : current ? 'current' : '';
                     return `
-                        ${i > 0 ? `<div class="order-tracker-line ${done ? 'done' : ''}"></div>` : ''}
+                        ${i > 0 ? `<div class="order-tracker-line ${done || current ? 'done' : ''}"></div>` : ''}
                         <div class="order-tracker-step ${cls}">
                             <div class="order-tracker-dot ${cls}">${PIPELINE_ICONS[i]}</div>
                             <span class="order-tracker-label">${PIPELINE_LABELS[i]}</span>
