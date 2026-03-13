@@ -257,6 +257,7 @@
         function showMessage(text, type) {
             message.textContent = text;
             message.className = `auth-message ${type}`;
+            message.style.display = '';
         }
 
         // Login form handler
@@ -281,6 +282,7 @@
             const msgEl = document.getElementById('auth-message');
             msgEl.textContent = '';
             msgEl.className = 'auth-message';
+            msgEl.style.display = 'none';
             const authLoader = document.getElementById('auth-loader');
             authLoader.classList.remove('hidden');
             authLoader.querySelector('.s97-progress__label').textContent = 'LOGGING IN';
