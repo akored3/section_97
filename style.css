@@ -1203,37 +1203,20 @@
             box-shadow: var(--elevation-3), 0 0 0 2px var(--outline-accent-strong);
         }
 
-        /* Break the perfect grid - stagger cards */
+        /* Break the perfect grid - stagger cards with subtle rotation */
         .product-card:nth-child(odd) {
-            transform: translateY(0);
+            transform: translateY(0) rotate(-0.3deg);
         }
 
         .product-card:nth-child(even) {
-            transform: translateY(20px);
-        }
-
-        .product-card:nth-child(odd):hover {
-            transform: translateY(-8px);
-        }
-
-        .product-card:nth-child(even):hover {
-            transform: translateY(12px);
-        }
-
-        /* Subtle rotation variation */
-        .product-card:nth-child(3n) {
-            transform: translateY(0) rotate(-0.5deg);
-        }
-
-        .product-card:nth-child(3n+1) {
             transform: translateY(20px) rotate(0.3deg);
         }
 
-        .product-card:nth-child(3n):hover {
+        .product-card:nth-child(odd):hover {
             transform: translateY(-8px) rotate(0deg);
         }
 
-        .product-card:nth-child(3n+1):hover {
+        .product-card:nth-child(even):hover {
             transform: translateY(12px) rotate(0deg);
         }
 
