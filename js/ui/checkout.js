@@ -426,7 +426,22 @@ async function handleAction() {
 
             // Verify payment server-side (Edge Function checks Paystack + amount match)
             btn.textContent = 'VERIFYING PAYMENT...';
-            await verifyPayment(reference, orderId);
+            try {
+                await verifyPayment(reference, orderId);
+            } catch (verifyErr) {
+                // Order exists but verification failed — still show confirmation
+                // with a note so the user knows their order was placed
+                console.warn('Payment verification failed, but order was created:', verifyErr);
+                await clearCartFull();
+                document.getElementById('checkout-order-id').textContent = `ORDER ID: ${formatOrderId(orderId)}`;
+                const note = document.getElementById('checkout-confirm-note');
+                if (note) {
+                    note.textContent = 'Your order was placed but payment verification is pending. You will receive confirmation shortly.';
+                    note.classList.remove('hidden');
+                }
+                goToStep(4);
+                return;
+            }
 
             // Clear cart
             await clearCartFull();

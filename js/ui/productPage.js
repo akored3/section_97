@@ -205,13 +205,17 @@ function setupAddToCart() {
 // Initialize page
 document.addEventListener('DOMContentLoaded', async () => {
     initializeTheme();
-    await initializeCart();
-    setupCartDrawer();
 
-    // Auth-aware cart sync
-    const user = await getCurrentUser();
-    if (user) await handleAuthChange(user.id);
-    else updateBadgeIfGuest();
+    // Cart/auth init is non-critical — don't let failures block product render
+    try {
+        await initializeCart();
+        setupCartDrawer();
+        const user = await getCurrentUser();
+        if (user) await handleAuthChange(user.id);
+        else updateBadgeIfGuest();
+    } catch (e) {
+        console.error('[PDP] Cart/auth init failed:', e);
+    }
 
     // Validate URL param before fetch (strict numeric check)
     const id = new URLSearchParams(window.location.search).get('id');

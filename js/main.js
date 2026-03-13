@@ -214,18 +214,34 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Products - core content
     let products = [];
-    await safeInit('Products', async () => {
+    try {
         products = await fetchProducts();
         // Shuffle product order each page load (Fisher-Yates)
         for (let i = products.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [products[i], products[j]] = [products[j], products[i]];
         }
-        if (loader) loader.complete();
         renderProducts(products);
         initializeLazyLoading();
         setupAddToCartButtons();
-    });
+    } catch (e) {
+        console.error('[Products] failed to load:', e);
+        const container = document.getElementById('product-container');
+        if (container) {
+            container.innerHTML = `
+                <div class="store-error-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    <p>FAILED TO LOAD PRODUCTS</p>
+                    <span>Check your connection and refresh the page</span>
+                </div>`;
+        }
+    } finally {
+        if (loader) loader.complete();
+    }
 
     // UI features - non-critical
     await safeInit('Filters', () => {

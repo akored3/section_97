@@ -227,7 +227,7 @@ async function loadOrders(userId) {
         return orders || [];
     } catch (e) {
         console.warn('Failed to load orders:', e);
-        renderEmptyOrders();
+        renderOrderError();
         return [];
     }
 }
@@ -336,6 +336,22 @@ function renderEmptyOrders() {
             <span class="profile-empty-sub">Your drip history will appear here</span>
             <br>
             <a href="index.html" class="profile-empty-cta">Start your collection</a>
+        </div>
+    `;
+}
+
+// Render order fetch error state (distinct from empty)
+function renderOrderError() {
+    const container = document.getElementById('profile-orders-list');
+    container.innerHTML = `
+        <div class="profile-orders-empty">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <p>COULDN'T LOAD ORDERS</p>
+            <span class="profile-empty-sub">Check your connection and try refreshing</span>
         </div>
     `;
 }
