@@ -136,6 +136,7 @@ function showStockToast(item) {
     const sizeLabel = item.size ? ` in size ${item.size}` : '';
     const toast = document.createElement('div');
     toast.className = 'cart-stock-toast';
+    toast.setAttribute('role', 'alert');
     toast.textContent = `Only ${item.maxStock} available${sizeLabel}`;
     drawer.appendChild(toast);
 
@@ -161,17 +162,29 @@ function updateIncButton(key, qty, maxStock) {
 
 // ─── Drawer Open / Close ─────────────────────────
 
+let drawerTrigger = null; // tracks the element that opened the drawer
+
 export function openCartDrawer() {
+    drawerTrigger = document.activeElement;
     renderDrawer();
-    document.getElementById('cart-drawer')?.classList.add('active');
+    const drawer = document.getElementById('cart-drawer');
+    drawer?.classList.add('active');
     document.getElementById('cart-overlay')?.classList.add('active');
     document.body.style.overflow = 'hidden';
+    // Focus the close button inside the drawer
+    const closeBtn = document.getElementById('cart-drawer-close');
+    if (closeBtn) closeBtn.focus();
 }
 
 export function closeCartDrawer() {
     document.getElementById('cart-drawer')?.classList.remove('active');
     document.getElementById('cart-overlay')?.classList.remove('active');
     document.body.style.overflow = '';
+    // Restore focus to the element that opened the drawer
+    if (drawerTrigger && typeof drawerTrigger.focus === 'function') {
+        drawerTrigger.focus();
+        drawerTrigger = null;
+    }
 }
 
 // ─── Cart Operations ─────────────────────────────
@@ -588,9 +601,31 @@ export function setupCartDrawer() {
     // Overlay click to close
     document.getElementById('cart-overlay')?.addEventListener('click', closeCartDrawer);
 
-    // Escape key
+    // Escape key + focus trap
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeCartDrawer();
+        const drawer = document.getElementById('cart-drawer');
+        if (!drawer?.classList.contains('active')) return;
+
+        if (e.key === 'Escape') {
+            closeCartDrawer();
+            return;
+        }
+
+        // Focus trap: cycle Tab within the drawer
+        if (e.key === 'Tab') {
+            const focusable = drawer.querySelectorAll('button:not([disabled]), a[href], [tabindex="0"]');
+            if (focusable.length === 0) return;
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+            }
+        }
     });
 
     // Cart buttons open drawer

@@ -7483,3 +7483,31 @@ a.dropdown-item {
     .lb-skeleton-bar, .lb-skeleton-card, .lb-skeleton-row { animation: none; }
     .lb-row[data-rank]::after { animation: none; display: none; }
 }
+
+/* Global reduced motion — catch-all for animations not covered above */
+@media (prefers-reduced-motion: reduce) {
+    /* Cart drawer & badge */
+    .cart-drawer-item { animation: none !important; }
+    .cart-drawer-item.removing { animation: none !important; opacity: 0; }
+    .cart-badge.pulse { animation: none !important; }
+    .cart-stock-toast { transition: none !important; }
+    .shake { animation: none !important; }
+
+    /* Checkout step transitions */
+    .checkout-step-content { animation: none !important; }
+    .step-exit { animation: none !important; }
+    .checkout-confirm-icon svg { animation: none !important; }
+    .checkout-confirm-text,
+    .checkout-order-id,
+    .checkout-timeline,
+    .checkout-confirm-note { animation: none !important; opacity: 1; transform: none; }
+
+    /* Store product cards */
+    .product-card { transition: none !important; }
+    .add-to-cart-btn.added-flash { animation: none !important; }
+    .card-size-picker { transition: none !important; }
+
+    /* General transitions */
+    .mobile-menu { transition: none !important; }
+    .cart-drawer { transition: none !important; }
+}

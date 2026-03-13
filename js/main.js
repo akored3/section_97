@@ -115,10 +115,13 @@ function initializeAuthDropdown() {
 
     // Desktop dropdown
     if (authBtn && dropdown) {
+        authBtn.setAttribute('aria-expanded', 'false');
+
         // Toggle dropdown on click (if logged in) or redirect (if not)
         authBtn.addEventListener('click', () => {
             if (isLoggedIn) {
-                dropdown.classList.toggle('active');
+                const isOpen = dropdown.classList.toggle('active');
+                authBtn.setAttribute('aria-expanded', isOpen);
             } else {
                 window.location.href = 'auth.html';
             }
@@ -128,6 +131,7 @@ function initializeAuthDropdown() {
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.auth-wrapper')) {
                 dropdown.classList.remove('active');
+                authBtn.setAttribute('aria-expanded', 'false');
             }
         });
     }
