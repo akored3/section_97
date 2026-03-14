@@ -105,11 +105,24 @@ async function repairUsername(userId) {
 
     repairInProgress = (async () => {
         try {
+            // Double-check: only repair if username is truly null in the DB
+            const { data: existing } = await supabase
+                .from('profiles')
+                .select('username')
+                .eq('id', userId)
+                .single();
+
+            if (existing?.username) {
+                // Username exists — the earlier query must have failed transiently
+                return existing.username;
+            }
+
             const newUsername = await getUniqueUsername();
             const { data: repaired } = await supabase
                 .from('profiles')
                 .update({ username: newUsername })
                 .eq('id', userId)
+                .is('username', null) // Only update if still null (race-safe)
                 .select('username')
                 .single();
 
@@ -184,6 +197,9 @@ export async function signUp(email, password) {
 // Sign in existing user
 export async function signIn(email, password) {
     try {
+        // Clear any stale session first (prevents multi-tab token conflicts)
+        await supabase.auth.signOut({ scope: 'local' });
+
         const { data, error } = await supabase.auth.signInWithPassword({
             email,
             password
