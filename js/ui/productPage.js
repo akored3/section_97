@@ -281,22 +281,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     startTitleFontRotation();
 });
 
-// Cycle through fonts on the product title every 10 seconds
-function startTitleFontRotation() {
+// Cycle through fonts on the product title every 5 seconds
+async function startTitleFontRotation() {
     const titleEl = document.getElementById('pdp-name');
     if (!titleEl) return;
 
+    // Force-load all fonts upfront (browsers only fetch on first use)
+    const preloadPromises = TITLE_FONTS.map(fontStr => {
+        const family = fontStr.split(',')[0].replace(/'/g, '').trim();
+        return document.fonts.load(`700 48px "${family}"`).catch(() => null);
+    });
+    await Promise.allSettled(preloadPromises);
+
+    // Filter to only fonts that actually loaded
+    const loadedFonts = TITLE_FONTS.filter(fontStr => {
+        const family = fontStr.split(',')[0].replace(/'/g, '').trim();
+        return document.fonts.check(`700 48px "${family}"`);
+    });
+
+    if (loadedFonts.length === 0) return;
+
     let fontIndex = 0;
 
-    // Start with a random font
-    titleEl.style.fontFamily = TITLE_FONTS[fontIndex];
-
     setInterval(() => {
-        fontIndex = (fontIndex + 1) % TITLE_FONTS.length;
+        fontIndex = (fontIndex + 1) % loadedFonts.length;
         titleEl.style.opacity = '0';
         setTimeout(() => {
-            titleEl.style.setProperty('font-family', TITLE_FONTS[fontIndex], 'important');
+            titleEl.style.fontFamily = loadedFonts[fontIndex];
             titleEl.style.opacity = '1';
         }, 300);
-    }, 1000);
+    }, 5000);
 }
