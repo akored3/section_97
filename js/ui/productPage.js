@@ -250,19 +250,28 @@ document.addEventListener('DOMContentLoaded', async () => {
 // Cycle through fonts on the product title every 5 seconds
 function startTitleFontRotation() {
     const titleEl = document.getElementById('pdp-name');
-    if (!titleEl) return;
+    if (!titleEl) {
+        console.error('[FONT ROTATE] pdp-name element not found!');
+        return;
+    }
+    console.log('[FONT ROTATE] Starting rotation on:', titleEl.textContent);
+    console.log('[FONT ROTATE] Current computed font:', getComputedStyle(titleEl).fontFamily);
 
     let fontIndex = 0;
     let currentClass = '';
 
     setInterval(() => {
         fontIndex = (fontIndex + 1) % TITLE_FONT_CLASSES.length;
+        const nextClass = TITLE_FONT_CLASSES[fontIndex];
+        console.log(`[FONT ROTATE] Switching to: ${nextClass}`);
+
         titleEl.style.opacity = '0';
         setTimeout(() => {
             if (currentClass) titleEl.classList.remove(currentClass);
-            currentClass = TITLE_FONT_CLASSES[fontIndex];
+            currentClass = nextClass;
             titleEl.classList.add(currentClass);
             titleEl.style.opacity = '1';
+            console.log(`[FONT ROTATE] Applied. Computed font now:`, getComputedStyle(titleEl).fontFamily);
         }, 300);
     }, 5000);
 }
