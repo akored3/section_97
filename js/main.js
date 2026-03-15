@@ -12,6 +12,22 @@ import { initPageLoader } from './ui/progressBar.js';
 // Track if user is logged in
 let isLoggedIn = false;
 
+// Rotating font classes for hero title
+const HERO_FONT_CLASSES = [
+    'font-bebas-neue', 'font-teko', 'font-oswald', 'font-anton',
+    'font-saira-condensed', 'font-barlow-condensed', 'font-fjalla-one',
+    'font-russo-one', 'font-black-ops-one', 'font-staatliches',
+    'font-quantico', 'font-turret-road', 'font-orbitron', 'font-audiowide',
+    'font-righteous', 'font-oxanium', 'font-michroma', 'font-electrolize',
+    'font-exo-2', 'font-play', 'font-chakra-petch', 'font-jura',
+    'font-montserrat', 'font-work-sans', 'font-space-grotesk',
+    'font-bruno-ace', 'font-iceberg', 'font-permanent-marker',
+    'font-bungee', 'font-fugaz-one', 'font-alfa-slab-one',
+    'font-racing-sans-one', 'font-share-tech-mono', 'font-roboto-mono',
+    'font-jetbrains-mono', 'font-ibm-plex-mono', 'font-space-mono',
+    'font-vt323', 'font-azeret-mono', 'font-rajdhani'
+];
+
 // Default user SVG icon markup (used to restore when logged out)
 const defaultUserSvg = `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><circle cx="32" cy="20" r="12"/><path d="M8 58C8 44 18 36 32 36C46 36 56 44 56 58"/><path d="M24 20H40" stroke-width="0.5" stroke-dasharray="2 2" opacity="0.3"/></svg>`;
 
@@ -255,5 +271,28 @@ document.addEventListener('DOMContentLoaded', async function() {
     await safeInit('Theme', () => initializeTheme());
     await safeInit('Menu', () => initializeMenu());
     await safeInit('IdleTimeout', () => initializeIdleTimeout());
+    await safeInit('FontRotation', () => startHeroFontRotation());
 
 });
+
+// Rotate the SECTION-97 hero title font every 5 seconds
+function startHeroFontRotation() {
+    const titleEl = document.querySelector('.hero-title');
+    if (!titleEl) return;
+
+    let fontIndex = 0;
+    let currentClass = '';
+
+    setInterval(() => {
+        fontIndex = (fontIndex + 1) % HERO_FONT_CLASSES.length;
+        const nextClass = HERO_FONT_CLASSES[fontIndex];
+
+        titleEl.style.opacity = '0';
+        setTimeout(() => {
+            if (currentClass) titleEl.classList.remove(currentClass);
+            currentClass = nextClass;
+            titleEl.classList.add(currentClass);
+            titleEl.style.opacity = '1';
+        }, 300);
+    }, 5000);
+}

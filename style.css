@@ -291,14 +291,60 @@
         }
         
         .hero-title {
-            font: var(--text-display);
+            font-weight: 700;
+            font-size: clamp(36px, 8vw, 56px);
+            line-height: 1.1;
+            font-family: var(--font-display);
             letter-spacing: 5px;
             margin: 0 0 6px 0;
             text-transform: uppercase;
             transition: text-shadow var(--duration-medium) var(--motion-standard),
-                        color var(--duration-medium) var(--motion-standard);
+                        color var(--duration-medium) var(--motion-standard),
+                        opacity 0.3s ease;
             position: relative;
         }
+
+        /* Rotating font classes for hero title */
+        .hero-title.font-bebas-neue { font-family: 'Bebas Neue', sans-serif !important; }
+        .hero-title.font-teko { font-family: 'Teko', sans-serif !important; }
+        .hero-title.font-oswald { font-family: 'Oswald', sans-serif !important; }
+        .hero-title.font-anton { font-family: 'Anton', sans-serif !important; }
+        .hero-title.font-saira-condensed { font-family: 'Saira Condensed', sans-serif !important; }
+        .hero-title.font-barlow-condensed { font-family: 'Barlow Condensed', sans-serif !important; }
+        .hero-title.font-fjalla-one { font-family: 'Fjalla One', sans-serif !important; }
+        .hero-title.font-russo-one { font-family: 'Russo One', sans-serif !important; }
+        .hero-title.font-black-ops-one { font-family: 'Black Ops One', sans-serif !important; }
+        .hero-title.font-staatliches { font-family: 'Staatliches', sans-serif !important; }
+        .hero-title.font-quantico { font-family: 'Quantico', sans-serif !important; }
+        .hero-title.font-turret-road { font-family: 'Turret Road', sans-serif !important; }
+        .hero-title.font-orbitron { font-family: 'Orbitron', sans-serif !important; }
+        .hero-title.font-audiowide { font-family: 'Audiowide', sans-serif !important; }
+        .hero-title.font-righteous { font-family: 'Righteous', sans-serif !important; }
+        .hero-title.font-oxanium { font-family: 'Oxanium', sans-serif !important; }
+        .hero-title.font-michroma { font-family: 'Michroma', sans-serif !important; }
+        .hero-title.font-electrolize { font-family: 'Electrolize', sans-serif !important; }
+        .hero-title.font-exo-2 { font-family: 'Exo 2', sans-serif !important; }
+        .hero-title.font-play { font-family: 'Play', sans-serif !important; }
+        .hero-title.font-chakra-petch { font-family: 'Chakra Petch', sans-serif !important; }
+        .hero-title.font-jura { font-family: 'Jura', sans-serif !important; }
+        .hero-title.font-montserrat { font-family: 'Montserrat', sans-serif !important; }
+        .hero-title.font-work-sans { font-family: 'Work Sans', sans-serif !important; }
+        .hero-title.font-space-grotesk { font-family: 'Space Grotesk', sans-serif !important; }
+        .hero-title.font-bruno-ace { font-family: 'Bruno Ace', sans-serif !important; }
+        .hero-title.font-iceberg { font-family: 'Iceberg', sans-serif !important; }
+        .hero-title.font-permanent-marker { font-family: 'Permanent Marker', cursive !important; }
+        .hero-title.font-bungee { font-family: 'Bungee', sans-serif !important; }
+        .hero-title.font-fugaz-one { font-family: 'Fugaz One', sans-serif !important; }
+        .hero-title.font-alfa-slab-one { font-family: 'Alfa Slab One', serif !important; }
+        .hero-title.font-racing-sans-one { font-family: 'Racing Sans One', sans-serif !important; }
+        .hero-title.font-share-tech-mono { font-family: 'Share Tech Mono', monospace !important; }
+        .hero-title.font-roboto-mono { font-family: 'Roboto Mono', monospace !important; }
+        .hero-title.font-jetbrains-mono { font-family: 'JetBrains Mono', monospace !important; }
+        .hero-title.font-ibm-plex-mono { font-family: 'IBM Plex Mono', monospace !important; }
+        .hero-title.font-space-mono { font-family: 'Space Mono', monospace !important; }
+        .hero-title.font-vt323 { font-family: 'VT323', monospace !important; }
+        .hero-title.font-azeret-mono { font-family: 'Azeret Mono', monospace !important; }
+        .hero-title.font-rajdhani { font-family: 'Rajdhani', sans-serif !important; }
 
         :root[data-theme="dark"] .hero-title {
             color: #ffffff;
@@ -2892,59 +2938,14 @@
 }
 
 .pdp-name {
-    font-family: var(--font-display);
-    font-weight: 700;
+    font: var(--text-headline-lg);
     font-size: clamp(1rem, 3.5vw, 2.2rem);
-    line-height: 1.2;
     color: var(--text-primary);
     margin: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    transition: opacity 0.3s ease;
 }
-
-/* Rotating font classes for product title */
-.pdp-name.font-bebas-neue { font-family: 'Bebas Neue', sans-serif !important; }
-.pdp-name.font-teko { font-family: 'Teko', sans-serif !important; }
-.pdp-name.font-oswald { font-family: 'Oswald', sans-serif !important; }
-.pdp-name.font-anton { font-family: 'Anton', sans-serif !important; }
-.pdp-name.font-saira-condensed { font-family: 'Saira Condensed', sans-serif !important; }
-.pdp-name.font-barlow-condensed { font-family: 'Barlow Condensed', sans-serif !important; }
-.pdp-name.font-fjalla-one { font-family: 'Fjalla One', sans-serif !important; }
-.pdp-name.font-russo-one { font-family: 'Russo One', sans-serif !important; }
-.pdp-name.font-black-ops-one { font-family: 'Black Ops One', sans-serif !important; }
-.pdp-name.font-staatliches { font-family: 'Staatliches', sans-serif !important; }
-.pdp-name.font-quantico { font-family: 'Quantico', sans-serif !important; }
-.pdp-name.font-turret-road { font-family: 'Turret Road', sans-serif !important; }
-.pdp-name.font-orbitron { font-family: 'Orbitron', sans-serif !important; }
-.pdp-name.font-audiowide { font-family: 'Audiowide', sans-serif !important; }
-.pdp-name.font-righteous { font-family: 'Righteous', sans-serif !important; }
-.pdp-name.font-oxanium { font-family: 'Oxanium', sans-serif !important; }
-.pdp-name.font-michroma { font-family: 'Michroma', sans-serif !important; }
-.pdp-name.font-electrolize { font-family: 'Electrolize', sans-serif !important; }
-.pdp-name.font-exo-2 { font-family: 'Exo 2', sans-serif !important; }
-.pdp-name.font-play { font-family: 'Play', sans-serif !important; }
-.pdp-name.font-chakra-petch { font-family: 'Chakra Petch', sans-serif !important; }
-.pdp-name.font-jura { font-family: 'Jura', sans-serif !important; }
-.pdp-name.font-montserrat { font-family: 'Montserrat', sans-serif !important; }
-.pdp-name.font-work-sans { font-family: 'Work Sans', sans-serif !important; }
-.pdp-name.font-space-grotesk { font-family: 'Space Grotesk', sans-serif !important; }
-.pdp-name.font-bruno-ace { font-family: 'Bruno Ace', sans-serif !important; }
-.pdp-name.font-iceberg { font-family: 'Iceberg', sans-serif !important; }
-.pdp-name.font-permanent-marker { font-family: 'Permanent Marker', cursive !important; }
-.pdp-name.font-bungee { font-family: 'Bungee', sans-serif !important; }
-.pdp-name.font-fugaz-one { font-family: 'Fugaz One', sans-serif !important; }
-.pdp-name.font-alfa-slab-one { font-family: 'Alfa Slab One', serif !important; }
-.pdp-name.font-racing-sans-one { font-family: 'Racing Sans One', sans-serif !important; }
-.pdp-name.font-share-tech-mono { font-family: 'Share Tech Mono', monospace !important; }
-.pdp-name.font-roboto-mono { font-family: 'Roboto Mono', monospace !important; }
-.pdp-name.font-jetbrains-mono { font-family: 'JetBrains Mono', monospace !important; }
-.pdp-name.font-ibm-plex-mono { font-family: 'IBM Plex Mono', monospace !important; }
-.pdp-name.font-space-mono { font-family: 'Space Mono', monospace !important; }
-.pdp-name.font-vt323 { font-family: 'VT323', monospace !important; }
-.pdp-name.font-azeret-mono { font-family: 'Azeret Mono', monospace !important; }
-.pdp-name.font-rajdhani { font-family: 'Rajdhani', sans-serif !important; }
 
 .pdp-price {
     font: var(--text-headline-lg);

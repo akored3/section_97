@@ -9,22 +9,6 @@ let selectedSize = null;
 let selectedSizeStock = null;
 let currentProduct = null;
 
-// Rotating fonts for the product title — class names match CSS definitions
-const TITLE_FONT_CLASSES = [
-    'font-bebas-neue', 'font-teko', 'font-oswald', 'font-anton',
-    'font-saira-condensed', 'font-barlow-condensed', 'font-fjalla-one',
-    'font-russo-one', 'font-black-ops-one', 'font-staatliches',
-    'font-quantico', 'font-turret-road', 'font-orbitron', 'font-audiowide',
-    'font-righteous', 'font-oxanium', 'font-michroma', 'font-electrolize',
-    'font-exo-2', 'font-play', 'font-chakra-petch', 'font-jura',
-    'font-montserrat', 'font-work-sans', 'font-space-grotesk',
-    'font-bruno-ace', 'font-iceberg', 'font-permanent-marker',
-    'font-bungee', 'font-fugaz-one', 'font-alfa-slab-one',
-    'font-racing-sans-one', 'font-share-tech-mono', 'font-roboto-mono',
-    'font-jetbrains-mono', 'font-ibm-plex-mono', 'font-space-mono',
-    'font-vt323', 'font-azeret-mono', 'font-rajdhani'
-];
-
 // Generate description from product name, brand, and category
 function generateDescription(product) {
     const templates = {
@@ -244,34 +228,4 @@ document.addEventListener('DOMContentLoaded', async () => {
     currentProduct = product;
     renderProduct(product);
     setupAddToCart();
-    startTitleFontRotation();
 });
-
-// Cycle through fonts on the product title every 5 seconds
-function startTitleFontRotation() {
-    const titleEl = document.getElementById('pdp-name');
-    if (!titleEl) {
-        console.error('[FONT ROTATE] pdp-name element not found!');
-        return;
-    }
-    console.log('[FONT ROTATE] Starting rotation on:', titleEl.textContent);
-    console.log('[FONT ROTATE] Current computed font:', getComputedStyle(titleEl).fontFamily);
-
-    let fontIndex = 0;
-    let currentClass = '';
-
-    setInterval(() => {
-        fontIndex = (fontIndex + 1) % TITLE_FONT_CLASSES.length;
-        const nextClass = TITLE_FONT_CLASSES[fontIndex];
-        console.log(`[FONT ROTATE] Switching to: ${nextClass}`);
-
-        titleEl.style.opacity = '0';
-        setTimeout(() => {
-            if (currentClass) titleEl.classList.remove(currentClass);
-            currentClass = nextClass;
-            titleEl.classList.add(currentClass);
-            titleEl.style.opacity = '1';
-            console.log(`[FONT ROTATE] Applied. Computed font now:`, getComputedStyle(titleEl).fontFamily);
-        }, 300);
-    }, 5000);
-}
