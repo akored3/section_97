@@ -288,12 +288,15 @@ function startTitleFontRotation() {
 
     let fontIndex = 0;
 
+    // Start with a random font
+    titleEl.style.fontFamily = TITLE_FONTS[fontIndex];
+
     setInterval(() => {
         fontIndex = (fontIndex + 1) % TITLE_FONTS.length;
         titleEl.style.opacity = '0';
         setTimeout(() => {
-            titleEl.style.fontFamily = TITLE_FONTS[fontIndex];
+            titleEl.style.setProperty('font-family', TITLE_FONTS[fontIndex], 'important');
             titleEl.style.opacity = '1';
         }, 300);
-    }, 10000);
+    }, 1000);
 }
