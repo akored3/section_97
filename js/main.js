@@ -276,16 +276,50 @@ document.addEventListener('DOMContentLoaded', async function() {
 });
 
 // Rotate the SECTION-97 hero title font every 5 seconds
-function startHeroFontRotation() {
+async function startHeroFontRotation() {
     const titleEl = document.querySelector('.hero-title');
     if (!titleEl) return;
+
+    // Font family names matching the CSS classes
+    const FONT_FAMILIES = [
+        'Bebas Neue', 'Teko', 'Oswald', 'Anton',
+        'Saira Condensed', 'Barlow Condensed', 'Fjalla One',
+        'Russo One', 'Black Ops One', 'Staatliches',
+        'Quantico', 'Turret Road', 'Orbitron', 'Audiowide',
+        'Righteous', 'Oxanium', 'Michroma', 'Electrolize',
+        'Exo 2', 'Play', 'Chakra Petch', 'Jura',
+        'Montserrat', 'Work Sans', 'Space Grotesk',
+        'Bruno Ace', 'Iceberg', 'Permanent Marker',
+        'Bungee', 'Fugaz One', 'Alfa Slab One',
+        'Racing Sans One', 'Share Tech Mono', 'Roboto Mono',
+        'JetBrains Mono', 'IBM Plex Mono', 'Space Mono',
+        'VT323', 'Azeret Mono', 'Rajdhani'
+    ];
+
+    // Preload all fonts so they're ready when we switch
+    await Promise.allSettled(
+        FONT_FAMILIES.map(f => document.fonts.load(`700 48px "${f}"`).catch(() => null))
+    );
+
+    // Filter to only classes whose font actually loaded
+    const availableClasses = HERO_FONT_CLASSES.filter((cls, i) => {
+        return document.fonts.check(`700 48px "${FONT_FAMILIES[i]}"`);
+    });
+
+    if (availableClasses.length === 0) return;
+
+    // Shuffle so it's not the same order every visit
+    for (let i = availableClasses.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [availableClasses[i], availableClasses[j]] = [availableClasses[j], availableClasses[i]];
+    }
 
     let fontIndex = 0;
     let currentClass = '';
 
     setInterval(() => {
-        fontIndex = (fontIndex + 1) % HERO_FONT_CLASSES.length;
-        const nextClass = HERO_FONT_CLASSES[fontIndex];
+        fontIndex = (fontIndex + 1) % availableClasses.length;
+        const nextClass = availableClasses[fontIndex];
 
         titleEl.style.opacity = '0';
         setTimeout(() => {
