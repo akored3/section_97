@@ -10,6 +10,11 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
+        /* Scroll snap — product rows land cleanly on screen (store page only) */
+        html:has(#product-container) {
+            scroll-snap-type: y proximity;
+        }
+
         /* ═══ M3-INSPIRED DESIGN TOKENS ═══════════════════════════════ */
 
         :root {
@@ -1175,6 +1180,8 @@
             gap: 15px;
             position: relative;
             overflow: hidden;
+            scroll-snap-align: start;
+            scroll-margin-top: 80px;
         }
 
         /* Scanline sweep effect */
@@ -1930,6 +1937,7 @@
 
             .product-card {
                 padding: 10px;
+                scroll-margin-top: 65px;
             }
 
             .product-footer {
