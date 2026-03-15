@@ -9,54 +9,20 @@ let selectedSize = null;
 let selectedSizeStock = null;
 let currentProduct = null;
 
-// Rotating fonts for the product title
-const TITLE_FONTS = [
-    // Bold & Condensed (Classic Streetwear)
-    "'Bebas Neue', sans-serif",
-    "'Teko', sans-serif",
-    "'Oswald', sans-serif",
-    "'Anton', sans-serif",
-    "'Saira Condensed', sans-serif",
-    "'Barlow Condensed', sans-serif",
-    "'Fjalla One', sans-serif",
-    // Industrial & Military
-    "'Russo One', sans-serif",
-    "'Black Ops One', sans-serif",
-    "'Staatliches', sans-serif",
-    "'Quantico', sans-serif",
-    "'Turret Road', sans-serif",
-    // Tech & Futuristic
-    "'Orbitron', sans-serif",
-    "'Audiowide', sans-serif",
-    "'Righteous', sans-serif",
-    "'Oxanium', sans-serif",
-    "'Michroma', sans-serif",
-    "'Electrolize', sans-serif",
-    "'Exo 2', sans-serif",
-    "'Play', sans-serif",
-    "'Chakra Petch', sans-serif",
-    "'Jura', sans-serif",
-    // Geometric & Modern
-    "'Montserrat', sans-serif",
-    "'Work Sans', sans-serif",
-    "'Space Grotesk', sans-serif",
-    "'Bruno Ace', sans-serif",
-    "'Iceberg', sans-serif",
-    // Display & Statement
-    "'Permanent Marker', cursive",
-    "'Bungee', sans-serif",
-    "'Fugaz One', sans-serif",
-    "'Alfa Slab One', serif",
-    "'Racing Sans One', sans-serif",
-    // Monospace & Code
-    "'Share Tech Mono', monospace",
-    "'Roboto Mono', monospace",
-    "'JetBrains Mono', monospace",
-    "'IBM Plex Mono', monospace",
-    "'Space Mono', monospace",
-    "'VT323', monospace",
-    "'Azeret Mono', monospace",
-    "'Rajdhani', sans-serif"
+// Rotating fonts for the product title — class names match CSS definitions
+const TITLE_FONT_CLASSES = [
+    'font-bebas-neue', 'font-teko', 'font-oswald', 'font-anton',
+    'font-saira-condensed', 'font-barlow-condensed', 'font-fjalla-one',
+    'font-russo-one', 'font-black-ops-one', 'font-staatliches',
+    'font-quantico', 'font-turret-road', 'font-orbitron', 'font-audiowide',
+    'font-righteous', 'font-oxanium', 'font-michroma', 'font-electrolize',
+    'font-exo-2', 'font-play', 'font-chakra-petch', 'font-jura',
+    'font-montserrat', 'font-work-sans', 'font-space-grotesk',
+    'font-bruno-ace', 'font-iceberg', 'font-permanent-marker',
+    'font-bungee', 'font-fugaz-one', 'font-alfa-slab-one',
+    'font-racing-sans-one', 'font-share-tech-mono', 'font-roboto-mono',
+    'font-jetbrains-mono', 'font-ibm-plex-mono', 'font-space-mono',
+    'font-vt323', 'font-azeret-mono', 'font-rajdhani'
 ];
 
 // Generate description from product name, brand, and category
@@ -282,32 +248,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 // Cycle through fonts on the product title every 5 seconds
-async function startTitleFontRotation() {
+function startTitleFontRotation() {
     const titleEl = document.getElementById('pdp-name');
     if (!titleEl) return;
 
-    // Force-load all fonts upfront (browsers only fetch on first use)
-    const preloadPromises = TITLE_FONTS.map(fontStr => {
-        const family = fontStr.split(',')[0].replace(/'/g, '').trim();
-        return document.fonts.load(`700 48px "${family}"`).catch(() => null);
-    });
-    await Promise.allSettled(preloadPromises);
-
-    // Filter to only fonts that actually loaded
-    const loadedFonts = TITLE_FONTS.filter(fontStr => {
-        const family = fontStr.split(',')[0].replace(/'/g, '').trim();
-        return document.fonts.check(`700 48px "${family}"`);
-    });
-
-    if (loadedFonts.length === 0) return;
-
     let fontIndex = 0;
+    let currentClass = '';
 
     setInterval(() => {
-        fontIndex = (fontIndex + 1) % loadedFonts.length;
+        fontIndex = (fontIndex + 1) % TITLE_FONT_CLASSES.length;
         titleEl.style.opacity = '0';
         setTimeout(() => {
-            titleEl.style.fontFamily = loadedFonts[fontIndex];
+            if (currentClass) titleEl.classList.remove(currentClass);
+            currentClass = TITLE_FONT_CLASSES[fontIndex];
+            titleEl.classList.add(currentClass);
             titleEl.style.opacity = '1';
         }, 300);
     }, 5000);
