@@ -1182,7 +1182,7 @@
             position: relative;
             overflow: hidden;
             scroll-snap-align: start;
-            scroll-margin-top: 80px;
+            scroll-margin-top: 100px;
         }
 
         /* Scanline sweep effect */
@@ -1938,7 +1938,7 @@
 
             .product-card {
                 padding: 10px;
-                scroll-margin-top: 65px;
+                scroll-margin-top: 80px;
             }
 
             .product-footer {
