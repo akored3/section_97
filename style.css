@@ -2892,14 +2892,15 @@
 }
 
 .pdp-name {
-    font: var(--text-headline-lg);
+    font-weight: 700;
     font-size: clamp(1rem, 3.5vw, 2.2rem);
+    line-height: 1.2;
     color: var(--text-primary);
     margin: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    transition: font-family 0.4s ease, opacity 0.4s ease;
+    transition: opacity 0.3s ease;
 }
 
 .pdp-price {
