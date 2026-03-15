@@ -9,6 +9,56 @@ let selectedSize = null;
 let selectedSizeStock = null;
 let currentProduct = null;
 
+// Rotating fonts for the product title
+const TITLE_FONTS = [
+    // Bold & Condensed (Classic Streetwear)
+    "'Bebas Neue', sans-serif",
+    "'Teko', sans-serif",
+    "'Oswald', sans-serif",
+    "'Anton', sans-serif",
+    "'Saira Condensed', sans-serif",
+    "'Barlow Condensed', sans-serif",
+    "'Fjalla One', sans-serif",
+    // Industrial & Military
+    "'Russo One', sans-serif",
+    "'Black Ops One', sans-serif",
+    "'Staatliches', sans-serif",
+    "'Quantico', sans-serif",
+    "'Turret Road', sans-serif",
+    // Tech & Futuristic
+    "'Orbitron', sans-serif",
+    "'Audiowide', sans-serif",
+    "'Righteous', sans-serif",
+    "'Oxanium', sans-serif",
+    "'Michroma', sans-serif",
+    "'Electrolize', sans-serif",
+    "'Exo 2', sans-serif",
+    "'Play', sans-serif",
+    "'Chakra Petch', sans-serif",
+    "'Jura', sans-serif",
+    // Geometric & Modern
+    "'Montserrat', sans-serif",
+    "'Work Sans', sans-serif",
+    "'Space Grotesk', sans-serif",
+    "'Bruno Ace', sans-serif",
+    "'Iceberg', sans-serif",
+    // Display & Statement
+    "'Permanent Marker', cursive",
+    "'Bungee', sans-serif",
+    "'Fugaz One', sans-serif",
+    "'Alfa Slab One', serif",
+    "'Racing Sans One', sans-serif",
+    // Monospace & Code
+    "'Share Tech Mono', monospace",
+    "'Roboto Mono', monospace",
+    "'JetBrains Mono', monospace",
+    "'IBM Plex Mono', monospace",
+    "'Space Mono', monospace",
+    "'VT323', monospace",
+    "'Azeret Mono', monospace",
+    "'Rajdhani', sans-serif"
+];
+
 // Generate description from product name, brand, and category
 function generateDescription(product) {
     const templates = {
@@ -228,4 +278,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     currentProduct = product;
     renderProduct(product);
     setupAddToCart();
+    startTitleFontRotation();
 });
+
+// Cycle through fonts on the product title every 10 seconds
+function startTitleFontRotation() {
+    const titleEl = document.getElementById('pdp-name');
+    if (!titleEl) return;
+
+    let fontIndex = 0;
+
+    setInterval(() => {
+        fontIndex = (fontIndex + 1) % TITLE_FONTS.length;
+        titleEl.style.opacity = '0';
+        setTimeout(() => {
+            titleEl.style.fontFamily = TITLE_FONTS[fontIndex];
+            titleEl.style.opacity = '1';
+        }, 300);
+    }, 10000);
+}

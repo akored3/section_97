@@ -2899,6 +2899,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    transition: font-family 0.4s ease, opacity 0.4s ease;
 }
 
 .pdp-price {
