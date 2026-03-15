@@ -11,7 +11,8 @@
         }
 
         /* Scroll snap — product rows land cleanly on screen (store page only) */
-        html:has(#product-container) {
+        html:has(#product-container),
+        html:has(#product-container) body {
             scroll-snap-type: y proximity;
         }
 
