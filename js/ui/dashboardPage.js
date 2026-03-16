@@ -10,6 +10,45 @@ let currentSearch = '';
 let currentPage = 1;
 const PAGE_SIZE = 15;
 
+// Image upload state — holds File objects or existing URL strings
+let pendingImageFront = null; // File | string (existing URL) | null
+let pendingImageBack = null;
+
+// ─── Image Upload ───────────────────────────────
+function setupImageUpload(inputId, previewId, zoneId, setter) {
+    const input = document.getElementById(inputId);
+    const preview = document.getElementById(previewId);
+    const zone = document.getElementById(zoneId);
+
+    input.addEventListener('change', () => {
+        const file = input.files[0];
+        if (!file) return;
+        setter(file);
+        preview.src = URL.createObjectURL(file);
+        zone.classList.add('has-image');
+    });
+}
+
+async function uploadImage(file, folder = 'products') {
+    const ext = file.name.split('.').pop().toLowerCase();
+    const fileName = `${folder}/${Date.now()}_${Math.random().toString(36).slice(2, 8)}.${ext}`;
+
+    const { data, error } = await supabase.storage
+        .from('product-images')
+        .upload(fileName, file, {
+            cacheControl: '31536000',
+            upsert: false
+        });
+
+    if (error) throw new Error(`Upload failed: ${error.message}`);
+
+    const { data: urlData } = supabase.storage
+        .from('product-images')
+        .getPublicUrl(data.path);
+
+    return urlData.publicUrl;
+}
+
 // ─── Helpers ─────────────────────────────────────
 function escHtml(str) {
     const d = document.createElement('div');
@@ -692,8 +731,34 @@ function openProductModal(product = null) {
     document.getElementById('pf_brand').value = product ? product.brand || '' : '';
     document.getElementById('pf_category').value = product ? product.category : '';
     document.getElementById('pf_stock').value = product ? product.stock || 0 : '';
-    document.getElementById('pf_image_front').value = product ? product.image_front || '' : '';
-    document.getElementById('pf_image_back').value = product ? product.image_back || '' : '';
+
+    // Reset file inputs and previews
+    document.getElementById('pf_image_front').value = '';
+    document.getElementById('pf_image_back').value = '';
+    const previewFront = document.getElementById('preview_front');
+    const previewBack = document.getElementById('preview_back');
+    const zoneFront = document.getElementById('zone_front');
+    const zoneBack = document.getElementById('zone_back');
+
+    if (product && product.image_front) {
+        previewFront.src = product.image_front;
+        zoneFront.classList.add('has-image');
+        pendingImageFront = product.image_front; // existing URL
+    } else {
+        previewFront.src = '';
+        zoneFront.classList.remove('has-image');
+        pendingImageFront = null;
+    }
+
+    if (product && product.image_back) {
+        previewBack.src = product.image_back;
+        zoneBack.classList.add('has-image');
+        pendingImageBack = product.image_back;
+    } else {
+        previewBack.src = '';
+        zoneBack.classList.remove('has-image');
+        pendingImageBack = null;
+    }
 
     const cat = product ? product.category : document.getElementById('pf_category').value;
     renderSizesGrid(cat);
@@ -712,6 +777,12 @@ function openProductModal(product = null) {
 function closeProductModal() {
     document.getElementById('productModalOverlay').classList.remove('open');
     document.getElementById('productForm').reset();
+    document.getElementById('zone_front').classList.remove('has-image');
+    document.getElementById('zone_back').classList.remove('has-image');
+    document.getElementById('preview_front').src = '';
+    document.getElementById('preview_back').src = '';
+    pendingImageFront = null;
+    pendingImageBack = null;
     editingProductId = null;
 }
 
@@ -722,10 +793,8 @@ async function submitProduct() {
     const brand = document.getElementById('pf_brand').value;
     const category = document.getElementById('pf_category').value;
     const stock = parseInt(document.getElementById('pf_stock').value) || 0;
-    const imageFront = document.getElementById('pf_image_front').value.trim();
-    const imageBack = document.getElementById('pf_image_back').value.trim() || null;
 
-    if (!name || !price || !brand || !category || !imageFront) {
+    if (!name || !price || !brand || !category || !pendingImageFront) {
         showToast('FILL ALL REQUIRED FIELDS', true);
         return;
     }
@@ -739,9 +808,33 @@ async function submitProduct() {
     });
 
     btn.disabled = true;
-    btn.textContent = 'DEPLOYING...';
+    btn.textContent = 'UPLOADING...';
 
     try {
+        // Upload images if they're File objects, otherwise keep existing URLs
+        const zoneFront = document.getElementById('zone_front');
+        const zoneBack = document.getElementById('zone_back');
+
+        let imageFront;
+        if (pendingImageFront instanceof File) {
+            zoneFront.classList.add('uploading');
+            imageFront = await uploadImage(pendingImageFront);
+            zoneFront.classList.remove('uploading');
+        } else {
+            imageFront = pendingImageFront; // existing URL string
+        }
+
+        let imageBack = null;
+        if (pendingImageBack instanceof File) {
+            zoneBack.classList.add('uploading');
+            imageBack = await uploadImage(pendingImageBack);
+            zoneBack.classList.remove('uploading');
+        } else if (pendingImageBack) {
+            imageBack = pendingImageBack;
+        }
+
+        btn.textContent = 'DEPLOYING...';
+
         if (editingProductId) {
             // Update existing product
             const { error } = await supabase
@@ -817,6 +910,10 @@ function setupProductModal() {
     document.getElementById('pf_category').addEventListener('change', (e) => {
         renderSizesGrid(e.target.value);
     });
+
+    // Image upload listeners
+    setupImageUpload('pf_image_front', 'preview_front', 'zone_front', (f) => { pendingImageFront = f; });
+    setupImageUpload('pf_image_back', 'preview_back', 'zone_back', (f) => { pendingImageBack = f; });
 
     // Expose to inline onclick handlers
     window.__editProduct = (id) => {

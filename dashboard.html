@@ -1237,6 +1237,57 @@
     }
     .form-select option { background: var(--sw-bg); color: var(--sw-text); }
     .form-textarea { resize: vertical; min-height: 60px; }
+    /* Image upload zones */
+    .img-upload-zone {
+        position: relative;
+        width: 100%; aspect-ratio: 4 / 5;
+        border: 2px dashed var(--sw-input-border);
+        background: var(--sw-input-bg);
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer;
+        overflow: hidden;
+        transition: border-color 0.2s;
+    }
+    .img-upload-zone:hover, .img-upload-zone:focus-within {
+        border-color: var(--sw-accent);
+    }
+    .img-upload-zone.has-image { border-style: solid; }
+    .img-upload-input {
+        position: absolute; inset: 0;
+        width: 100%; height: 100%;
+        opacity: 0; cursor: pointer;
+        z-index: 2;
+    }
+    .img-upload-preview {
+        position: absolute; inset: 0;
+        width: 100%; height: 100%;
+        object-fit: cover;
+        display: none;
+    }
+    .img-upload-zone.has-image .img-upload-preview { display: block; }
+    .img-upload-zone.has-image .img-upload-placeholder { display: none; }
+    .img-upload-placeholder {
+        display: flex; flex-direction: column; align-items: center; gap: 8px;
+        color: var(--sw-text-muted);
+        pointer-events: none;
+    }
+    .img-upload-placeholder span {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.7rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+    .img-upload-zone.uploading::after {
+        content: 'UPLOADING...';
+        position: absolute; inset: 0;
+        display: flex; align-items: center; justify-content: center;
+        background: rgba(0,0,0,0.6);
+        color: var(--sw-accent);
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.75rem;
+        letter-spacing: 0.15em;
+        z-index: 3;
+    }
     .form-row {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -1981,14 +2032,29 @@
                                     <input class="form-input" type="number" id="pf_stock" placeholder="e.g. 120" min="0" required>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label class="form-label">Front Image URL</label>
-                                <input class="form-input" type="text" id="pf_image_front" placeholder="images/product_front.jpeg" required>
-                                <div class="form-hint">Path relative to site root, e.g. images/black_hoodie.jpeg</div>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Back Image URL (optional)</label>
-                                <input class="form-input" type="text" id="pf_image_back" placeholder="images/product_back.jpeg">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Front Image <span style="color:var(--sw-danger);">*</span></label>
+                                    <div class="img-upload-zone" id="zone_front" tabindex="0">
+                                        <input type="file" accept="image/*" id="pf_image_front" class="img-upload-input">
+                                        <img class="img-upload-preview" id="preview_front" alt="">
+                                        <div class="img-upload-placeholder" id="placeholder_front">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                                            <span>Tap to upload</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Back Image <span style="color:var(--sw-text-muted);">(optional)</span></label>
+                                    <div class="img-upload-zone" id="zone_back" tabindex="0">
+                                        <input type="file" accept="image/*" id="pf_image_back" class="img-upload-input">
+                                        <img class="img-upload-preview" id="preview_back" alt="">
+                                        <div class="img-upload-placeholder" id="placeholder_back">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                                            <span>Tap to upload</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Available Sizes & Stock</label>
