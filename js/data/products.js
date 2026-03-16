@@ -12,8 +12,11 @@ export async function fetchProducts() {
             throw error;
         }
 
+        const NEW_THRESHOLD_DAYS = 14;
+        const now = Date.now();
+
         // Map Supabase fields to match existing frontend structure
-        return data.map(product => ({
+        const products = data.map(product => ({
             id: product.id,
             name: product.name,
             price: product.price,
@@ -22,11 +25,28 @@ export async function fetchProducts() {
             category: product.category,
             brand: product.brand,
             stock: product.stock,
+            createdAt: product.created_at,
+            isNew: product.created_at && (now - new Date(product.created_at).getTime()) < NEW_THRESHOLD_DAYS * 86400000,
             sizes: (product.product_sizes || []).map(s => ({
                 size: s.size,
                 stock: s.stock
             }))
         }));
+
+        // Shuffle helper
+        function shuffle(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // Split into new and rest, shuffle each, new products go first
+        const newProducts = shuffle(products.filter(p => p.isNew));
+        const restProducts = shuffle(products.filter(p => !p.isNew));
+
+        return [...newProducts, ...restProducts];
     } catch (error) {
         console.error('Error fetching products from Supabase:', error);
         return [];

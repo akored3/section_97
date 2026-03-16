@@ -1553,6 +1553,49 @@
                         inset 0 1px 0 rgba(255, 255, 255, 0.9);
         }
 
+        /* New product — red accent border + glow */
+        :root[data-theme="dark"] .product-card.new-product {
+            border-color: rgba(255, 40, 40, 0.25);
+            box-shadow: var(--elevation-1), 0 0 0 1px rgba(255, 40, 40, 0.2);
+        }
+        :root[data-theme="dark"] .product-card.new-product:hover {
+            border-color: rgba(255, 40, 40, 0.45);
+            box-shadow: var(--elevation-3),
+                        0 0 0 2px rgba(255, 40, 40, 0.35),
+                        0 4px 30px rgba(255, 40, 40, 0.1),
+                        0 0 60px rgba(255, 40, 40, 0.04);
+        }
+        :root[data-theme="light"] .product-card.new-product {
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06),
+                        0 0 0 1px rgba(255, 40, 40, 0.2),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        }
+        :root[data-theme="light"] .product-card.new-product:hover {
+            box-shadow: 0 4px 20px rgba(255, 40, 40, 0.12),
+                        0 0 0 2px rgba(255, 40, 40, 0.35),
+                        0 8px 24px rgba(0, 0, 0, 0.08),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        }
+
+        /* NEW tag */
+        .new-tag {
+            position: absolute;
+            top: 12px; left: 12px;
+            z-index: 5;
+            padding: 3px 10px;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #fff;
+            background: rgba(255, 40, 40, 0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 40, 40, 0.5);
+            border-radius: var(--shape-sm);
+            box-shadow: 0 0 12px rgba(255, 40, 40, 0.3);
+        }
+
         :root[data-theme="light"] .product-card p {
             color: var(--accent-hover);
         }

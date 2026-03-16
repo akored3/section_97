@@ -40,8 +40,11 @@ export function renderProducts(productsToRender) {
         const imgSrc = isAboveFold ? safeImage : 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"%3E%3C/svg%3E';
         const dataSrc = isAboveFold ? '' : `data-src="${safeImage}"`;
 
+        const isNew = product.isNew;
+
         return `
-            <div class="product-card">
+            <div class="product-card${isNew ? ' new-product' : ''}">
+                ${isNew ? '<span class="new-tag">NEW</span>' : ''}
                 <div class="product-image ${hasBackImage ? 'has-gallery' : ''}">
                     <img src="${imgSrc}"
                          ${dataSrc}
