@@ -13,13 +13,6 @@
         /* Scroll snap — product rows land cleanly on screen (store page only) */
         html:has(#product-container) {
             scroll-snap-type: y proximity;
-            scroll-padding-top: 90px;
-        }
-
-        /* Contain overscroll so rubber-band doesn't chain to browser chrome */
-        html {
-            overscroll-behavior-y: contain;
-            -webkit-overflow-scrolling: touch;
         }
 
         /* ═══ M3-INSPIRED DESIGN TOKENS ═══════════════════════════════ */
@@ -1954,10 +1947,6 @@
 
         /* M3 Compact — mobile */
         @media (max-width: 600px) {
-            html:has(#product-container) {
-                scroll-padding-top: 65px;
-            }
-
             .hero-title {
                 font-size: clamp(1.25rem, 5vw, 1.5rem);
                 letter-spacing: 1px;
