@@ -439,6 +439,7 @@ async function handleAction() {
                     note.textContent = 'Your order was placed but payment verification is pending. You will receive confirmation shortly.';
                     note.classList.remove('hidden');
                 }
+                isProcessing = false;
                 goToStep(4);
                 return;
             }
@@ -448,6 +449,7 @@ async function handleAction() {
 
             // Show confirmation
             document.getElementById('checkout-order-id').textContent = `ORDER ID: ${formatOrderId(orderId)}`;
+            isProcessing = false;
             goToStep(4);
 
         } catch (err) {
@@ -532,7 +534,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const cart = getCart();
 
     // Empty cart guard
-    if (cart.length === 0) return showError('empty');
+    if (cart.length === 0) {
+        if (loader) loader.complete();
+        return showError('empty');
+    }
 
     // Complete progress bar and render cart
     if (loader) loader.complete();

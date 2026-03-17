@@ -24,6 +24,8 @@ function setupImageUpload(inputId, previewId, zoneId, setter) {
         const file = input.files[0];
         if (!file) return;
         setter(file);
+        // Revoke previous blob URL to free memory
+        if (preview.src.startsWith('blob:')) URL.revokeObjectURL(preview.src);
         preview.src = URL.createObjectURL(file);
         zone.classList.add('has-image');
     });
@@ -779,8 +781,13 @@ function closeProductModal() {
     document.getElementById('productForm').reset();
     document.getElementById('zone_front').classList.remove('has-image');
     document.getElementById('zone_back').classList.remove('has-image');
-    document.getElementById('preview_front').src = '';
-    document.getElementById('preview_back').src = '';
+    // Revoke blob URLs before clearing
+    const prevFront = document.getElementById('preview_front');
+    const prevBack = document.getElementById('preview_back');
+    if (prevFront.src.startsWith('blob:')) URL.revokeObjectURL(prevFront.src);
+    if (prevBack.src.startsWith('blob:')) URL.revokeObjectURL(prevBack.src);
+    prevFront.src = '';
+    prevBack.src = '';
     pendingImageFront = null;
     pendingImageBack = null;
     editingProductId = null;
@@ -788,6 +795,7 @@ function closeProductModal() {
 
 async function submitProduct() {
     const btn = document.getElementById('productModalSubmit');
+    const wasEditing = !!editingProductId;
     const name = document.getElementById('pf_name').value.trim();
     const price = parseInt(document.getElementById('pf_price').value);
     const brand = document.getElementById('pf_brand').value;
@@ -878,7 +886,7 @@ async function submitProduct() {
         showToast('FAILED TO SAVE PRODUCT', true);
     } finally {
         btn.disabled = false;
-        btn.textContent = editingProductId ? 'UPDATE PRODUCT' : 'DEPLOY PRODUCT';
+        btn.textContent = wasEditing ? 'UPDATE PRODUCT' : 'DEPLOY PRODUCT';
     }
 }
 
