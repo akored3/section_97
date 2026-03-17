@@ -200,38 +200,29 @@
                         <p class="checkout-confirm-text">Your order has been successfully placed and is being processed.</p>
                         <div class="checkout-order-id" id="checkout-order-id"></div>
                         <p class="checkout-confirm-note hidden" id="checkout-confirm-note"></p>
-                        <div class="checkout-timeline">
-                            <h3 class="checkout-timeline-title">EST. DELIVERY</h3>
-                            <div class="checkout-timeline-track">
-                                <div class="checkout-timeline-node active">
-                                    <div class="checkout-timeline-dot"></div>
-                                    <div class="checkout-timeline-info">
-                                        <span class="checkout-timeline-label">Order Placed</span>
-                                        <span class="checkout-timeline-date">Today</span>
-                                    </div>
-                                </div>
-                                <div class="checkout-timeline-node">
-                                    <div class="checkout-timeline-dot"></div>
-                                    <div class="checkout-timeline-info">
-                                        <span class="checkout-timeline-label">Processing</span>
-                                        <span class="checkout-timeline-date">1-2 days</span>
-                                    </div>
-                                </div>
-                                <div class="checkout-timeline-node">
-                                    <div class="checkout-timeline-dot"></div>
-                                    <div class="checkout-timeline-info">
-                                        <span class="checkout-timeline-label">Shipped</span>
-                                        <span class="checkout-timeline-date">3-5 days</span>
-                                    </div>
-                                </div>
-                                <div class="checkout-timeline-node">
-                                    <div class="checkout-timeline-dot"></div>
-                                    <div class="checkout-timeline-info">
-                                        <span class="checkout-timeline-label">Delivered</span>
-                                        <span class="checkout-timeline-date">5-7 days</span>
-                                    </div>
-                                </div>
+                        <!-- Logged-in: link to profile order history -->
+                        <div class="checkout-next-steps hidden" id="confirm-auth">
+                            <div class="checkout-next-steps-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20">
+                                    <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
+                                    <rect x="9" y="3" width="6" height="4" rx="1"/>
+                                    <path d="M9 12l2 2 4-4"/>
+                                </svg>
                             </div>
+                            <p class="checkout-next-steps-text">Track your order status and delivery updates in your <strong>Order History</strong>.</p>
+                            <a href="profile.html" class="checkout-next-steps-btn">VIEW ORDER HISTORY</a>
+                        </div>
+
+                        <!-- Guest: save order ID reminder + nudge to sign up -->
+                        <div class="checkout-next-steps hidden" id="confirm-guest">
+                            <div class="checkout-next-steps-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20">
+                                    <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
+                                </svg>
+                            </div>
+                            <p class="checkout-next-steps-text">Save your <strong>Order ID</strong> above — you'll need it to check your order status. A confirmation will also be sent to your email.</p>
+                            <a href="auth.html" class="checkout-next-steps-btn checkout-next-steps-btn--secondary">CREATE ACCOUNT TO TRACK ORDERS</a>
+                            <a href="store.html" class="checkout-next-steps-btn">CONTINUE SHOPPING</a>
                         </div>
                     </div>
                 </div>

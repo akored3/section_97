@@ -48,6 +48,19 @@ function updateStepper(step) {
     });
 }
 
+// ─── Confirmation: show auth vs guest next-steps ─
+function showConfirmNextSteps() {
+    const authBlock = document.getElementById('confirm-auth');
+    const guestBlock = document.getElementById('confirm-guest');
+    if (currentUser) {
+        authBlock?.classList.remove('hidden');
+        guestBlock?.classList.add('hidden');
+    } else {
+        authBlock?.classList.add('hidden');
+        guestBlock?.classList.remove('hidden');
+    }
+}
+
 // ─── Step Navigation ─────────────────────────────
 
 function goToStep(step) {
@@ -440,6 +453,7 @@ async function handleAction() {
                     note.classList.remove('hidden');
                 }
                 isProcessing = false;
+                showConfirmNextSteps();
                 goToStep(4);
                 return;
             }
@@ -450,6 +464,7 @@ async function handleAction() {
             // Show confirmation
             document.getElementById('checkout-order-id').textContent = `ORDER ID: ${formatOrderId(orderId)}`;
             isProcessing = false;
+            showConfirmNextSteps();
             goToStep(4);
 
         } catch (err) {

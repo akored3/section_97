@@ -13,6 +13,13 @@
         /* Scroll snap — product rows land cleanly on screen (store page only) */
         html:has(#product-container) {
             scroll-snap-type: y proximity;
+            scroll-padding-top: 90px;
+        }
+
+        /* Contain overscroll so rubber-band doesn't chain to browser chrome */
+        html {
+            overscroll-behavior-y: contain;
+            -webkit-overflow-scrolling: touch;
         }
 
         /* ═══ M3-INSPIRED DESIGN TOKENS ═══════════════════════════════ */
@@ -1947,6 +1954,10 @@
 
         /* M3 Compact — mobile */
         @media (max-width: 600px) {
+            html:has(#product-container) {
+                scroll-padding-top: 65px;
+            }
+
             .hero-title {
                 font-size: clamp(1.25rem, 5vw, 1.5rem);
                 letter-spacing: 1px;
@@ -6011,8 +6022,68 @@ a.dropdown-item {
     animation: confirmTextEnter 0.5s ease-out 0.45s both;
 }
 
-.checkout-timeline {
+/* ── Next Steps (post-checkout) ── */
+
+.checkout-next-steps {
+    text-align: center;
+    margin-top: var(--space-lg);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--outline-variant);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-md);
     animation: confirmTextEnter 0.5s ease-out 0.5s both;
+}
+
+.checkout-next-steps-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--shape-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--outline-accent);
+    color: var(--accent);
+    background: var(--surface-1);
+}
+
+.checkout-next-steps-text {
+    font: var(--text-body-md);
+    color: var(--text-secondary);
+    max-width: 320px;
+    line-height: 1.5;
+}
+
+.checkout-next-steps-text strong {
+    color: var(--text-primary);
+}
+
+.checkout-next-steps-btn {
+    display: inline-block;
+    font: var(--text-label-md);
+    letter-spacing: 2px;
+    padding: var(--space-sm) var(--space-xl);
+    border-radius: var(--shape-sm);
+    border: 1px solid var(--accent);
+    color: var(--bg-primary);
+    background: var(--accent);
+    text-decoration: none;
+    transition: all var(--duration-short) var(--motion-standard);
+}
+
+.checkout-next-steps-btn:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 0 12px var(--glow-accent);
+}
+
+.checkout-next-steps-btn--secondary {
+    background: transparent;
+    color: var(--accent);
+}
+
+.checkout-next-steps-btn--secondary:hover {
+    background: var(--surface-2);
 }
 
 @keyframes confirmTextEnter {
@@ -6025,13 +6096,6 @@ a.dropdown-item {
         transform: translateY(0);
     }
 }
-
-/* ── Timeline nodes staggered entrance ── */
-
-.checkout-timeline-node:nth-child(1) { animation: confirmTextEnter 0.4s ease-out 0.6s both; }
-.checkout-timeline-node:nth-child(2) { animation: confirmTextEnter 0.4s ease-out 0.75s both; }
-.checkout-timeline-node:nth-child(3) { animation: confirmTextEnter 0.4s ease-out 0.9s both; }
-.checkout-timeline-node:nth-child(4) { animation: confirmTextEnter 0.4s ease-out 1.05s both; }
 
 /* ── Checkout Body (2-col grid) ── */
 
@@ -6312,79 +6376,6 @@ a.dropdown-item {
 
 /* ── Delivery Timeline ── */
 
-.checkout-timeline {
-    text-align: left;
-    margin-top: var(--space-lg);
-    padding-top: var(--space-lg);
-    border-top: 1px solid var(--outline-variant);
-}
-
-.checkout-timeline-title {
-    font: var(--text-label-md);
-    color: var(--text-secondary);
-    letter-spacing: 2px;
-    margin-bottom: var(--space-lg);
-}
-
-.checkout-timeline-track {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-lg);
-    padding-left: var(--space-sm);
-}
-
-.checkout-timeline-node {
-    display: flex;
-    align-items: center;
-    gap: var(--space-md);
-    position: relative;
-}
-
-.checkout-timeline-node:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    left: 7px;
-    top: 20px;
-    width: 2px;
-    height: calc(100% + var(--space-lg));
-    background: var(--outline-variant);
-}
-
-.checkout-timeline-node.active:not(:last-child)::after {
-    background: var(--accent);
-}
-
-.checkout-timeline-dot {
-    width: 16px;
-    height: 16px;
-    border: 2px solid var(--outline);
-    border-radius: 2px;
-    flex-shrink: 0;
-    position: relative;
-    z-index: 1;
-    background: var(--bg-primary);
-}
-
-.checkout-timeline-node.active .checkout-timeline-dot {
-    border-color: var(--accent);
-    background: var(--accent);
-}
-
-.checkout-timeline-info {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.checkout-timeline-label {
-    font: var(--text-body-md);
-    color: var(--text-primary);
-}
-
-.checkout-timeline-date {
-    font: var(--text-label-sm);
-    color: var(--text-muted);
-}
 
 /* ── Order Summary Sidebar ── */
 
@@ -7542,7 +7533,7 @@ a.dropdown-item {
     .checkout-confirm-icon svg { animation: none !important; }
     .checkout-confirm-text,
     .checkout-order-id,
-    .checkout-timeline,
+    .checkout-next-steps,
     .checkout-confirm-note { animation: none !important; opacity: 1; transform: none; }
 
     /* Store product cards */
