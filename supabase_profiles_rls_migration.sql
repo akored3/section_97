@@ -39,13 +39,15 @@ CREATE POLICY "Users can insert own profile"
 CREATE OR REPLACE FUNCTION protect_profile_stats()
 RETURNS TRIGGER AS $$
 BEGIN
-    -- If called by a SECURITY DEFINER function (like the stats trigger), allow all changes
-    -- Otherwise, force total_spent and order_count to stay unchanged
-    IF current_setting('role') != 'authenticated' THEN
-        RETURN NEW; -- Service role / trigger — allow everything
+    -- If current_user is NOT the 'authenticated' role, this UPDATE is coming
+    -- from a SECURITY DEFINER function (like update_profile_stats) — allow it.
+    -- Note: current_setting('role') does NOT work here because it's a session-level
+    -- GUC that stays 'authenticated' even inside SECURITY DEFINER functions.
+    IF current_user != 'authenticated' THEN
+        RETURN NEW;
     END IF;
 
-    -- For authenticated users: revert protected fields to their old values
+    -- For direct client updates: revert protected fields to their old values
     NEW.total_spent := OLD.total_spent;
     NEW.order_count := OLD.order_count;
     RETURN NEW;
