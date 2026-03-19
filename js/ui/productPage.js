@@ -171,8 +171,57 @@ function renderPdpChips(product, sizes, sizesContainer, stockEl, addBtn) {
             } else {
                 stockEl.textContent = '';
             }
+
+            syncStickyBar();
         });
     });
+
+    // Sync sticky bar after chip re-render (covers auto-select and sold out)
+    syncStickyBar();
+}
+
+// Sync sticky bar button text/state with main ATC button
+function syncStickyBar() {
+    const addBtn = document.getElementById('pdp-add-to-cart');
+    const stickyBtn = document.getElementById('pdp-sticky-atc');
+    if (!addBtn || !stickyBtn) return;
+
+    stickyBtn.disabled = addBtn.disabled;
+    // Shorten text for sticky bar: "Add to bag — Size M" → "ADD — M"
+    if (selectedSize) {
+        stickyBtn.textContent = `ADD — ${selectedSize}`;
+    } else if (addBtn.textContent.includes('SOLD OUT')) {
+        stickyBtn.textContent = 'SOLD OUT';
+    } else {
+        stickyBtn.textContent = 'Select size';
+    }
+}
+
+// Setup sticky ATC bar visibility via IntersectionObserver
+function setupStickyBar() {
+    const addBtn = document.getElementById('pdp-add-to-cart');
+    const stickyBar = document.getElementById('pdp-sticky-bar');
+    if (!addBtn || !stickyBar) return;
+
+    // Populate product info
+    const stickyName = document.getElementById('pdp-sticky-name');
+    const stickyPrice = document.getElementById('pdp-sticky-price');
+    if (currentProduct) {
+        stickyName.textContent = currentProduct.name;
+        stickyPrice.textContent = `₦${Number(currentProduct.price).toLocaleString()}`;
+    }
+
+    // Show/hide bar when main button enters/leaves viewport
+    const observer = new IntersectionObserver(([entry]) => {
+        const shouldShow = !entry.isIntersecting;
+        stickyBar.classList.toggle('visible', shouldShow);
+        stickyBar.setAttribute('aria-hidden', !shouldShow);
+    }, { threshold: 0 });
+
+    observer.observe(addBtn);
+
+    // Initial sync
+    syncStickyBar();
 }
 
 // Setup PDP add-to-cart button
@@ -180,7 +229,7 @@ function setupAddToCart() {
     const addBtn = document.getElementById('pdp-add-to-cart');
     if (!addBtn) return;
 
-    addBtn.addEventListener('click', () => {
+    const handleAdd = () => {
         if (!currentProduct || !selectedSize) return;
 
         addToCart({
@@ -197,9 +246,16 @@ function setupAddToCart() {
         const sizesContainer = document.getElementById('pdp-sizes');
         const stockEl = document.getElementById('pdp-stock');
         renderPdpChips(currentProduct, sizes, sizesContainer, stockEl, addBtn);
+        syncStickyBar();
 
         openCartDrawer();
-    });
+    };
+
+    addBtn.addEventListener('click', handleAdd);
+
+    // Sticky bar button triggers the same action
+    const stickyBtn = document.getElementById('pdp-sticky-atc');
+    if (stickyBtn) stickyBtn.addEventListener('click', handleAdd);
 }
 
 // Initialize page
@@ -228,4 +284,5 @@ document.addEventListener('DOMContentLoaded', async () => {
     currentProduct = product;
     renderProduct(product);
     setupAddToCart();
+    setupStickyBar();
 });

@@ -104,6 +104,17 @@
         </div>
     </div>
 
+    <!-- Sticky ATC bar — mobile only, appears when main button scrolls out of view -->
+    <div id="pdp-sticky-bar" class="pdp-sticky-bar" aria-hidden="true">
+        <div class="pdp-sticky-bar-info">
+            <span id="pdp-sticky-name" class="pdp-sticky-name"></span>
+            <span id="pdp-sticky-price" class="pdp-sticky-price"></span>
+        </div>
+        <button id="pdp-sticky-atc" class="pdp-sticky-atc" disabled>
+            Select a size
+        </button>
+    </div>
+
     <!-- Cart drawer (same structure as index.html) -->
     <div class="cart-overlay" id="cart-overlay"></div>
     <aside class="cart-drawer" id="cart-drawer" role="dialog" aria-label="Shopping cart">
