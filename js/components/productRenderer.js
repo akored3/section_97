@@ -42,9 +42,18 @@ export function renderProducts(productsToRender) {
 
         const isNew = product.isNew;
 
+        // Low stock: sum all size stocks (or fall back to product.stock)
+        const sizes = product.sizes || [];
+        const totalStock = sizes.length > 0
+            ? sizes.reduce((sum, s) => sum + (s.stock || 0), 0)
+            : (product.stock || 0);
+        const isLowStock = totalStock > 0 && totalStock <= 10;
+        const isSoldOut = totalStock === 0 && sizes.length > 0;
+
         return `
-            <div class="product-card${isNew ? ' new-product' : ''}">
+            <div class="product-card${isNew ? ' new-product' : ''}${isSoldOut ? ' sold-out' : ''}">
                 ${isNew ? '<span class="new-tag">NEW</span>' : ''}
+                ${isSoldOut ? '<span class="stock-tag sold-out-tag">SOLD OUT</span>' : isLowStock ? `<span class="stock-tag low-stock-tag">${totalStock} LEFT</span>` : ''}
                 <div class="product-image ${hasBackImage ? 'has-gallery' : ''}">
                     <img src="${imgSrc}"
                          ${dataSrc}
