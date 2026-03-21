@@ -2057,12 +2057,12 @@
             background: #f5f7f4;
         }
 
-        :root[data-theme="light"] .product-card button {
+        :root[data-theme="light"] .product-card button:not(.wishlist-heart):not(.gallery-arrow) {
             background: linear-gradient(135deg, var(--accent), var(--accent-dim));
             box-shadow: 0 0 12px var(--glow-accent), 0 2px 8px rgba(0, 0, 0, 0.12);
         }
 
-        :root[data-theme="light"] .product-card button:hover {
+        :root[data-theme="light"] .product-card button:not(.wishlist-heart):not(.gallery-arrow):hover {
             background: linear-gradient(135deg, var(--accent-bright), var(--accent));
             box-shadow: 0 0 22px var(--glow-accent-strong), 0 4px 16px rgba(0, 0, 0, 0.15);
             color: #fff;
