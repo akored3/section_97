@@ -136,7 +136,11 @@ new_web/
 ├── supabase/
 │   └── functions/
 │       └── verify-payment/index.ts   # Payment verification Edge Function
-├── supabase_*.sql                    # 19 migration files (run in order)
+├── migrations/                       # 19 SQL migration files (run in order)
+│   ├── supabase_migration.sql
+│   ├── supabase_cart_migration.sql
+│   ├── ...
+│   └── supabase_wishlist_migration.sql
 ├── SECURITY.md                       # Security documentation
 └── images/                           # Product images
 ```
