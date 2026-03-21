@@ -1,6 +1,13 @@
 # API keys — never commit
 js/config/supabase.js
 
+# Project docs (private)
+CLAUDE.md
+FORMETALBEARD.md
+SECURITY.md
+SKILL.md
+RANKS.md
+
 # Windows artifacts
 nul
 Thumbs.db
