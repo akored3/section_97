@@ -1,5 +1,7 @@
-CLAUDE.md
-FORMETALBEARD.md
-SKILL.md
-RANKS.md
+# API keys — never commit
+js/config/supabase.js
+
+# Windows artifacts
 nul
+Thumbs.db
+desktop.ini

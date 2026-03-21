@@ -18,13 +18,14 @@ A streetwear e-commerce website featuring premium brands (Supreme, Corteiz, Bale
 
 ```
 new_web/
-├── store.html          # Main store page with product grid
-├── product.html        # Product detail page (PDP)
-├── profile.html        # User profile page
+├── index.html          # Main store page (Vercel entry point)
+├── store.html          # Store page (alias)
+├── product.html        # Product detail page (PDP) with sticky ATC bar on mobile
+├── profile.html        # User profile page (orders, wishlist, achievements, stats)
 ├── auth.html           # Login/signup page
 ├── checkout.html       # 4-step checkout (Cart → Shipping → Payment → Confirm)
 ├── leaderboard.html    # Top spenders leaderboard with podium + table
-├── dashboard.html      # Admin command center (order management, hidden from public)
+├── dashboard.html      # Admin command center (order mgmt, product CRUD, mobile responsive)
 ├── style.css           # All styling
 ├── js/
 │   ├── main.js                      # Entry point, coordinates all modules
@@ -37,17 +38,18 @@ new_web/
 │   │   ├── ranks.js                 # Shared level/rank calculations (used by profile + leaderboard)
 │   │   └── usernames.json           # Word pools for username generation
 │   ├── components/
-│   │   ├── productRenderer.js       # Displays products to DOM
+│   │   ├── productRenderer.js       # Displays products to DOM (hearts, stock badges, NEW tags)
 │   │   └── filters.js               # Product filtering logic
 │   └── ui/
 │       ├── theme.js                 # Dark/light mode toggle
 │       ├── menu.js                  # Mobile hamburger menu
 │       ├── cart.js                  # Shopping cart (Supabase + localStorage hybrid)
 │       ├── checkout.js              # Checkout flow, Paystack integration, guest + auth orders
-│       ├── productPage.js           # Product detail page logic
-│       ├── profilePage.js           # Profile page logic (avatar, stats, orders)
+│       ├── wishlist.js              # Wishlist (Supabase + localStorage hybrid, hearts on cards/PDP)
+│       ├── productPage.js           # Product detail page logic + wishlist heart
+│       ├── profilePage.js           # Profile page logic (avatar, stats, orders, wishlist dropdown)
 │       ├── leaderboardPage.js       # Leaderboard page logic (podium, table, ranks)
-│       ├── dashboardPage.js         # Admin dashboard logic (orders, status updates)
+│       ├── dashboardPage.js         # Admin dashboard logic (orders, status updates, product CRUD, image upload)
 │       ├── lazyLoad.js              # Lazy loading with IntersectionObserver
 │       └── progressBar.js           # HUD progress bar animation driver
 ├── supabase/
@@ -67,9 +69,14 @@ new_web/
 ├── supabase_leaderboard_migration.sql           # Leaderboard RLS (public profile reads)
 ├── supabase_guest_checkout_migration.sql        # Guest checkout + full shipping details
 ├── supabase_admin_migration.sql                 # Admin role, RLS policies, status update RPC
+├── supabase_admin_products_migration.sql        # Product CRUD RPC for admin
 ├── supabase_stock_decrement_migration.sql       # Atomic stock decrement in create_validated_order()
 ├── supabase_fix_profile_stats_migration.sql     # Fix: protect_profile_stats blocking stats trigger
+├── supabase_storage_migration.sql               # Supabase Storage bucket for product images
+├── supabase_status_transitions_migration.sql    # Order status transition validation
+├── supabase_wishlist_migration.sql              # Wishlist table + RLS policies
 ├── SECURITY.md             # Security measures, decisions, and known limitations
+├── RANKS.md                # Rank system documentation
 ├── images/             # Product images (Supreme, Corteiz, Balenciaga)
 └── favicon.ico
 ```
@@ -80,11 +87,17 @@ new_web/
 - **Product Filtering** - Filter by hoodies, t-shirts, pants, jackets, shoes, bags
 - **Size Selection on Cards** - Glass overlay picker on product image with blur effect
 - **Shopping Cart** - Hybrid Supabase + localStorage persistence, size-aware deduplication
+- **Wishlist** - Heart buttons on cards/PDP, localStorage + Supabase hybrid, viewable on profile page
 - **Authentication** - Signup with auto-generated usernames, login, logout
 - **Guest Checkout** - Email-based checkout without account, full shipping details persisted to DB
 - **Checkout** - 4-step flow with Paystack payments (card + bank transfer)
 - **Leaderboard** - Top 50 spenders with podium (top 3) + table, abbreviated spend amounts, rank badges
-- **Admin Dashboard** - Order command center with status pipeline, filters, search, detail panel (role-based access)
+- **Admin Dashboard** - Order command center with status pipeline, filters, search, detail panel, product CRUD with image upload (role-based access, mobile responsive)
+- **Stock Badges** - LOW STOCK (≤10) and SOLD OUT badges on product cards
+- **NEW Product Tags** - Red border + NEW badge on recently added products, pinned to top
+- **Sticky ATC Bar** - Fixed add-to-cart bar on mobile PDP
+- **Product Snap Scroll** - CSS scroll-snap (proximity) so scroll always lands on a product row
+- **Stock Decrement** - Atomic stock reduction on order placement
 - **Responsive Design** - Mobile navigation drawer with streamlined UX
 - **Glassmorphism UI** - Modern glass-effect buttons and cards
 
@@ -170,10 +183,13 @@ git push
 
 ## Future Considerations
 
-- Mobile UI/UX polish (next up)
 - Username editing (planned as a paid feature)
-- Admin dashboard (order management, product CRUD, IP geolocation analytics, revenue trends, security logs)
 - GRANDMASTER messaging system — admin-to-user inbox, broadcast announcements, rank-up congrats, new drop alerts, discount promos, scheduled messages, HUD-styled message cards
+- Drop countdowns / "Notify Me" for upcoming products
+- Quick View modal on store cards
+- Product reviews / ratings
+- Leaderboard seasons
+- PWA (offline, install prompt)
 - Image optimization (WebP, responsive sizes)
 - Currency localization (i18n) — detect user locale, convert ₦ prices via exchange rate API
 - Footer redesign

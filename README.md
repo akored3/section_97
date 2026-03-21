@@ -16,6 +16,10 @@ A cyberpunk streetwear e-commerce store with real payments. Built from scratch w
 - Product grid with category filtering (hoodies, tees, pants, jackets, shoes, bags)
 - Real-time search across product names and brands
 - Size selection directly on product cards (glass overlay picker with blur effect)
+- Wishlist hearts on every product card (localStorage + Supabase sync)
+- LOW STOCK (≤10) and SOLD OUT badges on cards
+- NEW product tags with red border, pinned to top of grid
+- Product snap scroll (proximity) — scroll always lands on a product row
 - Dark/light mode toggle with localStorage persistence
 - Skeleton loading placeholders and lazy-loaded images
 - Staggered grid layout with film grain overlay and scanline hover effects
@@ -24,6 +28,8 @@ A cyberpunk streetwear e-commerce store with real payments. Built from scratch w
 - Per-size stock tracking with sold-out indicators
 - Image gallery with thumbnail navigation
 - Add-to-cart with size selection
+- Sticky add-to-cart bar on mobile
+- Wishlist heart button
 
 ### Shopping Cart
 - Hybrid persistence: Supabase for logged-in users, localStorage for guests
@@ -58,6 +64,7 @@ A cyberpunk streetwear e-commerce store with real payments. Built from scratch w
 - Avatar upload with rotating ring animation
 - XP/level system with rank badges
 - Order history with expandable details
+- Wishlist dropdown with saved products (view, remove, navigate to PDP)
 - Achievement badges (unlockable)
 - Stats: total spent, order count, member since
 
@@ -92,12 +99,14 @@ A cyberpunk streetwear e-commerce store with real payments. Built from scratch w
 
 ```
 new_web/
-├── store.html                        # Main store page
+├── index.html                        # Main store page (Vercel entry point)
+├── store.html                        # Store page (alias)
 ├── product.html                      # Product detail page
 ├── auth.html                         # Login / signup
-├── profile.html                      # User profile
+├── profile.html                      # User profile (orders, wishlist, achievements)
 ├── checkout.html                     # 4-step checkout (guest + auth)
 ├── leaderboard.html                  # Top spenders leaderboard
+├── dashboard.html                    # Admin command center
 ├── style.css                         # All styling
 ├── js/
 │   ├── main.js                       # Entry point
@@ -110,22 +119,24 @@ new_web/
 │   │   ├── ranks.js                  # Shared level/rank calculations
 │   │   └── usernames.json            # Word pools for username generation
 │   ├── components/
-│   │   ├── productRenderer.js        # Product card rendering
+│   │   ├── productRenderer.js        # Product card rendering (hearts, badges, NEW tags)
 │   │   └── filters.js                # Category + search filtering
 │   └── ui/
 │       ├── theme.js                  # Dark/light mode
 │       ├── menu.js                   # Mobile navigation drawer
 │       ├── cart.js                   # Cart logic (Supabase + localStorage)
 │       ├── checkout.js               # Checkout flow + Paystack (guest + auth)
+│       ├── wishlist.js               # Wishlist (Supabase + localStorage hybrid)
 │       ├── productPage.js            # Product detail page
-│       ├── profilePage.js            # Profile page
+│       ├── profilePage.js            # Profile page (wishlist dropdown)
 │       ├── leaderboardPage.js        # Leaderboard page
+│       ├── dashboardPage.js          # Admin dashboard (orders, product CRUD)
 │       ├── lazyLoad.js               # IntersectionObserver lazy loading
 │       └── progressBar.js            # HUD progress bar animation
 ├── supabase/
 │   └── functions/
 │       └── verify-payment/index.ts   # Payment verification Edge Function
-├── supabase_*.sql                    # 12 migration files (run in order)
+├── supabase_*.sql                    # 19 migration files (run in order)
 ├── SECURITY.md                       # Security documentation
 └── images/                           # Product images
 ```
@@ -158,6 +169,13 @@ cd section_97
    - `supabase_product_sizes_migration.sql` — product sizes table
    - `supabase_leaderboard_migration.sql` — leaderboard RLS
    - `supabase_guest_checkout_migration.sql` — guest checkout + shipping fields
+   - `supabase_admin_migration.sql` — admin role, RLS policies, status update RPC
+   - `supabase_admin_products_migration.sql` — product CRUD RPC for admin
+   - `supabase_stock_decrement_migration.sql` — atomic stock decrement
+   - `supabase_fix_profile_stats_migration.sql` — fix profile stats trigger
+   - `supabase_storage_migration.sql` — Supabase Storage bucket for product images
+   - `supabase_status_transitions_migration.sql` — order status transition validation
+   - `supabase_wishlist_migration.sql` — wishlist table + RLS policies
 
 2. **Config** — Create `js/config/supabase.js`:
    ```js
@@ -194,8 +212,18 @@ Use Paystack's test card: `4084 0840 8408 4081`, any future expiry, CVV `408`.
 - [x] Leaderboard (top 50 spenders, podium, rank badges)
 - [x] Guest checkout (email-based, no account required)
 - [x] Full shipping details persisted to database
-- [ ] Mobile UI/UX polish
-- [ ] Admin dashboard (order management, product CRUD)
+- [x] Admin dashboard (order management, product CRUD, image upload, mobile responsive)
+- [x] Sticky ATC bar on mobile PDP
+- [x] Low stock / sold out badges on product cards
+- [x] NEW product tags with red border, pinned to top
+- [x] Wishlist (hearts on cards/PDP, profile dropdown, Supabase + localStorage)
+- [x] Product snap scroll (proximity)
+- [x] Atomic stock decrement on orders
+- [ ] Drop countdowns / "Notify Me"
+- [ ] Quick View modal
+- [ ] Product reviews / ratings
+- [ ] Leaderboard seasons
+- [ ] PWA (offline, install prompt)
 - [ ] Guest order lookup (by email + order ID)
 - [ ] Currency localization (i18n)
 - [ ] Image optimization (WebP, responsive sizes)
