@@ -4,6 +4,7 @@ import { initializeTheme } from '../ui/theme.js';
 import { escapeHtml } from '../components/productRenderer.js';
 import { initializeCart, setupCartDrawer, addToCart, openCartDrawer, handleAuthChange, updateBadgeIfGuest, getCart } from './cart.js';
 import { getCurrentUser } from '../auth/auth.js';
+import { initializeWishlist, isWishlisted, toggleWishlist, handleWishlistAuth } from './wishlist.js';
 
 let selectedSize = null;
 let selectedSizeStock = null;
@@ -258,6 +259,23 @@ function setupAddToCart() {
     if (stickyBtn) stickyBtn.addEventListener('click', handleAdd);
 }
 
+// PDP wishlist heart
+function setupPdpWishlist(product) {
+    const btn = document.getElementById('pdp-wishlist');
+    if (!btn) return;
+
+    btn.dataset.productId = String(product.id);
+    const wishlisted = isWishlisted(product.id);
+    btn.classList.toggle('active', wishlisted);
+    btn.setAttribute('aria-pressed', wishlisted);
+
+    btn.addEventListener('click', () => {
+        toggleWishlist(product.id);
+        btn.classList.add('heart-pop');
+        btn.addEventListener('animationend', () => btn.classList.remove('heart-pop'), { once: true });
+    });
+}
+
 // Initialize page
 document.addEventListener('DOMContentLoaded', async () => {
     initializeTheme();
@@ -265,10 +283,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Cart/auth init is non-critical — don't let failures block product render
     try {
         await initializeCart();
+        await initializeWishlist();
         setupCartDrawer();
         const user = await getCurrentUser();
-        if (user) await handleAuthChange(user.id);
-        else updateBadgeIfGuest();
+        if (user) {
+            await handleAuthChange(user.id);
+            await handleWishlistAuth(user.id);
+        } else {
+            updateBadgeIfGuest();
+        }
     } catch (e) {
         console.error('[PDP] Cart/auth init failed:', e);
     }
@@ -285,4 +308,5 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderProduct(product);
     setupAddToCart();
     setupStickyBar();
+    setupPdpWishlist(product);
 });

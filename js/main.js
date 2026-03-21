@@ -8,6 +8,7 @@ import { getCurrentUser, onAuthStateChange, signOut } from './auth/auth.js';
 import { initializeLazyLoading } from './ui/lazyLoad.js';
 import { initializeCart, setupCartDrawer, setupAddToCartButtons, handleAuthChange, updateBadgeIfGuest } from './ui/cart.js';
 import { initPageLoader } from './ui/progressBar.js';
+import { initializeWishlist, handleWishlistAuth, setupWishlistDrawer, setProductsCache } from './ui/wishlist.js';
 
 // Track if user is logged in
 let isLoggedIn = false;
@@ -201,7 +202,9 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     await safeInit('Cart', async () => {
         await initializeCart();
+        await initializeWishlist();
         setupCartDrawer();
+        setupWishlistDrawer();
     });
 
     await safeInit('Auth', async () => {
@@ -210,11 +213,16 @@ document.addEventListener('DOMContentLoaded', async function() {
         onAuthStateChange((event, session) => {
             updateAuthButton();
             handleAuthChange(session?.user?.id || null);
+            handleWishlistAuth(session?.user?.id || null);
         });
-        // Initial auth-aware cart load
+        // Initial auth-aware cart + wishlist load
         const user = await getCurrentUser();
-        if (user) await handleAuthChange(user.id);
-        else updateBadgeIfGuest();
+        if (user) {
+            await handleAuthChange(user.id);
+            await handleWishlistAuth(user.id);
+        } else {
+            updateBadgeIfGuest();
+        }
     });
 
     // Products - core content
@@ -222,6 +230,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     try {
         products = await fetchProducts(); // Already shuffled with new products pinned to top
         renderProducts(products);
+        setProductsCache(products);
         initializeLazyLoading();
         setupAddToCartButtons();
     } catch (e) {

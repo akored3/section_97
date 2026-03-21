@@ -1,4 +1,5 @@
 // Handles rendering products to the DOM
+import { isWishlisted, toggleWishlist } from '../ui/wishlist.js';
 
 // Escape HTML to prevent XSS from dynamic data
 export function escapeHtml(str) {
@@ -55,6 +56,12 @@ export function renderProducts(productsToRender) {
                 ${isNew ? '<span class="new-tag">NEW</span>' : ''}
                 ${isSoldOut ? '<span class="stock-tag sold-out-tag">SOLD OUT</span>' : isLowStock ? `<span class="stock-tag low-stock-tag">${totalStock} LEFT</span>` : ''}
                 <div class="product-image ${hasBackImage ? 'has-gallery' : ''}">
+                    <button class="wishlist-heart${isWishlisted(product.id) ? ' active' : ''}"
+                        data-product-id="${safeId}" aria-label="Add to wishlist" aria-pressed="${isWishlisted(product.id)}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                        </svg>
+                    </button>
                     <img src="${imgSrc}"
                          ${dataSrc}
                          class="${imgClass}"
@@ -111,6 +118,7 @@ export function renderProducts(productsToRender) {
     // Initialize gallery arrows
     initGalleryArrows();
     initCardNavigation();
+    initWishlistHearts();
 }
 
 function initCardNavigation() {
@@ -118,7 +126,7 @@ function initCardNavigation() {
     cards.forEach(card => {
         card.style.cursor = 'pointer';
         card.addEventListener('click', (e) => {
-            if (e.target.closest('.add-to-cart-btn') || e.target.closest('.gallery-arrow') || e.target.closest('.card-size-picker')) return;
+            if (e.target.closest('.add-to-cart-btn') || e.target.closest('.gallery-arrow') || e.target.closest('.card-size-picker') || e.target.closest('.wishlist-heart')) return;
             const id = card.querySelector('.add-to-cart-btn')?.dataset.id;
             if (id) window.location.href = `product.html?id=${id}`;
         });
@@ -150,6 +158,19 @@ function initGalleryArrows() {
                 dots[0].classList.add('active');
                 dots[1].classList.remove('active');
             }
+        });
+    });
+}
+
+function initWishlistHearts() {
+    document.querySelectorAll('.wishlist-heart').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const productId = btn.dataset.productId;
+            toggleWishlist(productId);
+            // Pop animation
+            btn.classList.add('heart-pop');
+            btn.addEventListener('animationend', () => btn.classList.remove('heart-pop'), { once: true });
         });
     });
 }
