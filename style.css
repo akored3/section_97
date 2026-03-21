@@ -1722,6 +1722,14 @@
             pointer-events: none;
         }
 
+        .like-count {
+            font: var(--text-label-sm);
+            font-family: var(--font-mono);
+            color: inherit;
+            pointer-events: none;
+            margin-left: 2px;
+        }
+
         .product-card:hover .wishlist-heart,
         .wishlist-heart.active {
             opacity: 1;

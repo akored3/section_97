@@ -5,6 +5,7 @@ import { supabase } from '../config/supabase.js';
 let wishlist = []; // array of product ID strings
 let currentUserId = null;
 let useSupabase = false;
+let likeCounts = {}; // { productId: count }
 
 const STORAGE_KEY = 'section97-wishlist';
 
@@ -29,6 +30,45 @@ function updateBadge() {
     document.querySelectorAll('.wishlist-badge').forEach(badge => {
         badge.textContent = count;
         badge.style.display = count > 0 ? 'flex' : 'none';
+    });
+}
+
+// ─── Like Counts ────────────────────────────────
+
+export async function fetchLikeCounts() {
+    try {
+        const { data, error } = await supabase
+            .from('wishlists')
+            .select('product_id');
+
+        if (error) throw error;
+
+        // Count occurrences of each product_id
+        likeCounts = {};
+        (data || []).forEach(row => {
+            const id = String(row.product_id);
+            likeCounts[id] = (likeCounts[id] || 0) + 1;
+        });
+
+        updateAllLikeCounts();
+    } catch (e) {
+        console.warn('Failed to fetch like counts:', e);
+    }
+}
+
+export function getLikeCount(productId) {
+    return likeCounts[String(productId)] || 0;
+}
+
+function updateAllLikeCounts() {
+    document.querySelectorAll('.wishlist-heart').forEach(btn => {
+        const id = btn.dataset.productId;
+        const countEl = btn.querySelector('.like-count');
+        const count = likeCounts[id] || 0;
+        if (countEl) {
+            countEl.textContent = count;
+            countEl.style.display = count > 0 ? '' : 'none';
+        }
     });
 }
 
@@ -60,6 +100,14 @@ export async function toggleWishlist(productId) {
         wishlist.push(id);
         updateAllHearts(id, true);
     }
+
+    // Optimistic like count update
+    if (alreadyWishlisted) {
+        likeCounts[id] = Math.max((likeCounts[id] || 0) - 1, 0);
+    } else {
+        likeCounts[id] = (likeCounts[id] || 0) + 1;
+    }
+    updateAllLikeCounts();
 
     saveLocal();
     updateBadge();

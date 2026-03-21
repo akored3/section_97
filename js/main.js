@@ -8,7 +8,7 @@ import { getCurrentUser, onAuthStateChange, signOut } from './auth/auth.js';
 import { initializeLazyLoading } from './ui/lazyLoad.js';
 import { initializeCart, setupCartDrawer, setupAddToCartButtons, handleAuthChange, updateBadgeIfGuest } from './ui/cart.js';
 import { initPageLoader } from './ui/progressBar.js';
-import { initializeWishlist, handleWishlistAuth, setupWishlistDrawer, setProductsCache } from './ui/wishlist.js';
+import { initializeWishlist, handleWishlistAuth, setupWishlistDrawer, setProductsCache, fetchLikeCounts } from './ui/wishlist.js';
 
 // Track if user is logged in
 let isLoggedIn = false;
@@ -233,6 +233,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         setProductsCache(products);
         initializeLazyLoading();
         setupAddToCartButtons();
+        fetchLikeCounts(); // Fire-and-forget — updates counts when ready
     } catch (e) {
         console.error('[Products] failed to load:', e);
         const container = document.getElementById('product-container');
