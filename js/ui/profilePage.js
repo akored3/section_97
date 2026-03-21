@@ -4,8 +4,10 @@ import { supabase } from '../config/supabase.js';
 import { initializeTheme } from './theme.js';
 import { escapeHtml } from '../components/productRenderer.js';
 import { initializeCart, setupCartDrawer, handleAuthChange } from './cart.js';
+import { initializeWishlist, handleWishlistAuth, getWishlist, toggleWishlist } from './wishlist.js';
 import { initPageLoader } from './progressBar.js';
 import { calculateLevel, getRank } from '../data/ranks.js';
+import { fetchProducts } from '../data/products.js';
 
 // ── Achievement definitions ──
 const ACHIEVEMENTS = [
@@ -563,25 +565,111 @@ function setupLogout() {
     });
 }
 
+// ── Wishlist section ──
+
+let allProducts = [];
+
+async function loadWishlistProducts() {
+    if (allProducts.length === 0) {
+        try { allProducts = await fetchProducts(); } catch (e) { allProducts = []; }
+    }
+    return allProducts;
+}
+
+function renderWishlist() {
+    const container = document.getElementById('profile-wishlist-list');
+    if (!container) return;
+
+    const ids = getWishlist();
+    if (ids.length === 0) {
+        container.innerHTML = `
+            <div class="profile-orders-empty">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+                <p>WISHLIST EMPTY</p>
+                <span class="profile-empty-sub">Tap the heart on any product to save it here</span>
+                <br>
+                <a href="index.html" class="profile-empty-cta">Browse products</a>
+            </div>`;
+        return;
+    }
+
+    const items = ids.map(id => {
+        const product = allProducts.find(p => String(p.id) === id);
+        if (!product) return '';
+        const price = Math.round(Number(product.price)).toLocaleString('en-US');
+        return `
+            <div class="profile-wishlist-item">
+                <img src="${escapeHtml(product.imageSrc)}" alt="${escapeHtml(product.name)}" class="profile-wishlist-item-img" loading="lazy"
+                     onerror="this.onerror=null;this.src='images/placeholder.png';">
+                <div class="profile-wishlist-item-info">
+                    <span class="profile-wishlist-item-name">${escapeHtml(product.name)}</span>
+                    <span class="profile-wishlist-item-price">₦${price}</span>
+                </div>
+                <div class="profile-wishlist-item-actions">
+                    <a href="product.html?id=${product.id}" class="profile-wishlist-view-btn">VIEW</a>
+                    <button class="profile-wishlist-remove-btn" data-product-id="${product.id}" aria-label="Remove from wishlist">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>`;
+    }).filter(Boolean).join('');
+
+    container.innerHTML = items || `
+        <div class="profile-orders-empty">
+            <p>WISHLIST EMPTY</p>
+            <span class="profile-empty-sub">Products may have been removed</span>
+        </div>`;
+
+    // Remove button handlers
+    container.querySelectorAll('.profile-wishlist-remove-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            toggleWishlist(btn.dataset.productId);
+            renderWishlist();
+        });
+    });
+}
+
+function setupWishlistDropdown() {
+    const btn = document.getElementById('wishlist-toggle');
+    const content = document.getElementById('profile-wishlist-list');
+    if (!btn || !content) return;
+
+    btn.addEventListener('click', () => {
+        const expanded = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', !expanded);
+        content.setAttribute('aria-hidden', expanded);
+        content.classList.toggle('wishlist-collapsed', expanded);
+        content.classList.toggle('wishlist-expanded', !expanded);
+        if (!expanded) renderWishlist(); // Re-render on open to stay fresh
+    });
+}
+
 // Initialize everything when DOM is ready
 document.addEventListener('DOMContentLoaded', async () => {
     const loader = initPageLoader('profile-skeleton');
     initializeTheme();
     await initializeCart();
     setupCartDrawer();
+    await initializeWishlist();
 
     const user = await getCurrentUser();
 
     // Auth guard: redirect if not logged in
     if (!user) return showError();
 
-    // Sync cart with Supabase for correct badge count
+    // Sync cart + wishlist with Supabase
     await handleAuthChange(user.id);
+    await handleWishlistAuth(user.id);
 
     // Render profile
     loadProfile(user);
     setupAvatarUpload(user.id);
     setupLogout();
+    setupWishlistDropdown();
     setupOrdersDropdown();
     setupOrderExpansion();
     setupAchievementsDropdown();
@@ -592,10 +680,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     animateStatCounter(document.getElementById('profile-order-count'), user.orderCount || 0);
     updateLevelXP(totalSpent);
 
-    // Load async data (orders + member since)
+    // Load async data (orders + member since + products for wishlist)
     const [orders, createdAt] = await Promise.all([
         loadOrders(user.id),
-        loadMemberSince()
+        loadMemberSince(),
+        loadWishlistProducts()
     ]);
 
     // Render achievements based on real data
