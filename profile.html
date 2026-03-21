@@ -199,6 +199,23 @@
                 </svg>
             </a>
 
+            <!-- Wishlist (dropdown) -->
+            <section class="profile-wishlist-card">
+                <button id="wishlist-toggle" class="wishlist-dropdown-btn" aria-expanded="false" aria-controls="profile-wishlist-list">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18" aria-hidden="true">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                    <span class="wishlist-btn-text" data-text="WISHLIST">WISHLIST</span>
+                    <span class="wishlist-btn-tag">SAVED</span>
+                    <svg class="wishlist-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                </button>
+                <div id="profile-wishlist-list" class="profile-wishlist-list wishlist-collapsed" aria-hidden="true">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+
             <!-- Order History (dropdown) -->
             <section class="profile-orders-card">
                 <button id="orders-toggle" class="orders-dropdown-btn" aria-expanded="false" aria-controls="profile-orders-list">
