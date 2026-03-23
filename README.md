@@ -16,7 +16,7 @@ A cyberpunk streetwear e-commerce store with real payments. Built from scratch w
 - Product grid with category filtering (hoodies, tees, pants, jackets, shoes, bags)
 - Real-time search across product names and brands
 - Size selection directly on product cards (glass overlay picker with blur effect)
-- Wishlist hearts on every product card (localStorage + Supabase sync)
+- Wishlist hearts on every product card with like counts (localStorage + Supabase sync)
 - LOW STOCK (≤10) and SOLD OUT badges on cards
 - NEW product tags with red border, pinned to top of grid
 - Product snap scroll (proximity) — scroll always lands on a product row
@@ -140,7 +140,8 @@ new_web/
 │   ├── supabase_migration.sql
 │   ├── supabase_cart_migration.sql
 │   ├── ...
-│   └── supabase_wishlist_migration.sql
+│   ├── supabase_wishlist_migration.sql
+│   └── supabase_wishlist_counts_migration.sql
 ├── SECURITY.md                       # Security documentation
 └── images/                           # Product images
 ```
@@ -180,6 +181,7 @@ cd section_97
    - `supabase_storage_migration.sql` — Supabase Storage bucket for product images
    - `supabase_status_transitions_migration.sql` — order status transition validation
    - `supabase_wishlist_migration.sql` — wishlist table + RLS policies
+   - `supabase_wishlist_counts_migration.sql` — public like count access
 
 2. **Config** — Create `js/config/supabase.js`:
    ```js
@@ -220,7 +222,7 @@ Use Paystack's test card: `4084 0840 8408 4081`, any future expiry, CVV `408`.
 - [x] Sticky ATC bar on mobile PDP
 - [x] Low stock / sold out badges on product cards
 - [x] NEW product tags with red border, pinned to top
-- [x] Wishlist (hearts on cards/PDP, profile dropdown, Supabase + localStorage)
+- [x] Wishlist (hearts on cards/PDP, like counts, profile dropdown, Supabase + localStorage)
 - [x] Product snap scroll (proximity)
 - [x] Atomic stock decrement on orders
 - [ ] Drop countdowns / "Notify Me"
