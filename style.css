@@ -1701,7 +1701,9 @@
             position: absolute;
             bottom: 10px; right: 10px;
             z-index: 6;
-            width: 36px; height: 36px;
+            min-width: 36px; height: 36px;
+            padding: 0 10px;
+            gap: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1723,11 +1725,11 @@
         }
 
         .like-count {
-            font: var(--text-label-sm);
+            font-size: 0.75rem;
             font-family: var(--font-mono);
             color: inherit;
             pointer-events: none;
-            margin-left: 2px;
+            line-height: 1;
         }
 
         .product-card:hover .wishlist-heart,
