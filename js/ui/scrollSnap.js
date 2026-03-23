@@ -41,9 +41,8 @@ export function initScrollSnap() {
         const rect = card.getBoundingClientRect();
         const distance = rect.top - offset;
 
-        // Only snap if we're close enough (within half a card height)
-        // Otherwise user is mid-content and snap would be jarring
-        if (Math.abs(distance) > card.offsetHeight * 0.4) return;
+        // Skip if already nearly aligned (< 5px — no visible jump needed)
+        if (Math.abs(distance) < 5) return;
 
         isSnapping = true;
         window.scrollBy({ top: distance, behavior: 'smooth' });
