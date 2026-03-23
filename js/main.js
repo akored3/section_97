@@ -9,6 +9,7 @@ import { initializeLazyLoading } from './ui/lazyLoad.js';
 import { initializeCart, setupCartDrawer, setupAddToCartButtons, handleAuthChange, updateBadgeIfGuest } from './ui/cart.js';
 import { initPageLoader } from './ui/progressBar.js';
 import { initializeWishlist, handleWishlistAuth, setupWishlistDrawer, setProductsCache, fetchLikeCounts } from './ui/wishlist.js';
+import { initScrollSnap } from './ui/scrollSnap.js';
 
 // Track if user is logged in
 let isLoggedIn = false;
@@ -234,6 +235,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         initializeLazyLoading();
         setupAddToCartButtons();
         fetchLikeCounts(); // Fire-and-forget — updates counts when ready
+        initScrollSnap(); // JS-based snap on idle (replaces CSS scroll-snap)
     } catch (e) {
         console.error('[Products] failed to load:', e);
         const container = document.getElementById('product-container');

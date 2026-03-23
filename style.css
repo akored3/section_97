@@ -10,10 +10,8 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Scroll snap — product rows land cleanly on screen (store page only) */
-        html:has(#product-container) {
-            scroll-snap-type: y proximity;
-        }
+        /* Scroll snap removed — JS-based snap-on-idle handles alignment
+           without blocking fast scrolling momentum (see js/ui/scrollSnap.js) */
 
         /* ═══ M3-INSPIRED DESIGN TOKENS ═══════════════════════════════ */
 
@@ -1228,8 +1226,6 @@
             gap: 15px;
             position: relative;
             overflow: hidden;
-            scroll-snap-align: start;
-            scroll-margin-top: 120px;
             transform: translateZ(0); /* GPU compositing — fixes iOS scroll jank */
         }
 
@@ -2449,7 +2445,6 @@
 
             .product-card {
                 padding: 10px;
-                scroll-margin-top: 80px;
             }
 
             .product-footer {
