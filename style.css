@@ -1221,12 +1221,16 @@
             flex-direction: column;
             backdrop-filter: blur(10px);
             border-radius: var(--shape-lg);
-            transition: all var(--duration-medium) var(--motion-standard);
+            transition: box-shadow var(--duration-medium) var(--motion-standard),
+                        border-color var(--duration-medium) var(--motion-standard),
+                        filter var(--duration-medium) var(--motion-standard),
+                        opacity var(--duration-medium) var(--motion-standard);
             gap: 15px;
             position: relative;
             overflow: hidden;
             scroll-snap-align: start;
             scroll-margin-top: 120px;
+            transform: translateZ(0); /* GPU compositing — fixes iOS scroll jank */
         }
 
         /* Scanline sweep effect */
@@ -1314,7 +1318,7 @@
         .product-image.has-gallery .gallery-arrow {
             position: absolute;
             top: 50%;
-            transform: translateY(-50%);
+            transform: translateY(-50%) translateZ(0);
             width: 36px;
             height: 36px;
             border: none;
@@ -2502,7 +2506,9 @@
             color: white;
             background: linear-gradient(135deg, var(--accent-bright), var(--accent-dim));
             box-shadow: var(--elevation-2), 0 0 12px var(--glow-accent);
-            transition: all var(--duration-short) var(--motion-standard);
+            transition: background var(--duration-short) var(--motion-standard),
+                        box-shadow var(--duration-short) var(--motion-standard),
+                        transform var(--duration-short) var(--motion-standard);
             white-space: nowrap;
             font: var(--text-label-lg);
             letter-spacing: 1.5px;
