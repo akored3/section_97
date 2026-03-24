@@ -3,6 +3,7 @@ import { getCurrentUser } from '../auth/auth.js';
 import { supabase, PAYSTACK_PUBLIC_KEY } from '../config/supabase.js';
 import { escapeHtml } from '../components/productRenderer.js';
 import { initializeCart, getCart, getCartTotal, updateQuantity, removeFromCart, clearCartFull, handleAuthChange } from './cart.js';
+import { formatPrice, isNGN, initializeCurrency } from '../config/currency.js';
 import { initPageLoader } from './progressBar.js';
 
 // ─── State ───────────────────────────────────────
@@ -163,7 +164,7 @@ function renderCartItems() {
             </div>
             <div class="checkout-item-right">
                 <button class="checkout-item-remove" data-action="remove" data-key="${escapeHtml(item.cartKey)}" aria-label="Remove item">×</button>
-                <span class="checkout-item-price">₦${(item.price * item.quantity).toLocaleString()}</span>
+                <span class="checkout-item-price">${formatPrice(item.price * item.quantity)}</span>
             </div>
         </div>
     `).join('');
@@ -211,13 +212,13 @@ function renderOrderSummary() {
         <div class="checkout-summary-item">
             <span class="checkout-summary-item-qty">${item.quantity}x</span>
             <span class="checkout-summary-item-name">${escapeHtml(item.name)}</span>
-            <span class="checkout-summary-item-price">₦${(item.price * item.quantity).toLocaleString()}</span>
+            <span class="checkout-summary-item-price">${formatPrice(item.price * item.quantity)}</span>
         </div>
     `).join('');
 
     const total = getCartTotal();
-    subtotalEl.textContent = `₦${total.toLocaleString()}`;
-    totalEl.textContent = `₦${total.toLocaleString()}`;
+    subtotalEl.textContent = formatPrice(total);
+    totalEl.textContent = formatPrice(total);
 }
 
 // ─── Shipping Validation ─────────────────────────
@@ -532,6 +533,7 @@ function setupThemeToggle() {
 document.addEventListener('DOMContentLoaded', async () => {
     const loader = initPageLoader('checkout-loader');
     setupThemeToggle();
+    await initializeCurrency();
     await initializeCart();
 
     const user = await getCurrentUser();

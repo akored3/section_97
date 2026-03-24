@@ -5,6 +5,7 @@ import { escapeHtml } from '../components/productRenderer.js';
 import { initializeCart, setupCartDrawer, addToCart, openCartDrawer, handleAuthChange, updateBadgeIfGuest, getCart } from './cart.js';
 import { getCurrentUser } from '../auth/auth.js';
 import { initializeWishlist, isWishlisted, toggleWishlist, handleWishlistAuth } from './wishlist.js';
+import { formatPrice, initializeCurrency } from '../config/currency.js';
 
 let selectedSize = null;
 let selectedSizeStock = null;
@@ -33,7 +34,7 @@ function showError() {
 
 function renderProduct(product) {
     const safeName = escapeHtml(product.name);
-    const safePrice = Number(product.price).toLocaleString();
+    const safePrice = formatPrice(product.price);
     const description = generateDescription(product);
 
     // Dynamic page title
@@ -68,7 +69,7 @@ function renderProduct(product) {
     // Product info
     document.getElementById('pdp-brand').textContent = product.brand || '';
     document.getElementById('pdp-name').textContent = product.name;
-    document.getElementById('pdp-price').textContent = `₦${safePrice}`;
+    document.getElementById('pdp-price').textContent = safePrice;
     document.getElementById('pdp-description').textContent = description;
 
     // Sizes from database
@@ -209,7 +210,7 @@ function setupStickyBar() {
     const stickyPrice = document.getElementById('pdp-sticky-price');
     if (currentProduct) {
         stickyName.textContent = currentProduct.name;
-        stickyPrice.textContent = `₦${Number(currentProduct.price).toLocaleString()}`;
+        stickyPrice.textContent = formatPrice(currentProduct.price);
     }
 
     // Show/hide bar when main button enters/leaves viewport
@@ -279,6 +280,7 @@ function setupPdpWishlist(product) {
 // Initialize page
 document.addEventListener('DOMContentLoaded', async () => {
     initializeTheme();
+    await initializeCurrency();
 
     // Cart/auth init is non-critical — don't let failures block product render
     try {

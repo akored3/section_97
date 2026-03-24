@@ -10,6 +10,7 @@ import { initializeCart, setupCartDrawer, setupAddToCartButtons, handleAuthChang
 import { initPageLoader } from './ui/progressBar.js';
 import { initializeWishlist, handleWishlistAuth, setupWishlistDrawer, setProductsCache, fetchLikeCounts } from './ui/wishlist.js';
 import { initScrollSnap } from './ui/scrollSnap.js';
+import { initializeCurrency } from './config/currency.js';
 
 // Track if user is logged in
 let isLoggedIn = false;
@@ -200,6 +201,9 @@ async function safeInit(name, fn) {
 document.addEventListener('DOMContentLoaded', async function() {
     // Start HUD progress bar animation
     const loader = initPageLoader('store-loader');
+
+    // Detect user currency before rendering prices
+    await initializeCurrency();
 
     await safeInit('Cart', async () => {
         await initializeCart();

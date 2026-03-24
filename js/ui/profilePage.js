@@ -3,6 +3,7 @@ import { getCurrentUser, signOut } from '../auth/auth.js';
 import { supabase } from '../config/supabase.js';
 import { initializeTheme } from './theme.js';
 import { escapeHtml } from '../components/productRenderer.js';
+import { formatPrice, initializeCurrency } from '../config/currency.js';
 import { initializeCart, setupCartDrawer, handleAuthChange } from './cart.js';
 import { initializeWishlist, handleWishlistAuth, getWishlist, toggleWishlist } from './wishlist.js';
 import { initPageLoader } from './progressBar.js';
@@ -242,7 +243,7 @@ function renderOrders(orders) {
             month: 'short', day: 'numeric', year: 'numeric'
         });
         const totalVal = parseFloat(order.total || 0);
-        const total = (isNaN(totalVal) ? 0 : Math.round(totalVal)).toLocaleString('en-US');
+        const total = formatPrice(isNaN(totalVal) ? 0 : totalVal);
         const items = order.order_items || [];
         const firstName = items.length > 0 ? escapeHtml(items[0].product_name || 'Item') : 'Order';
         const extra = items.length > 1 ? ` +${items.length - 1} more` : '';
@@ -257,7 +258,7 @@ function renderOrders(orders) {
                     <span class="profile-order-item-name">${escapeHtml(item.product_name || 'Item')}</span>
                     <span class="profile-order-item-meta">${item.size ? `Size: ${escapeHtml(item.size)}` : ''}${item.size && item.quantity ? ' · ' : ''}${item.quantity ? `Qty: ${item.quantity}` : ''}</span>
                 </div>
-                <span class="profile-order-item-price">₦${Math.round(parseFloat(item.product_price || 0)).toLocaleString('en-US')}</span>
+                <span class="profile-order-item-price">${formatPrice(parseFloat(item.product_price || 0))}</span>
             </div>
         `).join('');
 
@@ -310,7 +311,7 @@ function renderOrders(orders) {
                         <div class="profile-order-row-meta">${escapeHtml(orderId)} · ${escapeHtml(date)}</div>
                     </div>
                     <span class="profile-order-status" data-status="${escapeHtml(statusRaw)}">${status}</span>
-                    <span class="profile-order-row-price">₦${escapeHtml(total)}</span>
+                    <span class="profile-order-row-price">${total}</span>
                     <svg class="profile-order-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" aria-hidden="true">
                         <polyline points="6 9 12 15 18 9"/>
                     </svg>
@@ -598,14 +599,13 @@ function renderWishlist() {
     const items = ids.map(id => {
         const product = allProducts.find(p => String(p.id) === id);
         if (!product) return '';
-        const price = Math.round(Number(product.price)).toLocaleString('en-US');
         return `
             <div class="profile-wishlist-item">
                 <img src="${escapeHtml(product.imageSrc)}" alt="${escapeHtml(product.name)}" class="profile-wishlist-item-img" loading="lazy"
                      onerror="this.onerror=null;this.src='images/placeholder.png';">
                 <div class="profile-wishlist-item-info">
                     <span class="profile-wishlist-item-name">${escapeHtml(product.name)}</span>
-                    <span class="profile-wishlist-item-price">₦${price}</span>
+                    <span class="profile-wishlist-item-price">${formatPrice(product.price)}</span>
                 </div>
                 <div class="profile-wishlist-item-actions">
                     <a href="product.html?id=${product.id}" class="profile-wishlist-view-btn">VIEW</a>
@@ -652,6 +652,7 @@ function setupWishlistDropdown() {
 document.addEventListener('DOMContentLoaded', async () => {
     const loader = initPageLoader('profile-skeleton');
     initializeTheme();
+    await initializeCurrency();
     await initializeCart();
     setupCartDrawer();
     await initializeWishlist();
@@ -676,7 +677,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Stats from profile (server-side, kept in sync by DB trigger)
     const totalSpent = user.totalSpent || 0;
-    animateStatCounter(document.getElementById('profile-total-spent'), Math.round(totalSpent), '₦');
+    // Animate total spent with currency conversion
+    const spentEl = document.getElementById('profile-total-spent');
+    if (spentEl) spentEl.textContent = formatPrice(totalSpent);
     animateStatCounter(document.getElementById('profile-order-count'), user.orderCount || 0);
     updateLevelXP(totalSpent);
 

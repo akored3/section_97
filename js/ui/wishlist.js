@@ -1,5 +1,6 @@
 // Wishlist — Supabase sync with localStorage fallback (mirrors cart pattern)
 import { supabase } from '../config/supabase.js';
+import { formatPrice } from '../config/currency.js';
 
 // ─── State ───────────────────────────────────────
 let wishlist = []; // array of product ID strings
@@ -222,14 +223,13 @@ function renderWishlistDrawer() {
     const items = wishlist.map(id => {
         const product = productsCache.find(p => String(p.id) === id);
         if (!product) return '';
-        const price = Number(product.price).toLocaleString();
         return `
             <div class="wishlist-drawer-item" data-product-id="${product.id}">
                 <img class="wishlist-drawer-item-img" src="${product.imageSrc}" alt="${product.name}"
                      onerror="this.onerror=null;this.src='images/placeholder.png';">
                 <div class="wishlist-drawer-item-details">
                     <span class="wishlist-drawer-item-name">${product.name}</span>
-                    <span class="wishlist-drawer-item-price">₦${price}</span>
+                    <span class="wishlist-drawer-item-price">${formatPrice(product.price)}</span>
                 </div>
                 <div class="wishlist-drawer-item-actions">
                     <a href="product.html?id=${product.id}" class="wishlist-drawer-view" aria-label="View product">

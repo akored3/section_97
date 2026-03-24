@@ -1,5 +1,6 @@
 // Handles rendering products to the DOM
 import { isWishlisted, toggleWishlist, getLikeCount } from '../ui/wishlist.js';
+import { formatPrice } from '../config/currency.js';
 
 // Escape HTML to prevent XSS from dynamic data
 export function escapeHtml(str) {
@@ -28,7 +29,7 @@ export function renderProducts(productsToRender) {
         const safeStock = escapeHtml(product.stock ?? '');
         const safeImage = escapeHtml(product.imageSrc);
         const safeBack = hasBackImage ? escapeHtml(product.imageBack) : '';
-        const formattedPrice = Number(product.price).toLocaleString();
+        const formattedPrice = formatPrice(product.price);
 
         // Store sizes in JS Map keyed by product ID
         productSizesMap.set(String(product.id), product.sizes || []);
@@ -92,7 +93,7 @@ export function renderProducts(productsToRender) {
                 <div class="product-footer">
                     <div class="product-info">
                         <h3>${safeName}</h3>
-                        <p>₦${formattedPrice}</p>
+                        <p>${formattedPrice}</p>
                     </div>
                     <div class="product-actions">
                         <button type="button" class="add-to-cart-btn"

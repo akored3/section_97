@@ -3,6 +3,7 @@ import { supabase } from '../config/supabase.js';
 import { initializeTheme } from './theme.js';
 import { initializeCart, setupCartDrawer, handleAuthChange } from './cart.js';
 import { getCurrentUser, signOut } from '../auth/auth.js';
+import { formatPrice, initializeCurrency } from '../config/currency.js';
 import { calculateLevel, getRank } from '../data/ranks.js';
 import { escapeHtml } from '../components/productRenderer.js';
 import { initializeMenu } from './menu.js';
@@ -75,7 +76,7 @@ function renderPodium(top3) {
         const { level } = calculateLevel(user.total_spent || 0);
         const rankData = getRank(level);
         const pct = ((user.order_count || 0) / maxOrders * 100).toFixed(1);
-        const spent = abbreviateAmount(Math.round(user.total_spent || 0));
+        const spent = formatPrice(user.total_spent || 0, { compact: true });
         const pulseColor = rank === 1 ? 'rgba(255,215,0,0.3)' :
                           rank === 2 ? 'rgba(255,0,255,0.25)' : 'rgba(0,212,255,0.25)';
 
@@ -109,7 +110,7 @@ function renderPodium(top3) {
                     </div>
                     <div class="lb-podium-stat-row">
                         <span class="lb-podium-stat-label muted">TOTAL SPENT</span>
-                        <span class="lb-podium-spent">₦${spent}</span>
+                        <span class="lb-podium-spent">${spent}</span>
                     </div>
                     <div class="lb-podium-stat-row">
                         <span class="lb-podium-stat-label muted">LEVEL</span>
@@ -144,7 +145,7 @@ function renderTable(users, currentUserId, startPos = 4) {
         const { level } = calculateLevel(user.total_spent || 0);
         const rankData = getRank(level);
         const pct = ((user.order_count || 0) / maxOrders * 100).toFixed(1);
-        const spent = abbreviateAmount(Math.round(user.total_spent || 0));
+        const spent = formatPrice(user.total_spent || 0, { compact: true });
         const isYou = currentUserId && user.id === currentUserId;
 
         const avatarContent = user.avatar_url
@@ -168,7 +169,7 @@ function renderTable(users, currentUserId, startPos = 4) {
                         <div class="lb-bar-fill" data-width="${pct}%"></div>
                     </div>
                 </div>
-                <span class="lb-spent">₦${spent}</span>
+                <span class="lb-spent">${spent}</span>
                 <div class="lb-badge" style="color: ${rankData.color}; border-color: ${rankData.color}33">${escapeHtml(rankData.name)}</div>
             </div>
         `;
@@ -201,7 +202,7 @@ function renderYourRank(allUsers, currentUser) {
     document.getElementById('lb-your-pos').textContent = pos ? `#${pos}` : 'UNRANKED';
     document.getElementById('lb-your-name').textContent = currentUser.username || 'Unknown';
     document.getElementById('lb-your-stats').textContent =
-        `${orderCount} orders · ₦${abbreviateAmount(Math.round(totalSpent))} spent · LVL ${level}`;
+        `${orderCount} orders · ${formatPrice(totalSpent, { compact: true })} spent · LVL ${level}`;
 
     const badge = document.getElementById('lb-your-badge');
     badge.textContent = rankData.name;
@@ -251,6 +252,7 @@ function setupAuthUI(user) {
 // ── Main init ──
 document.addEventListener('DOMContentLoaded', async () => {
     initializeTheme();
+    await initializeCurrency();
     await initializeCart();
     setupCartDrawer();
     initializeMenu();
@@ -299,8 +301,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             animateCounter(document.getElementById('lb-total-operators'), totalOps);
             animateCounter(document.getElementById('lb-total-orders'), totalOrders);
             // Redact volume — show magnitude via comma structure with block characters
-            const redacted = Math.round(totalVolume).toLocaleString('en-US').replace(/\d/g, '■');
-            document.getElementById('lb-total-volume').textContent = `₦${redacted}`;
+            const redacted = formatPrice(totalVolume).replace(/[\d]/g, '■');
+            document.getElementById('lb-total-volume').textContent = redacted;
 
             // Render podium (top users)
             const top3 = active.slice(0, 3);
