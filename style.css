@@ -1417,13 +1417,14 @@
 
         .product-footer {
             display: flex;
-            align-items: flex-start;
+            align-items: flex-end;
+            gap: var(--space-sm);
         }
 
         .product-info {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 4px;
             flex: 1;
             min-width: 0;
             padding-right: var(--space-sm);
@@ -1452,12 +1453,10 @@
         }
 
         .product-actions {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
             display: flex;
             flex-direction: column;
             align-items: flex-end;
+            flex-shrink: 0;
         }
 
         /* ─── Card Size Picker (glass overlay on image) ─── */
@@ -2462,7 +2461,7 @@
             }
 
             .product-actions {
-                position: static;
+                align-items: stretch;
             }
 
             .add-to-cart-btn {
