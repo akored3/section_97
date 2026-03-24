@@ -1650,9 +1650,9 @@
             position: absolute;
             top: 12px; right: 12px;
             z-index: 5;
-            padding: 3px 10px;
+            padding: 4px 12px;
             font-family: var(--font-mono);
-            font-size: 0.6rem;
+            font-size: 0.7rem;
             font-weight: 700;
             letter-spacing: 0.12em;
             text-transform: uppercase;
@@ -1711,15 +1711,15 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(0, 0, 0, 0.45);
+            background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.25);
             border-radius: var(--shape-full);
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(255, 255, 255, 0.85);
             cursor: pointer;
             transition: all var(--duration-medium) var(--motion-standard);
             opacity: 0;
-            transform: scale(0.85);
+            transform: scale(1);
         }
 
         .wishlist-heart svg {
@@ -2442,13 +2442,17 @@
             }
 
             #product-container {
-                grid-template-columns: 1fr;
-                gap: 20px;
+                grid-template-columns: 1fr 1fr;
+                gap: 14px;
                 padding: 10px;
             }
 
             .product-card {
                 padding: 10px;
+            }
+
+            .product-image {
+                aspect-ratio: 1 / 1;
             }
 
             .product-footer {
@@ -2465,9 +2469,11 @@
             }
 
             .add-to-cart-btn {
-                padding: 8px 14px;
+                padding: 12px 16px;
                 font-size: 0.75rem;
                 width: 100%;
+                min-height: 44px;
+                box-sizing: border-box;
             }
 
             .card-size-chip {
@@ -2483,17 +2489,28 @@
                 padding: 12px;
                 gap: 8px;
             }
+
+            /* Prevent tag overlap on narrow cards */
+            .new-tag {
+                font-size: 0.55rem;
+                padding: 2px 8px;
+            }
+
+            .stock-tag {
+                font-size: 0.6rem;
+                padding: 3px 8px;
+            }
         }
 
-        /* Single column only on very small screens */
+        /* Very small screens */
         @media (max-width: 380px) {
             #product-container {
-                grid-template-columns: 1fr;
-                gap: 20px;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
             }
 
             .product-card {
-                padding: 15px;
+                padding: 8px;
             }
         }
 
