@@ -1,9 +1,10 @@
-// Currency localization — auto-detect user currency, convert from NGN
-// Uses free APIs (no key required), caches rates in localStorage
+// Currency localization — auto-detect user country via IP, convert prices from NGN
+// ExchangeRate-API for conversion, IP geolocation for detection
 
 const BASE_CURRENCY = 'NGN';
 const CACHE_KEY = 'section97-currency';
-const CACHE_TTL = 1 * 60 * 60 * 1000; // 1 hour (short so VPN/travel picks up fast)
+const CACHE_TTL = 12 * 60 * 60 * 1000; // 12 hours
+const ER_API_KEY = '8b0197e597d61f073a039767';
 
 // ─── State ───────────────────────────────────────
 let userCurrency = BASE_CURRENCY;
@@ -11,51 +12,22 @@ let exchangeRate = 1;
 let currencyReady = false;
 let readyCallbacks = [];
 
-// Locale → currency mapping (fallback only)
-const LOCALE_CURRENCY_MAP = {
-    'US': 'USD', 'GB': 'GBP', 'CA': 'CAD', 'AU': 'AUD', 'NZ': 'NZD',
-    'EU': 'EUR', 'DE': 'EUR', 'FR': 'EUR', 'IT': 'EUR', 'ES': 'EUR',
-    'NL': 'EUR', 'BE': 'EUR', 'AT': 'EUR', 'IE': 'EUR', 'PT': 'EUR',
-    'FI': 'EUR', 'GR': 'EUR', 'SK': 'EUR', 'SI': 'EUR', 'LT': 'EUR',
-    'LV': 'EUR', 'EE': 'EUR', 'LU': 'EUR', 'MT': 'EUR', 'CY': 'EUR',
-    'JP': 'JPY', 'CN': 'CNY', 'KR': 'KRW', 'IN': 'INR', 'BR': 'BRL',
-    'MX': 'MXN', 'ZA': 'ZAR', 'GH': 'GHS', 'KE': 'KES', 'EG': 'EGP',
-    'AE': 'AED', 'SA': 'SAR', 'SE': 'SEK', 'NO': 'NOK', 'DK': 'DKK',
-    'CH': 'CHF', 'PL': 'PLN', 'CZ': 'CZK', 'HU': 'HUF', 'RO': 'RON',
-    'TR': 'TRY', 'RU': 'RUB', 'NG': 'NGN', 'SG': 'SGD', 'HK': 'HKD',
-    'TW': 'TWD', 'TH': 'THB', 'MY': 'MYR', 'PH': 'PHP', 'ID': 'IDR',
-    'VN': 'VND', 'PK': 'PKR', 'BD': 'BDT', 'AR': 'ARS', 'CL': 'CLP',
-    'CO': 'COP', 'PE': 'PEN',
-};
+// ─── IP Detection ───────────────────────────────
 
-// ─── Detection ──────────────────────────────────
-
-function detectCurrencyFromLocale() {
-    try {
-        const locale = navigator.language || navigator.languages?.[0] || '';
-        const parts = locale.split('-');
-        if (parts.length >= 2) {
-            const region = parts[parts.length - 1].toUpperCase();
-            return LOCALE_CURRENCY_MAP[region] || null;
-        }
-    } catch (e) { /* ignore */ }
-    return null;
-}
-
-// IP-based detection — reflects actual location (VPN-aware)
 async function detectCurrencyFromIP() {
-    // Try multiple providers for reliability
     const providers = [
         async () => {
             const r = await fetch('https://ipapi.co/json/');
             if (!r.ok) throw new Error(r.status);
             const d = await r.json();
+            console.log('[Currency] ipapi.co response:', d.country, d.currency);
             return d.currency || null;
         },
         async () => {
             const r = await fetch('https://ipwho.is/');
             if (!r.ok) throw new Error(r.status);
             const d = await r.json();
+            console.log('[Currency] ipwho.is response:', d.country, d.currency?.code);
             return d.currency?.code || null;
         },
     ];
@@ -64,15 +36,17 @@ async function detectCurrencyFromIP() {
         try {
             const currency = await Promise.race([
                 provider(),
-                new Promise((_, reject) => setTimeout(() => reject('timeout'), 4000))
+                new Promise((_, reject) => setTimeout(() => reject('timeout'), 5000))
             ]);
             if (currency) return currency;
-        } catch (e) { /* try next provider */ }
+        } catch (e) {
+            console.warn('[Currency] IP provider failed:', e);
+        }
     }
     return null;
 }
 
-// ─── Exchange Rate ──────────────────────────────
+// ─── Exchange Rate (ExchangeRate-API) ───────────
 
 function loadCache() {
     try {
@@ -95,43 +69,23 @@ function saveCache(currency, rate) {
 async function fetchExchangeRate(targetCurrency) {
     if (targetCurrency === BASE_CURRENCY) return 1;
 
-    // Try multiple exchange rate APIs
-    const apis = [
-        async () => {
-            const r = await fetch(`https://open.er-api.com/v6/latest/${BASE_CURRENCY}`);
-            if (!r.ok) throw new Error(r.status);
-            const d = await r.json();
-            const rate = d.rates?.[targetCurrency];
-            if (!rate || rate === 0) throw new Error('No rate found');
-            return rate;
-        },
-        async () => {
-            const r = await fetch(`https://latest.currency-api.pages.dev/v1/currencies/${BASE_CURRENCY.toLowerCase()}.json`);
-            if (!r.ok) throw new Error(r.status);
-            const d = await r.json();
-            const rate = d[BASE_CURRENCY.toLowerCase()]?.[targetCurrency.toLowerCase()];
-            if (!rate || rate === 0) throw new Error('No rate found');
-            return rate;
-        },
-    ];
+    try {
+        const url = `https://v6.exchangerate-api.com/v6/${ER_API_KEY}/latest/${BASE_CURRENCY}`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
 
-    for (const api of apis) {
-        try {
-            const rate = await Promise.race([
-                api(),
-                new Promise((_, reject) => setTimeout(() => reject('timeout'), 5000))
-            ]);
-            if (rate && rate !== 1) {
-                console.log(`[Currency] ${BASE_CURRENCY} → ${targetCurrency} rate: ${rate}`);
-                return rate;
-            }
-        } catch (e) {
-            console.warn('[Currency] API failed, trying next:', e);
-        }
+        if (data.result !== 'success') throw new Error(data['error-type'] || 'API error');
+
+        const rate = data.conversion_rates?.[targetCurrency];
+        if (!rate) throw new Error(`No rate for ${targetCurrency}`);
+
+        console.log(`[Currency] ExchangeRate-API: 1 ${BASE_CURRENCY} = ${rate} ${targetCurrency}`);
+        return rate;
+    } catch (e) {
+        console.error('[Currency] ExchangeRate-API failed:', e);
+        return 1;
     }
-
-    console.warn(`[Currency] All rate APIs failed for ${targetCurrency}, falling back to NGN`);
-    return 1;
 }
 
 // ─── Init ───────────────────────────────────────
@@ -139,38 +93,28 @@ async function fetchExchangeRate(targetCurrency) {
 export async function initializeCurrency() {
     // Check cache first
     const cached = loadCache();
-    if (cached && cached.rate !== 1) {
+    if (cached) {
         userCurrency = cached.currency;
         exchangeRate = cached.rate;
         currencyReady = true;
-        console.log(`[Currency] Using cached: ${userCurrency} (rate: ${exchangeRate})`);
+        console.log(`[Currency] Cached: ${userCurrency} (rate: ${exchangeRate})`);
         readyCallbacks.forEach(cb => cb());
         readyCallbacks = [];
         return;
     }
 
-    // IP detection first (reflects actual location, VPN-aware)
-    let detected = await detectCurrencyFromIP();
-
-    // Fall back to browser locale if IP fails
-    if (!detected) {
-        detected = detectCurrencyFromLocale();
-        console.log(`[Currency] IP detection failed, locale fallback: ${detected}`);
-    } else {
-        console.log(`[Currency] Detected from IP: ${detected}`);
-    }
-
+    // Detect currency from IP (VPN-aware, reflects actual location)
+    const detected = await detectCurrencyFromIP();
     userCurrency = detected || BASE_CURRENCY;
+    console.log(`[Currency] Detected: ${userCurrency}`);
 
     // Fetch exchange rate
-    if (userCurrency !== BASE_CURRENCY) {
-        exchangeRate = await fetchExchangeRate(userCurrency);
-    }
+    exchangeRate = await fetchExchangeRate(userCurrency);
+    console.log(`[Currency] Final: ${userCurrency}, rate: ${exchangeRate}`);
 
     saveCache(userCurrency, exchangeRate);
 
     currencyReady = true;
-    console.log(`[Currency] Ready: ${userCurrency}, rate: ${exchangeRate}`);
     readyCallbacks.forEach(cb => cb());
     readyCallbacks = [];
 }
