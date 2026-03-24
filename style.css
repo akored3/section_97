@@ -2496,22 +2496,24 @@
             }
 
             .product-footer {
-                flex-direction: column;
-                gap: 8px;
+                flex-direction: row;
+                align-items: center;
+                gap: 10px;
             }
 
             .product-info {
+                flex: 1;
+                min-width: 0;
                 padding-right: 0;
             }
 
             .product-actions {
-                align-items: stretch;
+                flex-shrink: 0;
             }
 
             .add-to-cart-btn {
-                padding: 12px 16px;
-                font-size: 0.75rem;
-                width: 100%;
+                padding: 10px 14px;
+                font-size: 0.7rem;
                 min-height: 44px;
                 box-sizing: border-box;
             }
