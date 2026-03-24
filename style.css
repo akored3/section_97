@@ -2482,7 +2482,7 @@
             }
 
             #product-container {
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: 1fr;
                 gap: clamp(10px, 2.5vw, 16px);
                 padding: 10px;
             }
@@ -2545,7 +2545,7 @@
         /* Very small screens */
         @media (max-width: 380px) {
             #product-container {
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: 1fr;
                 gap: 10px;
             }
 
