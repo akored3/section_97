@@ -3,7 +3,7 @@
 
 const BASE_CURRENCY = 'NGN';
 const CACHE_KEY = 'section97-currency';
-const CACHE_TTL = 12 * 60 * 60 * 1000; // 12 hours
+const CACHE_TTL = 1 * 60 * 60 * 1000; // 1 hour (short so VPN/travel picks up fast)
 
 // ─── State ───────────────────────────────────────
 let userCurrency = BASE_CURRENCY;
@@ -11,7 +11,7 @@ let exchangeRate = 1;
 let currencyReady = false;
 let readyCallbacks = [];
 
-// Locale → currency mapping (common ones)
+// Locale → currency mapping (fallback only)
 const LOCALE_CURRENCY_MAP = {
     'US': 'USD', 'GB': 'GBP', 'CA': 'CAD', 'AU': 'AUD', 'NZ': 'NZD',
     'EU': 'EUR', 'DE': 'EUR', 'FR': 'EUR', 'IT': 'EUR', 'ES': 'EUR',
@@ -33,7 +33,6 @@ const LOCALE_CURRENCY_MAP = {
 function detectCurrencyFromLocale() {
     try {
         const locale = navigator.language || navigator.languages?.[0] || '';
-        // Extract region code (e.g., "en-US" → "US", "fr-FR" → "FR")
         const parts = locale.split('-');
         if (parts.length >= 2) {
             const region = parts[parts.length - 1].toUpperCase();
@@ -43,13 +42,34 @@ function detectCurrencyFromLocale() {
     return null;
 }
 
+// IP-based detection — reflects actual location (VPN-aware)
 async function detectCurrencyFromIP() {
-    try {
-        const res = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(3000) });
-        if (!res.ok) return null;
-        const data = await res.json();
-        return data.currency || null;
-    } catch (e) { return null; }
+    // Try multiple providers for reliability
+    const providers = [
+        async () => {
+            const r = await fetch('https://ipapi.co/json/');
+            if (!r.ok) throw new Error(r.status);
+            const d = await r.json();
+            return d.currency || null;
+        },
+        async () => {
+            const r = await fetch('https://ipwho.is/');
+            if (!r.ok) throw new Error(r.status);
+            const d = await r.json();
+            return d.currency?.code || null;
+        },
+    ];
+
+    for (const provider of providers) {
+        try {
+            const currency = await Promise.race([
+                provider(),
+                new Promise((_, reject) => setTimeout(() => reject('timeout'), 4000))
+            ]);
+            if (currency) return currency;
+        } catch (e) { /* try next provider */ }
+    }
+    return null;
 }
 
 // ─── Exchange Rate ──────────────────────────────
@@ -75,18 +95,43 @@ function saveCache(currency, rate) {
 async function fetchExchangeRate(targetCurrency) {
     if (targetCurrency === BASE_CURRENCY) return 1;
 
-    try {
-        const res = await fetch(
-            `https://open.er-api.com/v6/latest/${BASE_CURRENCY}`,
-            { signal: AbortSignal.timeout(5000) }
-        );
-        if (!res.ok) return 1;
-        const data = await res.json();
-        return data.rates?.[targetCurrency] || 1;
-    } catch (e) {
-        console.warn('Exchange rate fetch failed, using NGN:', e);
-        return 1;
+    // Try multiple exchange rate APIs
+    const apis = [
+        async () => {
+            const r = await fetch(`https://open.er-api.com/v6/latest/${BASE_CURRENCY}`);
+            if (!r.ok) throw new Error(r.status);
+            const d = await r.json();
+            const rate = d.rates?.[targetCurrency];
+            if (!rate || rate === 0) throw new Error('No rate found');
+            return rate;
+        },
+        async () => {
+            const r = await fetch(`https://latest.currency-api.pages.dev/v1/currencies/${BASE_CURRENCY.toLowerCase()}.json`);
+            if (!r.ok) throw new Error(r.status);
+            const d = await r.json();
+            const rate = d[BASE_CURRENCY.toLowerCase()]?.[targetCurrency.toLowerCase()];
+            if (!rate || rate === 0) throw new Error('No rate found');
+            return rate;
+        },
+    ];
+
+    for (const api of apis) {
+        try {
+            const rate = await Promise.race([
+                api(),
+                new Promise((_, reject) => setTimeout(() => reject('timeout'), 5000))
+            ]);
+            if (rate && rate !== 1) {
+                console.log(`[Currency] ${BASE_CURRENCY} → ${targetCurrency} rate: ${rate}`);
+                return rate;
+            }
+        } catch (e) {
+            console.warn('[Currency] API failed, trying next:', e);
+        }
     }
+
+    console.warn(`[Currency] All rate APIs failed for ${targetCurrency}, falling back to NGN`);
+    return 1;
 }
 
 // ─── Init ───────────────────────────────────────
@@ -94,28 +139,38 @@ async function fetchExchangeRate(targetCurrency) {
 export async function initializeCurrency() {
     // Check cache first
     const cached = loadCache();
-    if (cached) {
+    if (cached && cached.rate !== 1) {
         userCurrency = cached.currency;
         exchangeRate = cached.rate;
         currencyReady = true;
+        console.log(`[Currency] Using cached: ${userCurrency} (rate: ${exchangeRate})`);
         readyCallbacks.forEach(cb => cb());
         readyCallbacks = [];
         return;
     }
 
-    // Detect currency
-    let detected = detectCurrencyFromLocale();
+    // IP detection first (reflects actual location, VPN-aware)
+    let detected = await detectCurrencyFromIP();
+
+    // Fall back to browser locale if IP fails
     if (!detected) {
-        detected = await detectCurrencyFromIP();
+        detected = detectCurrencyFromLocale();
+        console.log(`[Currency] IP detection failed, locale fallback: ${detected}`);
+    } else {
+        console.log(`[Currency] Detected from IP: ${detected}`);
     }
 
     userCurrency = detected || BASE_CURRENCY;
 
-    // Fetch rate
-    exchangeRate = await fetchExchangeRate(userCurrency);
+    // Fetch exchange rate
+    if (userCurrency !== BASE_CURRENCY) {
+        exchangeRate = await fetchExchangeRate(userCurrency);
+    }
+
     saveCache(userCurrency, exchangeRate);
 
     currencyReady = true;
+    console.log(`[Currency] Ready: ${userCurrency}, rate: ${exchangeRate}`);
     readyCallbacks.forEach(cb => cb());
     readyCallbacks = [];
 }
@@ -137,7 +192,6 @@ export function formatPrice(ngnAmount, { compact = false } = {}) {
             maximumFractionDigits: converted < 100 ? 2 : 0,
         }).format(converted);
     } catch (e) {
-        // Fallback if Intl doesn't recognize the currency
         return `${userCurrency} ${Math.round(converted).toLocaleString()}`;
     }
 }
@@ -182,12 +236,10 @@ export function isNGN() {
     return userCurrency === BASE_CURRENCY;
 }
 
-// Convert NGN amount to user currency (raw number)
 export function convertFromNGN(ngnAmount) {
     return ngnAmount * exchangeRate;
 }
 
-// Wait for currency to be ready (for modules that load before init completes)
 export function onCurrencyReady(callback) {
     if (currencyReady) {
         callback();
