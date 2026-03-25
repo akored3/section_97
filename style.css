@@ -2453,21 +2453,31 @@
             }
 
             .product-footer {
-                flex-direction: column;
-                gap: 8px;
+                flex-direction: row;
+                align-items: center;
+                gap: 10px;
             }
 
             .product-info {
+                flex: 1;
+                min-width: 0;
                 padding-right: 0;
+            }
+
+            .product-card h3 {
+                -webkit-line-clamp: 1;
+                line-clamp: 1;
+                font-size: clamp(0.75rem, 2.5vw, 0.9rem);
             }
 
             .product-actions {
                 position: static;
+                flex-shrink: 0;
             }
 
             .add-to-cart-btn {
-                padding: 8px 14px;
-                font-size: 0.75rem;
+                padding: 10px 14px;
+                font-size: 0.7rem;
                 width: 100%;
             }
 
