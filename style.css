@@ -1446,6 +1446,9 @@
             font-size: clamp(0.85rem, 2.5vw, 1rem);
             color: var(--accent);
             margin: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .product-actions {
