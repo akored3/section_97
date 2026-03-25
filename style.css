@@ -1181,7 +1181,7 @@
             flex: 1;
             min-width: 0;
             min-height: 80vh;
-            max-width: 1400px;
+            max-width: 1100px;
             margin: 0 auto;
         }
 
@@ -1264,33 +1264,21 @@
             box-shadow: var(--elevation-3), 0 0 0 2px var(--outline-accent-strong);
         }
 
-        /* Break the perfect grid - stagger cards */
+        /* Break the perfect grid - stagger cards with subtle rotation */
         .product-card:nth-child(odd) {
-            transform: translateY(0);
+            transform: translateY(0) rotate(-0.3deg);
         }
 
         .product-card:nth-child(even) {
-            transform: translateY(20px);
+            transform: translateY(20px) rotate(0.3deg);
         }
 
         .product-card:nth-child(odd):hover {
-            transform: translateY(-8px);
+            transform: translateY(-8px) rotate(0deg);
         }
 
         .product-card:nth-child(even):hover {
-            transform: translateY(12px);
-        }
-
-        @media (max-width: 600px) {
-            .product-card:nth-child(odd),
-            .product-card:nth-child(even) {
-                transform: none;
-            }
-
-            .product-card:nth-child(odd):hover,
-            .product-card:nth-child(even):hover {
-                transform: translateY(-4px);
-            }
+            transform: translateY(12px) rotate(0deg);
         }
 
         .product-image {
@@ -1355,15 +1343,6 @@
             }
         }
 
-        @media (hover: none) {
-            .product-image.has-gallery .gallery-arrow {
-                opacity: 0.7;
-                width: 32px;
-                height: 32px;
-                background: rgba(0, 0, 0, 0.65);
-            }
-        }
-
         .product-image.has-gallery .gallery-arrow:hover {
             background: rgba(var(--state-layer), 0.8);
             transform: translateY(-50%) scale(1.1);
@@ -1393,22 +1372,11 @@
         }
 
         .gallery-dot {
-            width: 7px;
-            height: 7px;
+            width: 6px;
+            height: 6px;
             border-radius: var(--shape-full);
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.4);
             transition: all var(--duration-short) var(--motion-standard);
-        }
-
-        @media (max-width: 600px) {
-            .gallery-dot {
-                width: 8px;
-                height: 8px;
-            }
-
-            .gallery-dots {
-                gap: 8px;
-            }
         }
 
         .gallery-dot.active {
@@ -1449,14 +1417,13 @@
 
         .product-footer {
             display: flex;
-            align-items: flex-end;
-            gap: var(--space-sm);
+            align-items: flex-start;
         }
 
         .product-info {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 8px;
             flex: 1;
             min-width: 0;
             padding-right: var(--space-sm);
@@ -1464,10 +1431,10 @@
 
         .product-card h3 {
             font: var(--text-headline-md);
-            font-size: clamp(0.8rem, 2.5vw, 1.05rem);
+            font-size: clamp(0.85rem, 2.8vw, 1.2rem);
             margin: 0;
             color: var(--text-primary);
-            line-height: 1.25;
+            line-height: 1.3;
             text-shadow: 0 0 8px rgba(0, 255, 100, 0.3), 0 0 20px rgba(0, 255, 100, 0.1);
             overflow: hidden;
             text-overflow: ellipsis;
@@ -1479,19 +1446,18 @@
 
         .product-card p {
             font: var(--text-title-lg);
-            font-size: clamp(0.75rem, 2.2vw, 0.95rem);
+            font-size: clamp(0.85rem, 2.5vw, 1rem);
             color: var(--accent);
             margin: 0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         .product-actions {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
             display: flex;
             flex-direction: column;
             align-items: flex-end;
-            flex-shrink: 0;
         }
 
         /* ─── Card Size Picker (glass overlay on image) ─── */
@@ -1685,9 +1651,9 @@
             position: absolute;
             top: 12px; right: 12px;
             z-index: 5;
-            padding: 4px 12px;
+            padding: 3px 10px;
             font-family: var(--font-mono);
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             font-weight: 700;
             letter-spacing: 0.12em;
             text-transform: uppercase;
@@ -1746,15 +1712,15 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.45);
             backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: var(--shape-full);
-            color: rgba(255, 255, 255, 0.85);
+            color: rgba(255, 255, 255, 0.7);
             cursor: pointer;
             transition: all var(--duration-medium) var(--motion-standard);
             opacity: 0;
-            transform: scale(1);
+            transform: scale(0.85);
         }
 
         .wishlist-heart svg {
@@ -2446,11 +2412,6 @@
                 gap: 20px;
                 padding: 15px;
             }
-
-            .product-footer {
-                flex-direction: column;
-                gap: 8px;
-            }
         }
 
         /* M3 Compact — mobile */
@@ -2483,7 +2444,7 @@
 
             #product-container {
                 grid-template-columns: 1fr;
-                gap: clamp(10px, 2.5vw, 16px);
+                gap: 20px;
                 padding: 10px;
             }
 
@@ -2491,31 +2452,23 @@
                 padding: 10px;
             }
 
-            .product-image {
-                aspect-ratio: 1 / 1;
-            }
-
             .product-footer {
-                flex-direction: row;
-                align-items: center;
-                gap: 10px;
+                flex-direction: column;
+                gap: 8px;
             }
 
             .product-info {
-                flex: 1;
-                min-width: 0;
                 padding-right: 0;
             }
 
             .product-actions {
-                flex-shrink: 0;
+                position: static;
             }
 
             .add-to-cart-btn {
-                padding: 10px 14px;
-                font-size: 0.7rem;
-                min-height: 44px;
-                box-sizing: border-box;
+                padding: 8px 14px;
+                font-size: 0.75rem;
+                width: 100%;
             }
 
             .card-size-chip {
@@ -2531,44 +2484,17 @@
                 padding: 12px;
                 gap: 8px;
             }
-
-            /* Prevent tag overlap on narrow cards */
-            .new-tag {
-                font-size: 0.55rem;
-                padding: 2px 8px;
-            }
-
-            .stock-tag {
-                font-size: 0.6rem;
-                padding: 3px 8px;
-            }
         }
 
-        /* Very small screens */
+        /* Single column only on very small screens */
         @media (max-width: 380px) {
             #product-container {
                 grid-template-columns: 1fr;
-                gap: 10px;
+                gap: 20px;
             }
 
             .product-card {
-                padding: 8px;
-            }
-        }
-
-        /* Mobile landscape — fit more cards, reduce height */
-        @media (max-height: 500px) and (orientation: landscape) {
-            #product-container {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 12px;
-            }
-
-            .product-card {
-                padding: 8px;
-            }
-
-            .product-image {
-                aspect-ratio: 1 / 1;
+                padding: 15px;
             }
         }
 
@@ -2596,15 +2522,9 @@
         .product-card button:not(.wishlist-heart):not(.gallery-arrow):hover {
             background: linear-gradient(135deg, var(--accent), var(--accent-bright));
             box-shadow: var(--elevation-3), 0 0 20px var(--glow-accent-strong);
-            transform: scale(1.02);
+            transform: scale(1.05);
             color: var(--on-accent);
             animation: btn-pulse 0.4s var(--motion-standard);
-        }
-
-        @media (max-width: 600px) {
-            .product-card button:not(.wishlist-heart):not(.gallery-arrow):hover {
-                transform: none;
-            }
         }
 
         @keyframes btn-pulse {
