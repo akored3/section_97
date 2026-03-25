@@ -119,6 +119,18 @@ export async function initializeCurrency() {
     readyCallbacks = [];
 }
 
+// ─── Locale Map (ensures correct currency symbols) ───
+
+const CURRENCY_LOCALE_MAP = {
+    NGN: 'en-NG', USD: 'en-US', GBP: 'en-GB', EUR: 'de-DE',
+    CAD: 'en-CA', AUD: 'en-AU', JPY: 'ja-JP', KES: 'en-KE',
+    GHS: 'en-GH', ZAR: 'en-ZA', INR: 'en-IN',
+};
+
+function localeForCurrency(currency) {
+    return CURRENCY_LOCALE_MAP[currency] || navigator.language || 'en-US';
+}
+
 // ─── Format ─────────────────────────────────────
 
 export function formatPrice(ngnAmount, { compact = false } = {}) {
@@ -129,7 +141,7 @@ export function formatPrice(ngnAmount, { compact = false } = {}) {
     }
 
     try {
-        return new Intl.NumberFormat(navigator.language || 'en-US', {
+        return new Intl.NumberFormat(localeForCurrency(userCurrency), {
             style: 'currency',
             currency: userCurrency,
             minimumFractionDigits: 0,
@@ -155,7 +167,7 @@ function formatCompact(amount) {
 
 function formatCurrencySymbol() {
     try {
-        return new Intl.NumberFormat(navigator.language || 'en-US', {
+        return new Intl.NumberFormat(localeForCurrency(userCurrency), {
             style: 'currency',
             currency: userCurrency,
             minimumFractionDigits: 0,
