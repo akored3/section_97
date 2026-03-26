@@ -270,7 +270,6 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Rank Up prompt — guests only
     safeInit('RankUp', async () => {
-        const rankBar = document.getElementById('rank-up-bar');
         const rankBtn = document.getElementById('rank-up-btn');
         const modal = document.getElementById('rankup-modal');
         const overlay = document.getElementById('rankup-overlay');
@@ -279,7 +278,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         const user = await getCurrentUser();
         if (user) {
-            if (rankBar) rankBar.classList.add('hidden');
+            rankBtn.classList.add('hidden');
             return;
         }
 
@@ -301,10 +300,10 @@ document.addEventListener('DOMContentLoaded', async function() {
         // Hide button when user logs in
         onAuthStateChange((event, session) => {
             if (session?.user) {
-                if (rankBar) rankBar.classList.add('hidden');
+                rankBtn.classList.add('hidden');
                 closeModal();
             } else {
-                if (rankBar) rankBar.classList.remove('hidden');
+                rankBtn.classList.remove('hidden');
             }
         });
     });

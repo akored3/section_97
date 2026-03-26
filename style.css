@@ -340,60 +340,49 @@
             color: var(--accent);
         }
         
-        /* ── Rank Up Button (below hero, guests only) ── */
-        .rank-up-bar {
+        /* ── Rank Up FAB (floating, guests only) ── */
+        .rank-up-fab {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 900;
+            width: 52px;
+            height: 52px;
             display: flex;
-            justify-content: center;
-            padding: 12px 0;
-        }
-
-        .rank-up-bar.hidden { display: none; }
-
-        .rank-up-btn {
-            display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 8px 20px;
-            background: transparent;
+            justify-content: center;
+            background: rgba(0, 255, 100, 0.12);
             border: 1px solid rgba(0, 255, 100, 0.3);
             border-radius: var(--shape-full);
             color: var(--accent);
-            font: var(--text-label-md);
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
-            letter-spacing: 2px;
             cursor: pointer;
-            animation: rankBtnBob 2.5s ease-in-out infinite;
+            animation: fabPulse 3s ease-in-out infinite;
             transition: all var(--duration-medium) var(--motion-standard);
+            box-shadow: 0 0 20px rgba(0, 255, 100, 0.15);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
         }
 
-        .rank-up-btn svg {
-            animation: rankBtnGlow 2.5s ease-in-out infinite;
-        }
+        .rank-up-fab.hidden { display: none; }
 
-        .rank-up-btn.hidden { display: none; }
-
-        @keyframes rankBtnBob {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-4px); }
-        }
-
-        @keyframes rankBtnGlow {
-            0%, 100% { filter: drop-shadow(0 0 3px rgba(0, 255, 100, 0.4)); }
-            50% { filter: drop-shadow(0 0 8px rgba(0, 255, 100, 0.8)); }
+        @keyframes fabPulse {
+            0%, 100% { box-shadow: 0 0 15px rgba(0, 255, 100, 0.15); }
+            50% { box-shadow: 0 0 25px rgba(0, 255, 100, 0.35); }
         }
 
         @media (hover: hover) {
-            .rank-up-btn:hover {
-                background: rgba(0, 255, 100, 0.1);
+            .rank-up-fab:hover {
+                background: rgba(0, 255, 100, 0.2);
                 border-color: var(--accent);
-                box-shadow: 0 0 15px rgba(0, 255, 100, 0.2);
+                box-shadow: 0 0 30px rgba(0, 255, 100, 0.3);
+                transform: scale(1.08);
             }
         }
 
-        :root[data-theme="light"] .rank-up-btn {
-            border-color: rgba(0, 168, 22, 0.3);
-            color: var(--accent);
+        :root[data-theme="light"] .rank-up-fab {
+            background: rgba(0, 168, 22, 0.08);
+            border-color: rgba(0, 168, 22, 0.25);
+            box-shadow: 0 0 15px rgba(0, 168, 22, 0.1);
         }
 
         /* ── Rank Up Modal ── */
