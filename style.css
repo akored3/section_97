@@ -363,10 +363,12 @@
             height: 22px;
         }
 
-        .wishlist-nav-btn:hover {
-            background-color: var(--accent);
-            color: var(--on-accent);
-            box-shadow: 0 0 10px var(--accent);
+        @media (hover: hover) {
+            .wishlist-nav-btn:hover {
+                background-color: var(--accent);
+                color: var(--on-accent);
+                box-shadow: 0 0 10px var(--accent);
+            }
         }
 
         .wishlist-badge {
@@ -407,10 +409,12 @@
             stroke-width: 2.5;
         }
 
-        .moon-btn:hover, .cart-btn:hover, .hamburger-btn:hover {
-            background-color: var(--accent);
-            color: var(--on-accent);
-            box-shadow: 0 0 10px var(--accent);
+        @media (hover: hover) {
+            .moon-btn:hover, .cart-btn:hover, .hamburger-btn:hover {
+                background-color: var(--accent);
+                color: var(--on-accent);
+                box-shadow: 0 0 10px var(--accent);
+            }
         }
 
         .auth-btn {
@@ -430,10 +434,12 @@
             flex-shrink: 0;
         }
 
-        .auth-btn:hover {
-            background-color: var(--accent);
-            color: var(--on-accent);
-            box-shadow: 0 0 10px var(--accent);
+        @media (hover: hover) {
+            .auth-btn:hover {
+                background-color: var(--accent);
+                color: var(--on-accent);
+                box-shadow: 0 0 10px var(--accent);
+            }
         }
 
         .auth-btn svg {
@@ -592,10 +598,12 @@
             stroke-width: 2.5;
         }
 
-        .search-toggle:hover {
-            background-color: var(--accent);
-            color: var(--on-accent);
-            box-shadow: 0 0 10px var(--accent);
+        @media (hover: hover) {
+            .search-toggle:hover {
+                background-color: var(--accent);
+                color: var(--on-accent);
+                box-shadow: 0 0 10px var(--accent);
+            }
         }
 
         .search-toggle.hidden {
@@ -609,10 +617,12 @@
             color: var(--accent);
         }
 
-        :root[data-theme="light"] .search-toggle:hover {
-            background-color: var(--accent);
-            color: #fff;
-            box-shadow: 0 0 10px var(--glow-accent);
+        @media (hover: hover) {
+            :root[data-theme="light"] .search-toggle:hover {
+                background-color: var(--accent);
+                color: #fff;
+                box-shadow: 0 0 10px var(--glow-accent);
+            }
         }
 
         .search-input-container {
