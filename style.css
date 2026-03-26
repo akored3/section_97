@@ -365,9 +365,9 @@
 
         @media (hover: hover) {
             .wishlist-nav-btn:hover {
-                background-color: var(--accent);
-                color: var(--on-accent);
-                box-shadow: 0 0 10px var(--accent);
+                background-color: rgba(0, 255, 100, 0.12);
+                color: var(--accent);
+                box-shadow: 0 0 8px rgba(0, 255, 100, 0.15);
             }
         }
 
@@ -411,9 +411,9 @@
 
         @media (hover: hover) {
             .moon-btn:hover, .cart-btn:hover, .hamburger-btn:hover {
-                background-color: var(--accent);
-                color: var(--on-accent);
-                box-shadow: 0 0 10px var(--accent);
+                background-color: rgba(0, 255, 100, 0.12);
+                color: var(--accent);
+                box-shadow: 0 0 8px rgba(0, 255, 100, 0.15);
             }
         }
 
@@ -436,9 +436,9 @@
 
         @media (hover: hover) {
             .auth-btn:hover {
-                background-color: var(--accent);
-                color: var(--on-accent);
-                box-shadow: 0 0 10px var(--accent);
+                background-color: rgba(0, 255, 100, 0.12);
+                color: var(--accent);
+                box-shadow: 0 0 8px rgba(0, 255, 100, 0.15);
             }
         }
 
@@ -600,9 +600,9 @@
 
         @media (hover: hover) {
             .search-toggle:hover {
-                background-color: var(--accent);
-                color: var(--on-accent);
-                box-shadow: 0 0 10px var(--accent);
+                background-color: rgba(0, 255, 100, 0.12);
+                color: var(--accent);
+                box-shadow: 0 0 8px rgba(0, 255, 100, 0.15);
             }
         }
 
@@ -619,9 +619,9 @@
 
         @media (hover: hover) {
             :root[data-theme="light"] .search-toggle:hover {
-                background-color: var(--accent);
-                color: #fff;
-                box-shadow: 0 0 10px var(--glow-accent);
+                background-color: rgba(0, 168, 22, 0.1);
+                color: var(--accent);
+                box-shadow: 0 0 8px rgba(0, 168, 22, 0.12);
             }
         }
 
