@@ -340,6 +340,217 @@
             color: var(--accent);
         }
         
+        /* ── Rank Up Button (hero section, guests only) ── */
+        .rank-up-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 20px;
+            margin-top: 6px;
+            background: transparent;
+            border: 1px solid rgba(0, 255, 100, 0.3);
+            border-radius: var(--shape-full);
+            color: var(--accent);
+            font: var(--text-label-md);
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            cursor: pointer;
+            animation: rankBtnBob 2.5s ease-in-out infinite;
+            transition: all var(--duration-medium) var(--motion-standard);
+        }
+
+        .rank-up-btn svg {
+            animation: rankBtnGlow 2.5s ease-in-out infinite;
+        }
+
+        .rank-up-btn.hidden { display: none; }
+
+        @keyframes rankBtnBob {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        @keyframes rankBtnGlow {
+            0%, 100% { filter: drop-shadow(0 0 3px rgba(0, 255, 100, 0.4)); }
+            50% { filter: drop-shadow(0 0 8px rgba(0, 255, 100, 0.8)); }
+        }
+
+        @media (hover: hover) {
+            .rank-up-btn:hover {
+                background: rgba(0, 255, 100, 0.1);
+                border-color: var(--accent);
+                box-shadow: 0 0 15px rgba(0, 255, 100, 0.2);
+            }
+        }
+
+        :root[data-theme="light"] .rank-up-btn {
+            border-color: rgba(0, 168, 22, 0.3);
+            color: var(--accent);
+        }
+
+        /* ── Rank Up Modal ── */
+        .rankup-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--duration-medium) var(--motion-standard);
+        }
+
+        .rankup-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .rankup-modal {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            z-index: 1001;
+            width: min(420px, 90vw);
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 32px 28px;
+            background: rgba(12, 16, 12, 0.85);
+            backdrop-filter: blur(20px) saturate(1.4);
+            -webkit-backdrop-filter: blur(20px) saturate(1.4);
+            border: 1px solid rgba(0, 255, 100, 0.15);
+            border-radius: var(--shape-lg);
+            box-shadow: 0 0 40px rgba(0, 255, 100, 0.08), var(--elevation-3);
+            text-align: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--duration-medium) var(--motion-standard),
+                        transform var(--duration-medium) var(--motion-standard);
+        }
+
+        .rankup-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .rankup-close {
+            position: absolute;
+            top: 14px; right: 14px;
+            background: none;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--shape-full);
+            color: rgba(255, 255, 255, 0.5);
+            width: 32px; height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--duration-short) var(--motion-standard);
+        }
+
+        .rankup-close:hover {
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .rankup-icon {
+            color: var(--accent);
+            margin-bottom: 12px;
+            filter: drop-shadow(0 0 10px rgba(0, 255, 100, 0.4));
+        }
+
+        .rankup-title {
+            font: var(--text-headline-lg);
+            font-size: 1.4rem;
+            color: var(--text-primary);
+            margin: 0 0 8px;
+            letter-spacing: 3px;
+        }
+
+        .rankup-subtitle {
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin: 0 0 20px;
+            line-height: 1.5;
+        }
+
+        .rankup-perks {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .rankup-perk {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: rgba(0, 255, 100, 0.04);
+            border: 1px solid rgba(0, 255, 100, 0.08);
+            border-radius: var(--shape-md);
+            color: var(--text-secondary);
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+        }
+
+        .rankup-perk svg {
+            color: var(--accent);
+            flex-shrink: 0;
+        }
+
+        .rankup-cta {
+            display: inline-block;
+            padding: 14px 40px;
+            background: linear-gradient(135deg, var(--accent-bright), var(--accent-dim));
+            border-radius: var(--shape-md);
+            color: var(--on-accent);
+            font: var(--text-label-lg);
+            font-family: var(--font-mono);
+            letter-spacing: 2px;
+            text-decoration: none;
+            box-shadow: 0 0 20px rgba(0, 255, 100, 0.2);
+            transition: all var(--duration-medium) var(--motion-standard);
+        }
+
+        .rankup-cta:hover {
+            box-shadow: 0 0 30px rgba(0, 255, 100, 0.35);
+            transform: translateY(-2px);
+        }
+
+        .rankup-note {
+            font-family: var(--font-body);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin: 14px 0 0;
+        }
+
+        .rankup-note a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        /* Light theme */
+        :root[data-theme="light"] .rankup-modal {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: rgba(0, 168, 22, 0.15);
+            box-shadow: 0 0 40px rgba(0, 168, 22, 0.06), var(--elevation-3);
+        }
+
+        :root[data-theme="light"] .rankup-close {
+            color: rgba(0, 0, 0, 0.4);
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        :root[data-theme="light"] .rankup-perk {
+            background: rgba(0, 168, 22, 0.04);
+            border-color: rgba(0, 168, 22, 0.1);
+        }
+
         /* Wishlist nav button (header) */
         .wishlist-nav-btn {
             background: none;

@@ -268,4 +268,44 @@ document.addEventListener('DOMContentLoaded', async function() {
     await safeInit('Menu', () => initializeMenu());
     await safeInit('IdleTimeout', () => initializeIdleTimeout());
 
+    // Rank Up prompt — guests only
+    safeInit('RankUp', async () => {
+        const rankBtn = document.getElementById('rank-up-btn');
+        const modal = document.getElementById('rankup-modal');
+        const overlay = document.getElementById('rankup-overlay');
+        const closeBtn = document.getElementById('rankup-close');
+        if (!rankBtn || !modal) return;
+
+        const user = await getCurrentUser();
+        if (user) {
+            rankBtn.classList.add('hidden');
+            return;
+        }
+
+        function openModal() {
+            modal.classList.add('active');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeModal() {
+            modal.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        rankBtn.addEventListener('click', openModal);
+        if (closeBtn) closeBtn.addEventListener('click', closeModal);
+        if (overlay) overlay.addEventListener('click', closeModal);
+
+        // Hide button when user logs in
+        onAuthStateChange((event, session) => {
+            if (session?.user) {
+                rankBtn.classList.add('hidden');
+                closeModal();
+            } else {
+                rankBtn.classList.remove('hidden');
+            }
+        });
+    });
+
 });
