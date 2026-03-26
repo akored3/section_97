@@ -340,13 +340,20 @@
             color: var(--accent);
         }
         
-        /* ── Rank Up Button (hero section, guests only) ── */
+        /* ── Rank Up Button (below hero, guests only) ── */
+        .rank-up-bar {
+            display: flex;
+            justify-content: center;
+            padding: 12px 0;
+        }
+
+        .rank-up-bar.hidden { display: none; }
+
         .rank-up-btn {
             display: inline-flex;
             align-items: center;
             gap: 6px;
             padding: 8px 20px;
-            margin-top: 6px;
             background: transparent;
             border: 1px solid rgba(0, 255, 100, 0.3);
             border-radius: var(--shape-full);
