@@ -229,6 +229,19 @@
         const message = document.getElementById('auth-message');
         const authModeText = document.getElementById('auth-mode-text');
 
+        // Auto-switch to signup if ?mode=signup
+        const urlMode = new URLSearchParams(window.location.search).get('mode');
+        if (urlMode === 'signup') {
+            loginForm.classList.add('hidden');
+            signupForm.classList.remove('hidden');
+            tabs.forEach(t => t.classList.remove('active'));
+            const signupTab = document.querySelector('[data-tab="signup"]');
+            if (signupTab) signupTab.classList.add('active');
+            if (authModeText) authModeText.textContent = 'REGISTER';
+            const authBg = document.getElementById('auth-bg');
+            if (authBg) authBg.classList.add('show-signup');
+        }
+
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
                 tabs.forEach(t => t.classList.remove('active'));
