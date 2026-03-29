@@ -147,14 +147,12 @@
                     </div>
                 </div>
 
-                <!-- Instant signup mode switch — runs before paint to prevent login flash -->
+                <!-- Instant signup mode switch — sets data-mode on html so CSS shows signup before paint -->
                 <script>
                     if (new URLSearchParams(window.location.search).get('mode') === 'signup') {
-                        document.write('<style>#login-form{display:none!important}#signup-form{display:flex!important}</style>');
-                        // Switch active tab (tabs are already in the DOM above)
+                        document.documentElement.setAttribute('data-auth-mode', 'signup');
                         document.querySelector('[data-tab="login"]').classList.remove('active');
                         document.querySelector('[data-tab="signup"]').classList.add('active');
-                        // Switch background
                         document.getElementById('auth-bg').classList.add('show-signup');
                     }
                 </script>
@@ -249,6 +247,8 @@
             if (authModeText) authModeText.textContent = 'REGISTER';
             const authBg = document.getElementById('auth-bg');
             if (authBg) authBg.classList.add('show-signup');
+            // Remove pre-paint attribute — class-based switching takes over
+            document.documentElement.removeAttribute('data-auth-mode');
         }
 
         tabs.forEach(tab => {
