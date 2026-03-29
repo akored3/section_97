@@ -6373,8 +6373,8 @@ a.dropdown-item {
 }
 
 /* Pre-paint signup mode: show signup form, hide login — removed by JS once tab switching is ready */
-html[data-auth-mode="signup"] #login-form { display: none; }
-html[data-auth-mode="signup"] #signup-form { display: flex; }
+html[data-auth-mode="signup"] #login-form { display: none !important; }
+html[data-auth-mode="signup"] #signup-form { display: flex !important; }
 
 .form-group {
     display: flex;
