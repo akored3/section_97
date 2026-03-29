@@ -150,6 +150,13 @@
                     </div>
                 </div>
 
+                <!-- Instant signup mode switch — runs before paint to prevent login flash -->
+                <script>
+                    if (new URLSearchParams(window.location.search).get('mode') === 'signup') {
+                        document.write('<style>#login-form{display:none!important}#signup-form{display:block!important}</style>');
+                    }
+                </script>
+
                 <!-- Login Form -->
                 <form id="login-form" class="auth-form">
                     <div class="form-group">
