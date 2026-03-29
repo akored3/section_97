@@ -151,6 +151,11 @@
                 <script>
                     if (new URLSearchParams(window.location.search).get('mode') === 'signup') {
                         document.write('<style>#login-form{display:none!important}#signup-form{display:flex!important}</style>');
+                        // Switch active tab (tabs are already in the DOM above)
+                        document.querySelector('[data-tab="login"]').classList.remove('active');
+                        document.querySelector('[data-tab="signup"]').classList.add('active');
+                        // Switch background
+                        document.getElementById('auth-bg').classList.add('show-signup');
                     }
                 </script>
 
