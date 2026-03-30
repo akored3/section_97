@@ -1912,13 +1912,13 @@
         /* Stock tags (low stock + sold out) */
         .stock-tag {
             position: absolute;
-            top: 12px; right: 12px;
+            top: 10px; left: 10px;
             z-index: 5;
-            padding: 3px 10px;
+            padding: 5px 12px;
             font-family: var(--font-mono);
-            font-size: 0.6rem;
+            font-size: 0.7rem;
             font-weight: 700;
-            letter-spacing: 0.12em;
+            letter-spacing: 0.14em;
             text-transform: uppercase;
             border-radius: var(--shape-sm);
             backdrop-filter: blur(8px);
@@ -1926,9 +1926,9 @@
 
         .low-stock-tag {
             color: #fff;
-            background: rgba(255, 160, 0, 0.85);
-            border: 1px solid rgba(255, 160, 0, 0.5);
-            box-shadow: 0 0 10px rgba(255, 160, 0, 0.25);
+            background: rgba(255, 60, 0, 0.9);
+            border: 1px solid rgba(255, 80, 0, 0.6);
+            box-shadow: 0 0 12px rgba(255, 60, 0, 0.35);
             animation: stock-pulse 2s ease-in-out infinite;
         }
 
@@ -1954,9 +1954,9 @@
         }
 
         :root[data-theme="light"] .low-stock-tag {
-            background: rgba(230, 140, 0, 0.9);
-            border-color: rgba(200, 120, 0, 0.5);
-            box-shadow: 0 0 10px rgba(200, 120, 0, 0.2);
+            background: rgba(220, 50, 0, 0.9);
+            border-color: rgba(200, 50, 0, 0.5);
+            box-shadow: 0 0 10px rgba(220, 50, 0, 0.2);
         }
 
         :root[data-theme="light"] .sold-out-tag {
