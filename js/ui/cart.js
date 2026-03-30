@@ -289,25 +289,12 @@ export function updateQuantity(key, qty) {
 
 async function syncUpsert(item) {
     try {
-        let q = supabase.from('cart_items')
-            .select('id, quantity')
-            .eq('user_id', currentUserId)
-            .eq('product_id', parseInt(item.id));
-        q = withSize(q, item.size);
-        const { data } = await q.maybeSingle();
-
-        if (data) {
-            await supabase.from('cart_items')
-                .update({ quantity: item.quantity })
-                .eq('id', data.id);
-        } else {
-            await supabase.from('cart_items').insert({
-                user_id: currentUserId,
-                product_id: parseInt(item.id),
-                size: item.size || null,
-                quantity: item.quantity
-            });
-        }
+        await supabase.from('cart_items').upsert({
+            user_id: currentUserId,
+            product_id: parseInt(item.id),
+            size: item.size || null,
+            quantity: item.quantity
+        }, { onConflict: 'user_id,product_id,size' });
     } catch (e) {
         console.warn('Cart sync (upsert) failed:', e);
     }
