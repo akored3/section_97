@@ -307,6 +307,17 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
         });
 
+        // Periodic vibrate on desktop to draw attention
+        if (window.matchMedia('(hover: hover)').matches) {
+            setInterval(() => {
+                if (rankBtn.classList.contains('hidden')) return;
+                rankBtn.classList.add('fab-vibrate');
+                rankBtn.addEventListener('animationend', () => {
+                    rankBtn.classList.remove('fab-vibrate');
+                }, { once: true });
+            }, 6000);
+        }
+
         // Collapse FAB while scrolling on touch devices
         if (window.matchMedia('(hover: none)').matches) {
             let scrollTimer;
