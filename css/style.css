@@ -1,42 +1,42 @@
  /* ── Self-hosted fonts (no Google Fonts dependency) ── */
         @font-face {
             font-family: 'Orbitron';
-            src: url('fonts/orbitron-variable.woff2') format('woff2');
+            src: url('../fonts/orbitron-variable.woff2') format('woff2');
             font-weight: 400 700;
             font-display: block;
         }
 
         @font-face {
             font-family: 'Share Tech Mono';
-            src: url('fonts/share-tech-mono-400.woff2') format('woff2');
+            src: url('../fonts/share-tech-mono-400.woff2') format('woff2');
             font-weight: 400;
             font-display: block;
         }
 
         @font-face {
             font-family: 'Rajdhani';
-            src: url('fonts/rajdhani-400.woff2') format('woff2');
+            src: url('../fonts/rajdhani-400.woff2') format('woff2');
             font-weight: 400;
             font-display: block;
         }
 
         @font-face {
             font-family: 'Rajdhani';
-            src: url('fonts/rajdhani-500.woff2') format('woff2');
+            src: url('../fonts/rajdhani-500.woff2') format('woff2');
             font-weight: 500;
             font-display: block;
         }
 
         @font-face {
             font-family: 'Rajdhani';
-            src: url('fonts/rajdhani-600.woff2') format('woff2');
+            src: url('../fonts/rajdhani-600.woff2') format('woff2');
             font-weight: 600;
             font-display: block;
         }
 
         @font-face {
             font-family: 'Rajdhani';
-            src: url('fonts/rajdhani-700.woff2') format('woff2');
+            src: url('../fonts/rajdhani-700.woff2') format('woff2');
             font-weight: 700;
             font-display: block;
         }
