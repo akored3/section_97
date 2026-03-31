@@ -315,6 +315,10 @@ document.addEventListener('DOMContentLoaded', async function() {
                 clearTimeout(scrollTimer);
                 scrollTimer = setTimeout(() => {
                     rankBtn.classList.remove('fab-collapsed');
+                    rankBtn.classList.add('fab-vibrate');
+                    rankBtn.addEventListener('animationend', () => {
+                        rankBtn.classList.remove('fab-vibrate');
+                    }, { once: true });
                 }, 800);
             }, { passive: true });
         }

@@ -439,6 +439,10 @@
 
         .rank-up-fab.hidden { display: none; }
 
+        .rank-up-fab.fab-vibrate {
+            animation: fabVibrate 0.5s ease-in-out;
+        }
+
         .rank-up-fab.fab-collapsed {
             padding: 10px;
             gap: 0;
@@ -448,6 +452,17 @@
             width: 0;
             overflow: hidden;
             opacity: 0;
+        }
+
+        @keyframes fabVibrate {
+            0%, 100% { transform: translateX(0); }
+            10% { transform: translateX(-2px) rotate(-1deg); }
+            20% { transform: translateX(2px) rotate(1deg); }
+            30% { transform: translateX(-1.5px) rotate(-0.5deg); }
+            40% { transform: translateX(1.5px) rotate(0.5deg); }
+            50% { transform: translateX(-1px); }
+            60% { transform: translateX(1px); }
+            70% { transform: translateX(0); }
         }
 
         @keyframes fabBreathe {
