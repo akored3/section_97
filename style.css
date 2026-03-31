@@ -439,6 +439,17 @@
 
         .rank-up-fab.hidden { display: none; }
 
+        .rank-up-fab.fab-collapsed {
+            padding: 10px;
+            gap: 0;
+            opacity: 0.5;
+        }
+        .rank-up-fab.fab-collapsed .fab-label {
+            width: 0;
+            overflow: hidden;
+            opacity: 0;
+        }
+
         @keyframes fabBreathe {
             0%, 100% { box-shadow: 0 0 12px rgba(0, 255, 100, 0.1); }
             50% { box-shadow: 0 0 20px rgba(0, 255, 100, 0.25); }

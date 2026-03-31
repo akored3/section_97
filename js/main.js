@@ -306,6 +306,18 @@ document.addEventListener('DOMContentLoaded', async function() {
                 rankBtn.classList.remove('hidden');
             }
         });
+
+        // Collapse FAB while scrolling on touch devices
+        if (window.matchMedia('(hover: none)').matches) {
+            let scrollTimer;
+            window.addEventListener('scroll', () => {
+                rankBtn.classList.add('fab-collapsed');
+                clearTimeout(scrollTimer);
+                scrollTimer = setTimeout(() => {
+                    rankBtn.classList.remove('fab-collapsed');
+                }, 800);
+            }, { passive: true });
+        }
     });
 
 });
