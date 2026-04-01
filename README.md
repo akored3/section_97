@@ -88,8 +88,9 @@ A cyberpunk streetwear e-commerce store with real payments. Built from scratch w
 |-------|-----------|
 | Frontend | HTML, CSS, vanilla JavaScript (ES6 modules) |
 | Backend | Supabase (auth, PostgreSQL, RLS) |
-| Payments | Paystack Inline (card + bank transfer) |
-| Fonts | Orbitron, Share Tech Mono, Rajdhani |
+| Payments | Paystack Inline (card + bank transfer). Stripe planned for international. |
+| Fonts | Self-hosted woff2 — Orbitron, Share Tech Mono, Rajdhani (no external dependencies) |
+| Currency | Auto-detection via IP geolocation + ExchangeRate-API (display-only conversion) |
 | Icons | Custom inline SVGs (blueprint/technical drawing style) |
 | Design System | M3-inspired CSS custom properties (shape, elevation, motion, color tokens) |
 
@@ -111,7 +112,8 @@ new_web/
 ├── js/
 │   ├── main.js                       # Entry point
 │   ├── config/
-│   │   └── supabase.js               # Supabase client + Paystack key (gitignored)
+│   │   ├── supabase.js               # Supabase client + Paystack key (gitignored)
+│   │   └── currency.js               # Currency localization (IP detect → exchange rate → format)
 │   ├── auth/
 │   │   └── auth.js                   # Signup, login, logout, session
 │   ├── data/
@@ -136,12 +138,15 @@ new_web/
 ├── supabase/
 │   └── functions/
 │       └── verify-payment/index.ts   # Payment verification Edge Function
-├── migrations/                       # 19 SQL migration files (run in order)
+├── fonts/                            # Self-hosted woff2 font files
+├── migrations/                       # 21 SQL migration files (run in order)
 │   ├── supabase_migration.sql
 │   ├── supabase_cart_migration.sql
 │   ├── ...
 │   ├── supabase_wishlist_migration.sql
-│   └── supabase_wishlist_counts_migration.sql
+│   ├── supabase_wishlist_counts_migration.sql
+│   ├── supabase_stock_restore_migration.sql
+│   └── supabase_payment_ref_notnull_migration.sql
 ├── SECURITY.md                       # Security documentation
 └── images/                           # Product images
 ```
@@ -182,6 +187,8 @@ cd section_97
    - `supabase_status_transitions_migration.sql` — order status transition validation
    - `supabase_wishlist_migration.sql` — wishlist table + RLS policies
    - `supabase_wishlist_counts_migration.sql` — public like count access
+   - `supabase_stock_restore_migration.sql` — auto-restore stock on cancel/fail
+   - `supabase_payment_ref_notnull_migration.sql` — NOT NULL payment reference
 
 2. **Config** — Create `js/config/supabase.js`:
    ```js
@@ -225,13 +232,17 @@ Use Paystack's test card: `4084 0840 8408 4081`, any future expiry, CVV `408`.
 - [x] Wishlist (hearts on cards/PDP, like counts, profile dropdown, Supabase + localStorage)
 - [x] Product snap scroll (proximity)
 - [x] Atomic stock decrement on orders
+- [x] Currency conversion (auto-detect country via IP, display prices in local currency)
+- [x] Self-hosted fonts (no Google Fonts dependency, FOUT-free with preloading)
+- [x] Concurrency hardening (atomic cart upserts, stock restore on cancel, NOT NULL payment ref)
+- [x] Rank-up FAB redesign (pill shape, shimmer, vibrate, scroll collapse on mobile)
+- [ ] Stripe integration (international payments)
 - [ ] Drop countdowns / "Notify Me"
 - [ ] Quick View modal
 - [ ] Product reviews / ratings
 - [ ] Leaderboard seasons
 - [ ] PWA (offline, install prompt)
 - [ ] Guest order lookup (by email + order ID)
-- [ ] Currency localization (i18n)
 - [ ] Image optimization (WebP, responsive sizes)
 - [ ] Footer redesign
 
