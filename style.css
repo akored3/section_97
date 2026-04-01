@@ -440,7 +440,8 @@
         .rank-up-fab.hidden { display: none; }
 
         /* Hide FAB when mobile menu is open */
-        body:has(.mobile-menu.active) .rank-up-fab { opacity: 0; pointer-events: none; }
+        body:has(.mobile-menu.active) .rank-up-fab,
+        body:has(.cart-drawer.active) .rank-up-fab { opacity: 0; pointer-events: none; }
 
         .rank-up-fab.fab-vibrate {
             animation: fabVibrate 0.7s ease-in-out;
