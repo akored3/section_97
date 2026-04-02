@@ -34,6 +34,11 @@ export function initScrollSnap() {
     }
 
     function snapToNearest() {
+        // Don't snap if user has scrolled past the product grid (e.g. viewing footer)
+        const scrollBottom = window.scrollY + window.innerHeight;
+        const containerBottom = container.offsetTop + container.offsetHeight;
+        if (scrollBottom > containerBottom + 50) return;
+
         const card = getNearestCard();
         if (!card) return;
 
