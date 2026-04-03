@@ -39,25 +39,9 @@ function loadImage(img) {
     const src = img.dataset.src;
     if (!src) return;
 
-    // Create a new image to preload
-    const tempImg = new Image();
-
-    tempImg.onload = () => {
-        // Once loaded, swap the src and add loaded class for fade-in
-        img.src = src;
-        img.classList.add('loaded');
-        img.classList.remove('lazy-load');
-    };
-
-    tempImg.onerror = () => {
-        // Fallback to placeholder on error
-        img.src = 'images/placeholder.png';
-        img.classList.add('loaded');
-        img.classList.remove('lazy-load');
-    };
-
-    // Start loading
-    tempImg.src = src;
+    img.src = src;
+    img.classList.add('loaded');
+    img.classList.remove('lazy-load');
 }
 
 function loadAllImages() {
