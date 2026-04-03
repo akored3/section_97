@@ -13,13 +13,6 @@ document.addEventListener('error', function(e) {
         return;
     }
 
-    // Product images — swap to placeholder
-    if (img.dataset.fallback !== 'done' && img.src.indexOf('placeholder.png') === -1) {
-        img.dataset.fallback = 'done';
-        img.src = 'images/placeholder.png';
-        return;
-    }
-
-    // Everything else — just hide
+    // Failed image — hide it
     img.style.display = 'none';
 }, true);
