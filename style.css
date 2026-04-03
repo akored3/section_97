@@ -3099,21 +3099,25 @@
 
         @media (max-width: 480px) {
             footer {
-                margin-top: 60px;
+                margin-top: 40px;
             }
 
             .footer-divider {
-                margin-bottom: 32px;
+                margin-bottom: 20px;
             }
 
             .footer-content {
-                grid-template-columns: 1fr;
-                gap: 28px;
-                padding-bottom: 28px;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+                padding-bottom: 20px;
             }
 
             .footer-brand {
-                grid-column: auto;
+                grid-column: 1 / -1;
+            }
+
+            .footer-desc {
+                display: none;
             }
 
             .footer-bottom {
