@@ -33,13 +33,9 @@ export function renderProducts(productsToRender) {
         // Store sizes in JS Map keyed by product ID
         productSizesMap.set(String(product.id), product.sizes || []);
 
-        // Load visible products immediately, rest are lazy loaded
-        const cardsPerRow = window.innerWidth < 768 ? 2 : (window.innerWidth < 992 ? 2 : 3);
-        const aboveFoldCount = cardsPerRow * 2; // ~2 rows worth
-        const isAboveFold = index < aboveFoldCount;
-        const imgClass = isAboveFold ? 'product loaded' : 'product lazy-load';
-        const imgSrc = isAboveFold ? safeImage : 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"%3E%3C/svg%3E';
-        const dataSrc = isAboveFold ? '' : `data-src="${safeImage}"`;
+        // Browser-native lazy loading handles below-fold deferral
+        const imgClass = 'product loaded';
+        const imgSrc = safeImage;
 
         const isNew = product.isNew;
 
@@ -64,7 +60,6 @@ export function renderProducts(productsToRender) {
                         <span class="like-count" style="${getLikeCount(product.id) > 0 ? '' : 'display:none'}">${getLikeCount(product.id)}</span>
                     </button>
                     <img src="${imgSrc}"
-                         ${dataSrc}
                          class="${imgClass}"
                          alt="${safeName}"
                          loading="lazy"

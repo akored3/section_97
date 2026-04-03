@@ -25,8 +25,8 @@ export function initializeLazyLoading() {
             }
         });
     }, {
-        // Start loading 100px before image enters viewport
-        rootMargin: '100px 0px',
+        // Start loading well ahead of viewport for smooth scrolling
+        rootMargin: '500px 0px',
         threshold: 0.01
     });
 
