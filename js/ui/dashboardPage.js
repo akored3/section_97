@@ -746,10 +746,10 @@ function updateBulkToolbar() {
     const selectAllCb = document.getElementById('selectAllProducts');
 
     if (count > 0) {
-        toolbar.classList.add('visible');
+        toolbar.classList.remove('hidden');
         document.getElementById('bulkCount').textContent = `${count} SELECTED`;
     } else {
-        toolbar.classList.remove('visible');
+        toolbar.classList.add('hidden');
     }
 
     if (selectAllCb) {

@@ -1015,9 +1015,8 @@
 
         /* Product management */
         .products-header { flex-direction: column; align-items: flex-start; gap: 10px; }
-        .products-header-actions { width: 100%; justify-content: space-between; }
-        .btn-add-product { flex: 1; justify-content: center; }
-        .bulk-toolbar { flex-wrap: wrap; gap: 8px; }
+        .btn-add-product { width: 100%; justify-content: center; }
+        .selection-bar { flex-wrap: wrap; gap: 8px; }
         .products-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
         .prod-card-img { height: 140px; }
         .prod-card-body { padding: 10px; }
@@ -1201,9 +1200,14 @@
         box-shadow: 0 0 12px var(--sw-accent-glow-wide);
     }
 
-    /* Select all label */
-    .products-header-actions {
-        display: flex; align-items: center; gap: 12px;
+    /* Selection bar (select all + bulk actions) */
+    .selection-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 0;
+        margin-bottom: 8px;
+        border-bottom: 1px solid var(--sw-card-border);
     }
     .select-all-label {
         display: flex; align-items: center; gap: 8px;
@@ -1216,35 +1220,29 @@
     .select-all-label input { display: none; }
     .select-all-text { white-space: nowrap; }
 
-    /* Bulk action toolbar */
-    .bulk-toolbar {
-        display: none;
+    /* Inline bulk actions (appear when items selected) */
+    .bulk-actions-inline {
+        display: flex;
         align-items: center;
-        justify-content: space-between;
-        padding: 10px 16px;
-        margin-bottom: 12px;
-        background: var(--sw-accent-glow-wide);
-        border: 1px solid var(--sw-accent);
+        gap: 10px;
         animation: bulkSlideIn 0.2s ease-out;
     }
-    .bulk-toolbar.visible { display: flex; }
+    .bulk-actions-inline.hidden { display: none; }
     @keyframes bulkSlideIn {
-        from { opacity: 0; transform: translateY(-8px); }
-        to { opacity: 1; transform: translateY(0); }
+        from { opacity: 0; transform: translateX(8px); }
+        to { opacity: 1; transform: translateX(0); }
     }
     .bulk-count {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 0.75rem;
-        font-weight: 700;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.7rem;
         color: var(--sw-accent);
         letter-spacing: 0.06em;
     }
-    .bulk-actions { display: flex; gap: 8px; }
     .bulk-btn {
         font-family: 'Share Tech Mono', monospace;
-        font-size: 0.72rem;
+        font-size: 0.7rem;
         letter-spacing: 0.06em;
-        padding: 6px 14px;
+        padding: 5px 12px;
         border: 1px solid var(--sw-card-border);
         background: var(--sw-card-bg);
         color: var(--sw-text-muted);
@@ -2068,22 +2066,20 @@
                             <div class="products-header-title"><div class="ph-bar"></div>PRODUCT CATALOG</div>
                             <div class="products-count" id="productsCount">0 PRODUCTS</div>
                         </div>
-                        <div class="products-header-actions">
-                            <label class="select-all-label">
-                                <input type="checkbox" id="selectAllProducts">
-                                <span class="prod-checkmark"></span>
-                                <span class="select-all-text">SELECT ALL</span>
-                            </label>
-                            <button class="btn-add-product" id="btnAddProduct">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                                ADD PRODUCT
-                            </button>
-                        </div>
+                        <button class="btn-add-product" id="btnAddProduct">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            ADD PRODUCT
+                        </button>
                     </div>
-                    <!-- Bulk action toolbar -->
-                    <div class="bulk-toolbar" id="bulkToolbar">
-                        <span class="bulk-count" id="bulkCount">0 SELECTED</span>
-                        <div class="bulk-actions">
+                    <!-- Selection toolbar -->
+                    <div class="selection-bar">
+                        <label class="select-all-label">
+                            <input type="checkbox" id="selectAllProducts">
+                            <span class="prod-checkmark"></span>
+                            <span class="select-all-text">SELECT ALL</span>
+                        </label>
+                        <div class="bulk-actions-inline hidden" id="bulkToolbar">
+                            <span class="bulk-count" id="bulkCount">0 SELECTED</span>
                             <button class="bulk-btn bulk-btn-delete" id="bulkDeleteBtn">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
                                 DELETE
