@@ -1015,7 +1015,9 @@
 
         /* Product management */
         .products-header { flex-direction: column; align-items: flex-start; gap: 10px; }
-        .btn-add-product { width: 100%; justify-content: center; }
+        .products-header-actions { width: 100%; justify-content: space-between; }
+        .btn-add-product { flex: 1; justify-content: center; }
+        .bulk-toolbar { flex-wrap: wrap; gap: 8px; }
         .products-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
         .prod-card-img { height: 140px; }
         .prod-card-body { padding: 10px; }
@@ -1165,6 +1167,94 @@
     }
     .prod-action-btn:hover { border-color: var(--sw-accent); color: var(--sw-accent); }
     .prod-action-btn.danger:hover { border-color: var(--sw-danger); color: var(--sw-danger); }
+
+    /* Product selection checkbox */
+    .prod-select-checkbox {
+        position: absolute; top: 8px; left: 8px; z-index: 2;
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer;
+    }
+    .prod-select-checkbox input { display: none; }
+    .prod-checkmark {
+        width: 20px; height: 20px;
+        border: 1.5px solid var(--sw-card-border);
+        background: var(--sw-card-bg);
+        display: flex; align-items: center; justify-content: center;
+        transition: all 0.2s;
+        backdrop-filter: blur(8px);
+    }
+    .prod-select-checkbox input:checked + .prod-checkmark,
+    .select-all-label input:checked + .prod-checkmark {
+        background: var(--sw-accent);
+        border-color: var(--sw-accent);
+    }
+    .prod-select-checkbox input:checked + .prod-checkmark::after,
+    .select-all-label input:checked + .prod-checkmark::after {
+        content: '';
+        width: 5px; height: 9px;
+        border: solid var(--sw-bg); border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+        margin-top: -2px;
+    }
+    .prod-card.selected {
+        border-color: var(--sw-accent);
+        box-shadow: 0 0 12px var(--sw-accent-glow-wide);
+    }
+
+    /* Select all label */
+    .products-header-actions {
+        display: flex; align-items: center; gap: 12px;
+    }
+    .select-all-label {
+        display: flex; align-items: center; gap: 8px;
+        cursor: pointer;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--sw-text-muted);
+        letter-spacing: 0.08em;
+    }
+    .select-all-label input { display: none; }
+    .select-all-text { white-space: nowrap; }
+
+    /* Bulk action toolbar */
+    .bulk-toolbar {
+        display: none;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 16px;
+        margin-bottom: 12px;
+        background: var(--sw-accent-glow-wide);
+        border: 1px solid var(--sw-accent);
+        animation: bulkSlideIn 0.2s ease-out;
+    }
+    .bulk-toolbar.visible { display: flex; }
+    @keyframes bulkSlideIn {
+        from { opacity: 0; transform: translateY(-8px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .bulk-count {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--sw-accent);
+        letter-spacing: 0.06em;
+    }
+    .bulk-actions { display: flex; gap: 8px; }
+    .bulk-btn {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.72rem;
+        letter-spacing: 0.06em;
+        padding: 6px 14px;
+        border: 1px solid var(--sw-card-border);
+        background: var(--sw-card-bg);
+        color: var(--sw-text-muted);
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .bulk-btn:hover { border-color: var(--sw-text-secondary); color: var(--sw-text); }
+    .bulk-btn-delete { border-color: rgba(255,40,40,0.3); color: #ff4444; }
+    .bulk-btn-delete:hover { background: #ff4444; color: #fff; border-color: #ff4444; }
+
     /* Add/Edit product modal */
     .modal-overlay {
         position: fixed; inset: 0;
@@ -1978,10 +2068,28 @@
                             <div class="products-header-title"><div class="ph-bar"></div>PRODUCT CATALOG</div>
                             <div class="products-count" id="productsCount">0 PRODUCTS</div>
                         </div>
-                        <button class="btn-add-product" id="btnAddProduct">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                            ADD PRODUCT
-                        </button>
+                        <div class="products-header-actions">
+                            <label class="select-all-label">
+                                <input type="checkbox" id="selectAllProducts">
+                                <span class="prod-checkmark"></span>
+                                <span class="select-all-text">SELECT ALL</span>
+                            </label>
+                            <button class="btn-add-product" id="btnAddProduct">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                ADD PRODUCT
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Bulk action toolbar -->
+                    <div class="bulk-toolbar" id="bulkToolbar">
+                        <span class="bulk-count" id="bulkCount">0 SELECTED</span>
+                        <div class="bulk-actions">
+                            <button class="bulk-btn bulk-btn-delete" id="bulkDeleteBtn">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                                DELETE
+                            </button>
+                            <button class="bulk-btn bulk-btn-clear" id="bulkClearBtn">CLEAR</button>
+                        </div>
                     </div>
                     <div class="products-grid" id="productsGrid"></div>
                 </div>

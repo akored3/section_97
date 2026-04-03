@@ -638,6 +638,7 @@ function setupSectionNav() {
 let productsLoaded = false;
 let allProducts = [];
 let editingProductId = null;
+const selectedProducts = new Set();
 
 const CLOTHING_SIZES = ['S', 'M', 'L', 'XL'];
 const SHOE_SIZES = ['7', '8', '9', '10', '11', '12'];
@@ -677,6 +678,8 @@ async function loadProducts() {
 
     allProducts = data || [];
     productsLoaded = true;
+    selectedProducts.clear();
+    updateBulkToolbar();
     document.getElementById('productsCount').textContent = `${allProducts.length} PRODUCTS`;
     renderProductsGrid();
 }
@@ -691,8 +694,14 @@ function renderProductsGrid() {
     grid.innerHTML = allProducts.map(p => {
         const totalStock = (p.product_sizes || []).reduce((sum, s) => sum + s.stock, 0) || p.stock || 0;
         const stockClass = totalStock < 20 ? ' low' : '';
-        return `<div class="prod-card cb">
+        const checked = selectedProducts.has(p.id) ? ' checked' : '';
+        const selectedClass = selectedProducts.has(p.id) ? ' selected' : '';
+        return `<div class="prod-card cb${selectedClass}" data-product-id="${p.id}">
             <div class="cb-b"></div>
+            <label class="prod-select-checkbox" onclick="event.stopPropagation()">
+                <input type="checkbox" data-select-id="${p.id}"${checked}>
+                <span class="prod-checkmark"></span>
+            </label>
             <div class="prod-card-actions">
                 <button class="prod-action-btn" onclick="window.__editProduct(${p.id})" title="Edit">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -715,6 +724,70 @@ function renderProductsGrid() {
             </div>
         </div>`;
     }).join('');
+
+    // Bind checkbox change events
+    grid.querySelectorAll('[data-select-id]').forEach(cb => {
+        cb.addEventListener('change', () => {
+            const id = parseInt(cb.dataset.selectId);
+            if (cb.checked) {
+                selectedProducts.add(id);
+            } else {
+                selectedProducts.delete(id);
+            }
+            cb.closest('.prod-card').classList.toggle('selected', cb.checked);
+            updateBulkToolbar();
+        });
+    });
+}
+
+function updateBulkToolbar() {
+    const toolbar = document.getElementById('bulkToolbar');
+    const count = selectedProducts.size;
+    const selectAllCb = document.getElementById('selectAllProducts');
+
+    if (count > 0) {
+        toolbar.classList.add('visible');
+        document.getElementById('bulkCount').textContent = `${count} SELECTED`;
+    } else {
+        toolbar.classList.remove('visible');
+    }
+
+    if (selectAllCb) {
+        selectAllCb.checked = count > 0 && count === allProducts.length;
+        selectAllCb.indeterminate = count > 0 && count < allProducts.length;
+    }
+}
+
+function toggleSelectAll(checked) {
+    if (checked) {
+        allProducts.forEach(p => selectedProducts.add(p.id));
+    } else {
+        selectedProducts.clear();
+    }
+    // Update all checkboxes visually
+    document.querySelectorAll('[data-select-id]').forEach(cb => {
+        cb.checked = checked;
+        cb.closest('.prod-card').classList.toggle('selected', checked);
+    });
+    updateBulkToolbar();
+}
+
+async function bulkDeleteProducts() {
+    const count = selectedProducts.size;
+    if (count === 0) return;
+    if (!confirm(`DELETE ${count} PRODUCT${count > 1 ? 'S' : ''}?\n\nThis action cannot be undone.`)) return;
+
+    const ids = [...selectedProducts];
+    try {
+        const { error } = await supabase.from('products').delete().in('id', ids);
+        if (error) throw error;
+        selectedProducts.clear();
+        updateBulkToolbar();
+        showToast(`${count} PRODUCT${count > 1 ? 'S' : ''} DELETED`);
+        await loadProducts();
+    } catch (err) {
+        showToast('BULK DELETE FAILED', true);
+    }
 }
 
 function openProductModal(product = null) {
@@ -918,6 +991,20 @@ function setupProductModal() {
     // Image upload listeners
     setupImageUpload('pf_image_front', 'preview_front', 'zone_front', (f) => { pendingImageFront = f; });
     setupImageUpload('pf_image_back', 'preview_back', 'zone_back', (f) => { pendingImageBack = f; });
+
+    // Bulk actions
+    document.getElementById('selectAllProducts').addEventListener('change', (e) => {
+        toggleSelectAll(e.target.checked);
+    });
+    document.getElementById('bulkDeleteBtn').addEventListener('click', bulkDeleteProducts);
+    document.getElementById('bulkClearBtn').addEventListener('click', () => {
+        selectedProducts.clear();
+        document.querySelectorAll('[data-select-id]').forEach(cb => {
+            cb.checked = false;
+            cb.closest('.prod-card').classList.remove('selected');
+        });
+        updateBulkToolbar();
+    });
 
     // Expose to inline onclick handlers
     window.__editProduct = (id) => {
