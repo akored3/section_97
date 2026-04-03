@@ -86,9 +86,13 @@ async function fetchExchangeRate(targetCurrency) {
 // ─── Init ───────────────────────────────────────
 
 export async function initializeCurrency() {
-    // Check cache first
+    // Always detect current location — catches VPN on/off without manual cache clear
+    const detected = await detectCurrencyFromIP();
+    const currentCurrency = detected || BASE_CURRENCY;
+
+    // Use cached exchange rate only if currency still matches
     const cached = loadCache();
-    if (cached) {
+    if (cached && cached.currency === currentCurrency) {
         userCurrency = cached.currency;
         exchangeRate = cached.rate;
         currencyReady = true;
@@ -97,11 +101,8 @@ export async function initializeCurrency() {
         return;
     }
 
-    // Detect currency from IP (VPN-aware, reflects actual location)
-    const detected = await detectCurrencyFromIP();
-    userCurrency = detected || BASE_CURRENCY;
-
-    // Fetch exchange rate
+    // Currency changed or no cache — fetch fresh rate
+    userCurrency = currentCurrency;
     exchangeRate = await fetchExchangeRate(userCurrency);
 
     saveCache(userCurrency, exchangeRate);
