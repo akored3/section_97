@@ -128,7 +128,6 @@ async function repairUsername(userId) {
 
             return repaired?.username || newUsername;
         } catch (e) {
-            console.warn('Failed to repair missing username:', e);
             return null;
         } finally {
             repairInProgress = null;
@@ -176,7 +175,6 @@ export async function signUp(email, password) {
 
         if (profileError) throw profileError;
         if (!updatedProfile?.username) {
-            console.warn('Profile update returned no data — RLS may be blocking writes');
         }
 
         return {
@@ -272,8 +270,29 @@ export async function getCurrentUser() {
             orderCount: profile?.order_count || 0
         };
     } catch (e) {
-        console.warn('Failed to get current user:', e);
         return null;
+    }
+}
+
+// Delete account via Edge Function (cascades all user data)
+export async function deleteAccount() {
+    try {
+        const { data, error } = await supabase.functions.invoke('delete-account', {
+            body: {}
+        });
+
+        if (error) {
+            return { success: false, error: error.message || 'Deletion failed' };
+        }
+
+        // Clear local session + cached data
+        await supabase.auth.signOut({ scope: 'local' });
+        localStorage.removeItem('cart');
+        localStorage.removeItem('wishlist');
+
+        return { success: true };
+    } catch (error) {
+        return { success: false, error: error.message };
     }
 }
 

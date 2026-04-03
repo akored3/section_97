@@ -1,5 +1,6 @@
 // Profile page — displays user profile, avatar upload, stats, achievements, and order history
-import { getCurrentUser, signOut } from '../auth/auth.js';
+import './imgFallback.js';
+import { getCurrentUser, signOut, deleteAccount } from '../auth/auth.js';
 import { supabase } from '../config/supabase.js';
 import { initializeTheme } from './theme.js';
 import { escapeHtml } from '../components/productRenderer.js';
@@ -151,7 +152,6 @@ async function loadMemberSince() {
             return authUser.created_at;
         }
     } catch (e) {
-        console.warn('Failed to load member since:', e);
     }
     return null;
 }
@@ -229,7 +229,6 @@ async function loadOrders(userId) {
 
         return orders || [];
     } catch (e) {
-        console.warn('Failed to load orders:', e);
         renderOrderError();
         return [];
     }
@@ -514,7 +513,6 @@ function setupAvatarUpload(userId) {
             // Update the image
             avatarImg.src = publicUrl;
         } catch (err) {
-            console.error('Avatar upload failed:', err);
             showAvatarError(wrapper, 'Upload failed — try again');
         } finally {
             isAvatarUploading = false;
@@ -566,6 +564,60 @@ function setupLogout() {
     });
 }
 
+// ── Account deletion ──
+
+function setupDeleteAccount() {
+    const btn = document.getElementById('delete-account-btn');
+    const overlay = document.getElementById('delete-modal-overlay');
+    const input = document.getElementById('delete-confirm-input');
+    const cancelBtn = document.getElementById('delete-cancel-btn');
+    const confirmBtn = document.getElementById('delete-confirm-btn');
+
+    if (!btn || !overlay) return;
+
+    btn.addEventListener('click', () => {
+        overlay.classList.remove('hidden');
+        overlay.setAttribute('aria-hidden', 'false');
+        input.value = '';
+        confirmBtn.disabled = true;
+        input.focus();
+    });
+
+    function closeModal() {
+        overlay.classList.add('hidden');
+        overlay.setAttribute('aria-hidden', 'true');
+        input.value = '';
+        confirmBtn.disabled = true;
+    }
+
+    cancelBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeModal();
+    });
+
+    input.addEventListener('input', () => {
+        confirmBtn.disabled = input.value.trim() !== 'DELETE';
+    });
+
+    confirmBtn.addEventListener('click', async () => {
+        if (input.value.trim() !== 'DELETE') return;
+
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = 'Deleting...';
+
+        const result = await deleteAccount();
+        if (result.success) {
+            window.location.href = 'index.html';
+        } else {
+            confirmBtn.textContent = 'Delete Forever';
+            confirmBtn.disabled = false;
+            // Show error inline
+            const desc = document.getElementById('delete-modal-desc');
+            if (desc) desc.innerHTML = `<span style="color:var(--accent-red,#ff4444)">Error: ${result.error}. Try again.</span>`;
+        }
+    });
+}
+
 // ── Wishlist section ──
 
 let allProducts = [];
@@ -601,8 +653,7 @@ function renderWishlist() {
         if (!product) return '';
         return `
             <div class="profile-wishlist-item">
-                <img src="${escapeHtml(product.imageSrc)}" alt="${escapeHtml(product.name)}" class="profile-wishlist-item-img" loading="lazy"
-                     onerror="this.onerror=null;this.src='images/placeholder.png';">
+                <img src="${escapeHtml(product.imageSrc)}" alt="${escapeHtml(product.name)}" class="profile-wishlist-item-img" loading="lazy">
                 <div class="profile-wishlist-item-info">
                     <span class="profile-wishlist-item-name">${escapeHtml(product.name)}</span>
                     <span class="profile-wishlist-item-price">${formatPrice(product.price)}</span>
@@ -670,6 +721,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     loadProfile(user);
     setupAvatarUpload(user.id);
     setupLogout();
+    setupDeleteAccount();
     setupWishlistDropdown();
     setupOrdersDropdown();
     setupOrderExpansion();

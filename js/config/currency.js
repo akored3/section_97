@@ -20,14 +20,12 @@ async function detectCurrencyFromIP() {
             const r = await fetch('https://ipapi.co/json/');
             if (!r.ok) throw new Error(r.status);
             const d = await r.json();
-            console.log('[Currency] ipapi.co response:', d.country, d.currency);
             return d.currency || null;
         },
         async () => {
             const r = await fetch('https://ipwho.is/');
             if (!r.ok) throw new Error(r.status);
             const d = await r.json();
-            console.log('[Currency] ipwho.is response:', d.country, d.currency?.code);
             return d.currency?.code || null;
         },
     ];
@@ -40,7 +38,6 @@ async function detectCurrencyFromIP() {
             ]);
             if (currency) return currency;
         } catch (e) {
-            console.warn('[Currency] IP provider failed:', e);
         }
     }
     return null;
@@ -80,10 +77,8 @@ async function fetchExchangeRate(targetCurrency) {
         const rate = data.conversion_rates?.[targetCurrency];
         if (!rate) throw new Error(`No rate for ${targetCurrency}`);
 
-        console.log(`[Currency] ExchangeRate-API: 1 ${BASE_CURRENCY} = ${rate} ${targetCurrency}`);
         return rate;
     } catch (e) {
-        console.error('[Currency] ExchangeRate-API failed:', e);
         return 1;
     }
 }
@@ -97,7 +92,6 @@ export async function initializeCurrency() {
         userCurrency = cached.currency;
         exchangeRate = cached.rate;
         currencyReady = true;
-        console.log(`[Currency] Cached: ${userCurrency} (rate: ${exchangeRate})`);
         readyCallbacks.forEach(cb => cb());
         readyCallbacks = [];
         return;
@@ -106,11 +100,9 @@ export async function initializeCurrency() {
     // Detect currency from IP (VPN-aware, reflects actual location)
     const detected = await detectCurrencyFromIP();
     userCurrency = detected || BASE_CURRENCY;
-    console.log(`[Currency] Detected: ${userCurrency}`);
 
     // Fetch exchange rate
     exchangeRate = await fetchExchangeRate(userCurrency);
-    console.log(`[Currency] Final: ${userCurrency}, rate: ${exchangeRate}`);
 
     saveCache(userCurrency, exchangeRate);
 

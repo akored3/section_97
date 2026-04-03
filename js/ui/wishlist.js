@@ -53,7 +53,6 @@ export async function fetchLikeCounts() {
 
         updateAllLikeCounts();
     } catch (e) {
-        console.warn('Failed to fetch like counts:', e);
     }
 }
 
@@ -128,7 +127,6 @@ export async function toggleWishlist(productId) {
                     .insert({ user_id: currentUserId, product_id: parseInt(id) });
             }
         } catch (e) {
-            console.warn('Wishlist sync failed:', e);
         }
     }
 }
@@ -186,7 +184,6 @@ export async function handleWishlistAuth(userId) {
             btn.setAttribute('aria-pressed', active);
         });
     } catch (e) {
-        console.warn('Wishlist sync failed:', e);
     }
 }
 
@@ -225,8 +222,7 @@ function renderWishlistDrawer() {
         if (!product) return '';
         return `
             <div class="wishlist-drawer-item" data-product-id="${product.id}">
-                <img class="wishlist-drawer-item-img" src="${product.imageSrc}" alt="${product.name}"
-                     onerror="this.onerror=null;this.src='images/placeholder.png';">
+                <img class="wishlist-drawer-item-img" src="${product.imageSrc}" alt="${product.name}">
                 <div class="wishlist-drawer-item-details">
                     <span class="wishlist-drawer-item-name">${product.name}</span>
                     <span class="wishlist-drawer-item-price">${formatPrice(product.price)}</span>

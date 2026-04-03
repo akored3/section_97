@@ -193,9 +193,10 @@ async function safeInit(name, fn) {
     try {
         await fn();
     } catch (e) {
-        console.error(`[${name}] failed to initialize:`, e);
     }
 }
+
+import './ui/imgFallback.js';
 
 // Initialize everything when DOM is ready
 document.addEventListener('DOMContentLoaded', async function() {
@@ -241,7 +242,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         fetchLikeCounts(); // Fire-and-forget — updates counts when ready
         initScrollSnap(); // JS-based snap on idle (replaces CSS scroll-snap)
     } catch (e) {
-        console.error('[Products] failed to load:', e);
         const container = document.getElementById('product-container');
         if (container) {
             container.innerHTML = `

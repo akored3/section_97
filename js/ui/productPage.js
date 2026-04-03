@@ -1,4 +1,5 @@
 // Product details page — handles fetch, render, sizes, descriptions, and cart
+import './imgFallback.js';
 import { fetchProductById } from '../data/products.js';
 import { initializeTheme } from '../ui/theme.js';
 import { escapeHtml } from '../components/productRenderer.js';
@@ -295,7 +296,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             updateBadgeIfGuest();
         }
     } catch (e) {
-        console.error('[PDP] Cart/auth init failed:', e);
     }
 
     // Validate URL param before fetch (strict numeric check)

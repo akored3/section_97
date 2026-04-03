@@ -1,4 +1,5 @@
 // Admin dashboard — order management command center
+import './imgFallback.js';
 import { supabase } from '../config/supabase.js';
 import { getCurrentUser } from '../auth/auth.js';
 
@@ -186,7 +187,6 @@ async function fetchOrders() {
         .order('created_at', { ascending: false });
 
     if (error) {
-        console.error('Failed to fetch orders:', error);
         showToast('FAILED TO LOAD ORDERS', true);
         return [];
     }
@@ -231,7 +231,6 @@ async function fetchAndSubscribeUsers() {
     if (error) {
         el.textContent = '—';
         delta.textContent = 'FETCH ERROR';
-        console.error('Failed to fetch user count:', error);
         return;
     }
 
@@ -476,7 +475,7 @@ function openDetail(order) {
     const itemsHtml = items.map(item => `
         <div class="detail-item">
             <div class="di-thumb">
-                ${item.product_image ? `<img src="${escHtml(item.product_image)}" alt="${escHtml(item.product_name)}" onerror="this.style.display='none'">` : ''}
+                ${item.product_image ? `<img src="${escHtml(item.product_image)}" alt="${escHtml(item.product_name)}">` : ''}
             </div>
             <div class="di-info">
                 <div class="di-name">${escHtml(item.product_name)}</div>
@@ -586,7 +585,6 @@ function openDetail(order) {
                 else closeDetail();
 
             } catch (err) {
-                console.error('Status update failed:', err);
                 showToast(`FAILED: ${err.message}`, true);
                 btn.disabled = false;
                 btn.style.opacity = '1';
@@ -703,7 +701,7 @@ function renderProductsGrid() {
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
                 </button>
             </div>
-            <img class="prod-card-img" src="${escHtml(p.image_front)}" alt="${escHtml(p.name)}" onerror="this.style.display='none'">
+            <img class="prod-card-img" src="${escHtml(p.image_front)}" alt="${escHtml(p.name)}">
             <div class="prod-card-body">
                 <div class="prod-card-name">${escHtml(p.name)}</div>
                 <div class="prod-card-meta">
@@ -882,7 +880,6 @@ async function submitProduct() {
         closeProductModal();
         await loadProducts();
     } catch (err) {
-        console.error('Product save error:', err);
         showToast('FAILED TO SAVE PRODUCT', true);
     } finally {
         btn.disabled = false;
@@ -900,7 +897,6 @@ async function deleteProduct(id) {
         showToast('PRODUCT DELETED');
         await loadProducts();
     } catch (err) {
-        console.error('Delete error:', err);
         showToast('FAILED TO DELETE PRODUCT', true);
     }
 }
@@ -964,7 +960,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
     } catch (e) {
-        console.error('[DASH] is_admin RPC threw:', e);
         skeleton.classList.add('hidden');
         authGate.classList.remove('hidden');
         setTimeout(() => { window.location.href = 'store.html'; }, 2000);

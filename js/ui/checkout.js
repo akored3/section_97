@@ -1,4 +1,5 @@
 // Checkout page — 4-step flow: Cart → Shipping → Payment (Paystack) → Confirm
+import './imgFallback.js';
 import { getCurrentUser } from '../auth/auth.js';
 import { supabase, PAYSTACK_PUBLIC_KEY } from '../config/supabase.js';
 import { escapeHtml } from '../components/productRenderer.js';
@@ -151,8 +152,7 @@ function renderCartItems() {
 
     container.innerHTML = cartData.map(item => `
         <div class="checkout-item-card" data-key="${escapeHtml(item.cartKey)}">
-            <img class="checkout-item-img" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}"
-                 onerror="this.style.display='none'">
+            <img class="checkout-item-img" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}">
             <div class="checkout-item-details">
                 <div class="checkout-item-name">${escapeHtml(item.name)}</div>
                 ${item.size ? `<span class="checkout-item-tag">SIZE: ${escapeHtml(item.size)}</span>` : ''}
@@ -445,7 +445,6 @@ async function handleAction() {
             } catch (verifyErr) {
                 // Order exists but verification failed — still show confirmation
                 // with a note so the user knows their order was placed
-                console.warn('Payment verification failed, but order was created:', verifyErr);
                 await clearCartFull();
                 document.getElementById('checkout-order-id').textContent = `ORDER ID: ${formatOrderId(orderId)}`;
                 const note = document.getElementById('checkout-confirm-note');
@@ -479,7 +478,6 @@ async function handleAction() {
                 showToast('Payment cancelled. Your cart is still saved.');
             } else {
                 showToast('Something went wrong. Please try again.');
-                console.error('Checkout error:', err.message || err);
             }
         }
     }

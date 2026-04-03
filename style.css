@@ -5579,6 +5579,161 @@ a.dropdown-item {
     animation: pdp-fade-in-up var(--duration-long) var(--motion-emphasized) 0.18s both;
 }
 
+/* ── Danger Zone (account deletion) ── */
+.profile-danger-zone {
+    margin-top: var(--space-xl);
+    padding: var(--space-lg) var(--space-xl);
+    border: 2px solid rgba(255, 40, 40, 0.25);
+    border-radius: var(--shape-md);
+    background: rgba(255, 40, 40, 0.04);
+}
+:root[data-theme="light"] .profile-danger-zone {
+    background: rgba(255, 40, 40, 0.06);
+    border-color: rgba(200, 30, 30, 0.2);
+}
+.danger-zone-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #ff4444;
+    margin: 0 0 var(--space-sm);
+}
+.danger-zone-desc {
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    margin: 0 0 var(--space-md);
+    line-height: 1.5;
+}
+.danger-zone-btn {
+    font-family: var(--font-label);
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    padding: var(--space-sm) var(--space-lg);
+    background: transparent;
+    border: 1.5px solid #ff4444;
+    color: #ff4444;
+    border-radius: var(--shape-sm);
+    cursor: pointer;
+    transition: background var(--motion-standard), color var(--motion-standard);
+}
+.danger-zone-btn:hover {
+    background: #ff4444;
+    color: #fff;
+}
+
+/* Delete account modal */
+.delete-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+.delete-modal-overlay.hidden { display: none; }
+.delete-modal {
+    width: min(400px, 90vw);
+    padding: var(--space-xl);
+    background: var(--bg-primary, #0a0a0f);
+    border: 2px solid rgba(255, 40, 40, 0.3);
+    border-radius: var(--shape-lg);
+    box-shadow: 0 0 40px rgba(255, 40, 40, 0.1);
+}
+:root[data-theme="light"] .delete-modal {
+    background: #fff;
+    border-color: rgba(200, 30, 30, 0.25);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+.delete-modal-title {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #ff4444;
+    margin: 0 0 var(--space-sm);
+}
+.delete-modal-desc {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0 0 var(--space-lg);
+}
+.delete-modal-desc strong {
+    color: #ff4444;
+    font-family: var(--font-label);
+}
+.delete-confirm-input {
+    width: 100%;
+    padding: var(--space-sm) var(--space-md);
+    font-family: var(--font-label);
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--shape-sm);
+    color: var(--text-primary);
+    outline: none;
+    transition: border-color var(--motion-standard);
+    box-sizing: border-box;
+    margin-bottom: var(--space-lg);
+}
+.delete-confirm-input:focus {
+    border-color: #ff4444;
+}
+:root[data-theme="light"] .delete-confirm-input {
+    background: rgba(0, 0, 0, 0.04);
+    border-color: rgba(0, 0, 0, 0.12);
+}
+.delete-modal-actions {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: flex-end;
+}
+.delete-modal-cancel {
+    font-family: var(--font-label);
+    font-size: 0.8rem;
+    padding: var(--space-sm) var(--space-lg);
+    background: transparent;
+    border: 1.5px solid rgba(255, 255, 255, 0.15);
+    color: var(--text-secondary);
+    border-radius: var(--shape-sm);
+    cursor: pointer;
+    transition: border-color var(--motion-standard), color var(--motion-standard);
+}
+.delete-modal-cancel:hover {
+    border-color: var(--text-primary);
+    color: var(--text-primary);
+}
+:root[data-theme="light"] .delete-modal-cancel {
+    border-color: rgba(0, 0, 0, 0.15);
+}
+.delete-modal-confirm {
+    font-family: var(--font-label);
+    font-size: 0.8rem;
+    padding: var(--space-sm) var(--space-lg);
+    background: #ff4444;
+    border: none;
+    color: #fff;
+    border-radius: var(--shape-sm);
+    cursor: pointer;
+    transition: opacity var(--motion-standard);
+}
+.delete-modal-confirm:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+.delete-modal-confirm:not(:disabled):hover {
+    opacity: 0.85;
+}
+
 /* ── Order History card (dropdown) ── */
 .profile-orders-card {
     position: relative;

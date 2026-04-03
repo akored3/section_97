@@ -16,7 +16,6 @@ export function renderProducts(productsToRender) {
     const productContainer = document.getElementById("product-container");
 
     if (!productContainer) {
-        console.error('Product container not found');
         return;
     }
 
@@ -72,7 +71,7 @@ export function renderProducts(productsToRender) {
                          data-front="${safeImage}"
                          ${hasBackImage ? `data-back="${safeBack}"` : ''}
                          data-current="front"
-                         onerror="this.onerror=null;this.src='images/placeholder.png';">
+                         >
                     ${hasBackImage ? `
                         <button class="gallery-arrow gallery-prev" aria-label="Previous image">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">

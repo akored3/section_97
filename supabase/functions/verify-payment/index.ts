@@ -31,7 +31,7 @@ Deno.serve(async (req) => {
         // ─── Look up the order ──────────────────────
         const { data: order, error: orderError } = await supabaseAdmin
             .from('orders')
-            .select('id, total, status, payment_reference, user_id')
+            .select('id, total, status, payment_reference, user_id, guest_email')
             .eq('id', order_id)
             .single();
 
@@ -43,9 +43,8 @@ Deno.serve(async (req) => {
         }
 
         // ─── Ownership check ────────────────────────
-        // For authenticated orders, verify the caller is the order owner.
-        // For guest orders (user_id is null), the payment reference match below is sufficient.
         if (order.user_id) {
+            // Authenticated order — verify JWT caller is the owner
             const authHeader = req.headers.get('Authorization');
             if (!authHeader) {
                 return new Response(
@@ -65,6 +64,12 @@ Deno.serve(async (req) => {
                     { status: 403, headers: { ...cors, 'Content-Type': 'application/json' } }
                 );
             }
+        } else if (!order.guest_email) {
+            // Order has neither user_id nor guest_email — invalid state
+            return new Response(
+                JSON.stringify({ error: 'Invalid order' }),
+                { status: 400, headers: { ...cors, 'Content-Type': 'application/json' } }
+            );
         }
 
         // Don't re-verify already verified orders — only return true for active statuses
@@ -87,7 +92,6 @@ Deno.serve(async (req) => {
         // ─── Verify with Paystack API ─────────────────
         const paystackSecret = Deno.env.get('PAYSTACK_SECRET_KEY');
         if (!paystackSecret) {
-            console.error('PAYSTACK_SECRET_KEY not configured');
             return new Response(
                 JSON.stringify({ error: 'Payment verification unavailable' }),
                 { status: 500, headers: { ...cors, 'Content-Type': 'application/json' } }
@@ -114,6 +118,19 @@ Deno.serve(async (req) => {
             );
         }
 
+        // ─── Guest email verification ────────────────
+        // For guest orders, confirm the Paystack transaction email matches the guest_email on the order.
+        // This prevents third parties who know the order_id + reference from triggering verification.
+        if (!order.user_id && order.guest_email) {
+            const paystackEmail = paystackData.data?.customer?.email?.toLowerCase();
+            if (!paystackEmail || paystackEmail !== order.guest_email.toLowerCase()) {
+                return new Response(
+                    JSON.stringify({ error: 'Email mismatch' }),
+                    { status: 403, headers: { ...cors, 'Content-Type': 'application/json' } }
+                );
+            }
+        }
+
         // ─── Amount verification ──────────────────────
         // Paystack returns amount in kobo (1 NGN = 100 kobo)
         const paidAmountNaira = paystackData.data.amount / 100;
@@ -126,10 +143,6 @@ Deno.serve(async (req) => {
                 .from('orders')
                 .update({ status: 'failed' })
                 .eq('id', order_id);
-
-            console.error(
-                `Amount mismatch: paid ₦${paidAmountNaira}, order total ₦${orderTotal}, order ${order_id}`
-            );
 
             return new Response(
                 JSON.stringify({ verified: false, error: 'Amount mismatch', status: 'failed' }),
@@ -146,7 +159,6 @@ Deno.serve(async (req) => {
         );
 
     } catch (err) {
-        console.error('Verification error:', err.message);
         return new Response(
             JSON.stringify({ error: 'Internal server error' }),
             { status: 500, headers: { ...cors, 'Content-Type': 'application/json' } }

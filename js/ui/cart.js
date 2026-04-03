@@ -80,8 +80,7 @@ function renderDrawer() {
 
     container.innerHTML = cart.map((item, i) => `
         <div class="cart-drawer-item" data-key="${escapeHtml(item.cartKey)}" style="animation-delay:${i * 50}ms">
-            <img class="cart-drawer-item-img" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}"
-                 onerror="this.style.display='none'">
+            <img class="cart-drawer-item-img" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}">
             <div class="cart-drawer-item-details">
                 <div class="cart-drawer-item-name">${escapeHtml(item.name)}</div>
                 ${item.size ? `<div class="cart-drawer-item-size">Size ${escapeHtml(item.size)}</div>` : ''}
@@ -296,7 +295,6 @@ async function syncUpsert(item) {
             quantity: item.quantity
         }, { onConflict: 'user_id,product_id,size' });
     } catch (e) {
-        console.warn('Cart sync (upsert) failed:', e);
     }
 }
 
@@ -308,7 +306,6 @@ async function syncDelete(item) {
             .eq('product_id', parseInt(item.id));
         await withSize(q, item.size);
     } catch (e) {
-        console.warn('Cart sync (delete) failed:', e);
     }
 }
 
@@ -320,7 +317,6 @@ async function syncUpdate(item) {
             .eq('product_id', parseInt(item.id));
         await withSize(q, item.size);
     } catch (e) {
-        console.warn('Cart sync (update) failed:', e);
     }
 }
 
@@ -349,7 +345,6 @@ async function loadFromSupabase() {
 
         return items;
     } catch (e) {
-        console.warn('Failed to load cart from Supabase:', e);
         return null;
     }
 }
@@ -373,7 +368,6 @@ async function attachStockLimits(items) {
         }
         saveLocal(); // persist maxStock to localStorage
     } catch (e) {
-        console.warn('Failed to fetch stock limits:', e);
     }
 }
 
@@ -419,7 +413,6 @@ export async function handleAuthChange(userId) {
                     );
                 }
             } catch (e) {
-                console.warn('Failed to sync merged cart:', e);
             }
         } else if (serverCart.length === 0 && localCart.length > 0) {
             // Server empty but local has items — sync failed earlier, re-push
@@ -434,7 +427,6 @@ export async function handleAuthChange(userId) {
                     }))
                 );
             } catch (e) {
-                console.warn('Failed to re-sync local cart:', e);
             }
         } else {
             // Normal: server is source of truth
@@ -668,7 +660,6 @@ export async function clearCartFull() {
         try {
             await supabase.from('cart_items').delete().eq('user_id', currentUserId);
         } catch (e) {
-            console.warn('Failed to clear Supabase cart:', e);
         }
     }
     cart = [];

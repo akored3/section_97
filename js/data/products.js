@@ -48,7 +48,6 @@ export async function fetchProducts() {
 
         return [...newProducts, ...restProducts];
     } catch (error) {
-        console.error('Error fetching products from Supabase:', error);
         return [];
     }
 }
@@ -82,7 +81,6 @@ export async function fetchProductById(id) {
             }))
         };
     } catch (error) {
-        console.error('Error fetching product:', error);
         return null;
     }
 }

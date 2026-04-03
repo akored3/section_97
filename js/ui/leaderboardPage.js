@@ -1,4 +1,5 @@
 // Leaderboard page — displays top spenders ranked by total spend
+import './imgFallback.js';
 import { supabase } from '../config/supabase.js';
 import { initializeTheme } from './theme.js';
 import { initializeCart, setupCartDrawer, handleAuthChange } from './cart.js';
@@ -81,7 +82,7 @@ function renderPodium(top3) {
                           rank === 2 ? 'rgba(255,0,255,0.25)' : 'rgba(0,212,255,0.25)';
 
         const avatarContent = user.avatar_url
-            ? `<img src="${escapeHtml(user.avatar_url)}" alt="${escapeHtml(user.username)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/><div class="lb-avatar-fallback" style="display:none">${userSvg}</div>`
+            ? `<img src="${escapeHtml(user.avatar_url)}" alt="${escapeHtml(user.username)}"/><div class="lb-avatar-fallback" style="display:none">${userSvg}</div>`
             : userSvg;
 
         return `
@@ -149,7 +150,7 @@ function renderTable(users, currentUserId, startPos = 4) {
         const isYou = currentUserId && user.id === currentUserId;
 
         const avatarContent = user.avatar_url
-            ? `<img src="${escapeHtml(user.avatar_url)}" alt="${escapeHtml(user.username)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/><div class="lb-avatar-fallback" style="display:none">${userSvg}</div>`
+            ? `<img src="${escapeHtml(user.avatar_url)}" alt="${escapeHtml(user.username)}"/><div class="lb-avatar-fallback" style="display:none">${userSvg}</div>`
             : userSvg;
 
         const rankAttr = pos <= 3 ? ` data-rank="${pos}"` : '';
@@ -326,7 +327,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         startGlitch();
 
     } catch (err) {
-        console.error('Leaderboard load failed:', err);
         document.getElementById('lb-skeleton').classList.add('hidden');
         document.getElementById('lb-content').classList.remove('hidden');
         document.getElementById('lb-podium').innerHTML = `
