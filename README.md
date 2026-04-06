@@ -30,6 +30,8 @@ A cyberpunk streetwear e-commerce store with real payments. Built from scratch w
 - Add-to-cart with size selection
 - Sticky add-to-cart bar on mobile
 - Wishlist heart button
+- **Product reviews** — verified-purchase reviews with star ratings, fit feedback (runs small/true to size/runs large), rating distribution bars, and fit consensus pills
+- Star ratings displayed on store product cards
 
 ### Shopping Cart
 - Hybrid persistence: Supabase for logged-in users, localStorage for guests

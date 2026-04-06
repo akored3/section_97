@@ -7,6 +7,7 @@ import { initializeCart, setupCartDrawer, addToCart, openCartDrawer, handleAuthC
 import { getCurrentUser } from '../auth/auth.js';
 import { initializeWishlist, isWishlisted, toggleWishlist, handleWishlistAuth } from './wishlist.js';
 import { formatPrice, initializeCurrency } from '../config/currency.js';
+import { fetchReviews, hasPurchased, renderReviewSection, setupReviewForm } from './reviews.js';
 
 let selectedSize = null;
 let selectedSizeStock = null;
@@ -278,6 +279,33 @@ function setupPdpWishlist(product) {
     });
 }
 
+// Load and render reviews for the current product
+async function loadReviews(productId) {
+    const section = document.getElementById('rv-section');
+    if (!section) return;
+
+    const [reviews, user, canReview] = await Promise.all([
+        fetchReviews(productId),
+        getCurrentUser(),
+        hasPurchased(productId)
+    ]);
+
+    const userReview = user ? reviews.find(r => r.user_id === user.id) : null;
+
+    section.classList.remove('hidden');
+    renderReviewSection(reviews, canReview, userReview, productId);
+
+    // Stagger card entrance animations
+    section.querySelectorAll('.rv-card').forEach((card, i) => {
+        card.style.animationDelay = `${i * 80}ms`;
+    });
+
+    // Setup form if user can review
+    if (canReview) {
+        setupReviewForm(productId, () => loadReviews(productId));
+    }
+}
+
 // Initialize page
 document.addEventListener('DOMContentLoaded', async () => {
     initializeTheme();
@@ -311,4 +339,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupAddToCart();
     setupStickyBar();
     setupPdpWishlist(product);
+
+    // Load reviews (non-blocking)
+    loadReviews(product.id);
 });

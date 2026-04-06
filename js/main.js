@@ -11,6 +11,7 @@ import { initPageLoader } from './ui/progressBar.js';
 import { initializeWishlist, handleWishlistAuth, setupWishlistDrawer, setProductsCache, fetchLikeCounts } from './ui/wishlist.js';
 import { initScrollSnap } from './ui/scrollSnap.js';
 import { initializeCurrency } from './config/currency.js';
+import { fetchProductRatings, renderCardRating } from './ui/reviews.js';
 
 // Track if user is logged in
 let isLoggedIn = false;
@@ -241,6 +242,23 @@ document.addEventListener('DOMContentLoaded', async function() {
         setupAddToCartButtons();
         fetchLikeCounts(); // Fire-and-forget — updates counts when ready
         initScrollSnap(); // JS-based snap on idle (replaces CSS scroll-snap)
+
+        // Inject star ratings into cards (non-blocking)
+        fetchProductRatings(products.map(p => p.id)).then(ratings => {
+            document.querySelectorAll('.product-card').forEach(card => {
+                const id = parseInt(card.querySelector('.add-to-cart-btn')?.dataset.id);
+                const info = ratings.get(id);
+                if (info) {
+                    const priceRow = card.querySelector('.product-price-row');
+                    if (priceRow) {
+                        const ratingEl = document.createElement('div');
+                        ratingEl.innerHTML = renderCardRating(info.avg, info.count);
+                        const ratingDiv = ratingEl.firstElementChild;
+                        if (ratingDiv) priceRow.parentNode.insertBefore(ratingDiv, priceRow);
+                    }
+                }
+            });
+        });
     } catch (e) {
         const container = document.getElementById('product-container');
         if (container) {
