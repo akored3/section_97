@@ -7,14 +7,25 @@ import { escapeHtml } from '../components/productRenderer.js';
 export async function fetchReviews(productId) {
     const { data, error } = await supabase
         .from('reviews')
-        .select('id, rating, fit, body, created_at, user_id, profiles:user_id (username)')
+        .select('id, rating, fit, body, created_at, user_id')
         .eq('product_id', productId)
         .order('created_at', { ascending: false });
 
     if (error) return [];
+    if (data.length === 0) return [];
+
+    // Batch-fetch usernames from profiles
+    const userIds = [...new Set(data.map(r => r.user_id))];
+    const { data: profiles } = await supabase
+        .from('profiles')
+        .select('id, username')
+        .in('id', userIds);
+
+    const usernameMap = new Map((profiles || []).map(p => [p.id, p.username]));
+
     return data.map(r => ({
         ...r,
-        username: r.profiles?.username || 'ANONYMOUS'
+        username: usernameMap.get(r.user_id) || 'ANONYMOUS'
     }));
 }
 
