@@ -210,8 +210,8 @@ export function renderReviewSection(reviews, canReview, userReview, productId) {
             <form class="rv-form hidden" id="rv-form">
                 <div class="rv-form-stars" id="rv-form-stars">
                     <span class="rv-form-label">RATING</span>
-                    <div class="rv-star-input" id="rv-star-input">
-                        ${[1,2,3,4,5].map(i => `<button type="button" class="rv-star-btn${userReview && i <= userReview.rating ? ' active' : ''}" data-rating="${i}" aria-label="${i} star${i > 1 ? 's' : ''}">
+                    <div class="rv-star-input" id="rv-star-input" role="radiogroup" aria-label="Product rating">
+                        ${[1,2,3,4,5].map(i => `<button type="button" class="rv-star-btn${userReview && i <= userReview.rating ? ' active' : ''}" data-rating="${i}" aria-label="${i} star${i > 1 ? 's' : ''}" aria-pressed="${userReview && i <= userReview.rating ? 'true' : 'false'}">
                             <svg viewBox="0 0 24 24" width="28" height="28"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                         </button>`).join('')}
                     </div>
@@ -223,8 +223,8 @@ export function renderReviewSection(reviews, canReview, userReview, productId) {
                     </div>
                 </div>
                 <div class="rv-form-body">
-                    <textarea id="rv-body" class="rv-textarea" placeholder="How's the quality? How does it fit? Would you recommend it?" maxlength="500" minlength="10">${userReview ? escapeHtml(userReview.body) : ''}</textarea>
-                    <span class="rv-char-count" id="rv-char-count">${userReview ? userReview.body.length : 0}/500</span>
+                    <textarea id="rv-body" class="rv-textarea" placeholder="How's the quality? How does it fit? Would you recommend it?" maxlength="500" minlength="10" aria-describedby="rv-char-count">${userReview ? escapeHtml(userReview.body) : ''}</textarea>
+                    <span class="rv-char-count" id="rv-char-count" aria-live="polite">${userReview ? userReview.body.length : 0}/500</span>
                 </div>
                 <div class="rv-form-actions">
                     <button type="submit" class="rv-submit-btn" id="rv-submit-btn" disabled>
@@ -243,10 +243,11 @@ export function renderReviewSection(reviews, canReview, userReview, productId) {
         </div>`;
     } else {
         html += `<div class="rv-empty">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="40" opacity="0.4">
+            <svg class="rv-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48">
                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
             </svg>
-            <p>No reviews yet${canReview ? ' — be the first to drop one' : ''}</p>
+            <p>NO REVIEWS YET</p>
+            ${canReview ? '<span class="rv-empty-cta">BE THE FIRST TO DROP ONE</span>' : '<span class="rv-empty-hint">PURCHASE TO REVIEW</span>'}
         </div>`;
     }
 
@@ -299,7 +300,7 @@ export function setupReviewForm(productId, onSubmitted) {
 
     // Star input
     const starBtns = form.querySelectorAll('.rv-star-btn');
-    starBtns.forEach(btn => {
+    starBtns.forEach((btn, index) => {
         btn.addEventListener('mouseenter', () => {
             const val = parseInt(btn.dataset.rating);
             starBtns.forEach(b => {
@@ -309,9 +310,21 @@ export function setupReviewForm(productId, onSubmitted) {
         btn.addEventListener('click', () => {
             selectedRating = parseInt(btn.dataset.rating);
             starBtns.forEach(b => {
-                b.classList.toggle('active', parseInt(b.dataset.rating) <= selectedRating);
+                const active = parseInt(b.dataset.rating) <= selectedRating;
+                b.classList.toggle('active', active);
+                b.setAttribute('aria-pressed', active);
             });
             validateForm();
+        });
+        // Keyboard arrow navigation
+        btn.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' && index < starBtns.length - 1) {
+                e.preventDefault();
+                starBtns[index + 1].focus();
+            } else if (e.key === 'ArrowLeft' && index > 0) {
+                e.preventDefault();
+                starBtns[index - 1].focus();
+            }
         });
     });
     // Reset hover on mouse leave

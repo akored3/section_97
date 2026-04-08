@@ -8991,11 +8991,10 @@ html[data-auth-mode="signup"] #signup-form { display: flex !important; }
 }
 
 .rv-avg {
-    font: var(--text-headline-lg);
-    font-size: 1.8rem;
+    font: 700 1.8rem/1 var(--font-display);
     color: #FFD700;
-    text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
-    line-height: 1;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.4), 0 0 4px rgba(255, 215, 0, 0.8);
+    letter-spacing: 1px;
 }
 
 .rv-stars {
@@ -9011,12 +9010,12 @@ html[data-auth-mode="signup"] #signup-form { display: flex !important; }
 
 .rv-star-full {
     color: #FFD700;
-    filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.5));
+    filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.7));
 }
 
 .rv-star-half {
     color: #FFD700;
-    filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.5));
+    filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.7));
 }
 
 .rv-star-empty {
@@ -9058,7 +9057,7 @@ html[data-auth-mode="signup"] #signup-form { display: flex !important; }
 
 .rv-dist-bar {
     flex: 1;
-    height: 8px;
+    height: 6px;
     background: var(--outline-variant);
     border-radius: var(--shape-full);
     overflow: hidden;
@@ -9066,10 +9065,10 @@ html[data-auth-mode="signup"] #signup-form { display: flex !important; }
 
 .rv-dist-fill {
     height: 100%;
-    background: var(--accent);
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-bright) 100%);
     border-radius: var(--shape-full);
     transition: width var(--duration-long) var(--motion-emphasized);
-    box-shadow: 0 0 8px var(--glow-accent);
+    box-shadow: 0 0 10px var(--glow-accent);
 }
 
 .rv-dist-count {
@@ -9117,19 +9116,21 @@ html[data-auth-mode="signup"] #signup-form { display: flex !important; }
     gap: var(--space-sm);
     font: var(--text-label-md);
     letter-spacing: 1.5px;
-    color: var(--accent);
-    background: transparent;
-    border: 1.5px solid var(--outline-accent);
+    color: var(--on-accent);
+    background: var(--accent);
+    border: 1.5px solid var(--accent);
     border-radius: var(--shape-sm);
-    padding: 0.6rem 1.2rem;
+    padding: 0.65rem 1.5rem;
     cursor: pointer;
     transition: all var(--duration-medium) var(--motion-standard);
+    box-shadow: 0 0 12px var(--glow-accent);
 }
 
 .rv-write-btn:hover {
-    background: var(--surface-2);
-    border-color: var(--accent);
-    box-shadow: 0 0 12px var(--glow-accent);
+    background: var(--accent-bright);
+    border-color: var(--accent-bright);
+    box-shadow: 0 0 20px var(--glow-accent);
+    transform: translateY(-2px);
 }
 
 /* ── Review form ── */
@@ -9328,11 +9329,14 @@ html[data-auth-mode="signup"] #signup-form { display: flex !important; }
     border: 1px solid var(--outline-variant);
     border-radius: var(--shape-md);
     animation: rv-card-in var(--duration-medium) var(--motion-emphasized) both;
-    transition: border-color var(--duration-medium) var(--motion-standard);
+    transition: all var(--duration-medium) var(--motion-standard);
 }
 
 .rv-card:hover {
     border-color: var(--outline-accent);
+    background: var(--surface-2);
+    box-shadow: 0 0 12px rgba(0, 255, 100, 0.15);
+    transform: translateY(-2px);
 }
 
 @keyframes rv-card-in {
@@ -9405,14 +9409,39 @@ html[data-auth-mode="signup"] #signup-form { display: flex !important; }
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--space-sm);
-    padding: 2.5rem 1rem;
+    gap: var(--space-md);
+    padding: 3rem 1rem;
     color: var(--text-muted);
 }
 
+.rv-empty-icon {
+    opacity: 0.4;
+    animation: rv-pulse 2.5s var(--motion-standard) infinite;
+}
+
+@keyframes rv-pulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.6; }
+}
+
 .rv-empty p {
-    font: var(--text-body-md);
+    font: var(--text-label-md);
+    letter-spacing: 1px;
+    color: var(--text-secondary);
     margin: 0;
+}
+
+.rv-empty-cta {
+    font: var(--text-label-sm);
+    color: var(--accent);
+    letter-spacing: 0.5px;
+    opacity: 0.8;
+}
+
+.rv-empty-hint {
+    font: var(--text-label-sm);
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
 }
 
 /* ── Card ratings (store page) ── */
@@ -9425,7 +9454,7 @@ html[data-auth-mode="signup"] #signup-form { display: flex !important; }
 
 .card-rating .rv-star-full {
     color: #FFD700;
-    filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.5));
+    filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.6));
 }
 
 .card-rating-avg {
@@ -9482,9 +9511,17 @@ html[data-auth-mode="signup"] #signup-form { display: flex !important; }
         padding: 1rem;
     }
 
+    .rv-textarea {
+        min-height: 80px;
+    }
+
+    .rv-star-btn {
+        padding: 6px;
+    }
+
     .rv-star-btn svg {
-        width: 24px;
-        height: 24px;
+        width: 26px;
+        height: 26px;
     }
 
     .rv-fit-input {
@@ -9492,8 +9529,25 @@ html[data-auth-mode="signup"] #signup-form { display: flex !important; }
     }
 
     .rv-fit-btn {
-        font-size: 0.6rem;
-        padding: 0.35rem 0.65rem;
+        font-size: 0.65rem;
+        padding: 0.4rem 0.7rem;
+    }
+
+    .rv-username {
+        max-width: 160px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .rv-card-stars .rv-star {
+        width: 16px;
+        height: 16px;
+    }
+
+    .rv-char-count {
+        right: 12px;
+        bottom: 10px;
     }
 }
 
@@ -9502,4 +9556,5 @@ html[data-auth-mode="signup"] #signup-form { display: flex !important; }
     .rv-card { animation: none; opacity: 1; transform: none; }
     .rv-form { animation: none; }
     .rv-dist-fill { transition: none; }
+    .rv-empty-icon { animation: none; opacity: 0.4; }
 }
