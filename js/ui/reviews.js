@@ -14,14 +14,18 @@ export async function fetchReviews(productId) {
     if (error) return [];
     if (data.length === 0) return [];
 
-    // Batch-fetch usernames from profiles
+    // Batch-fetch usernames from profiles (non-fatal if this fails)
     const userIds = [...new Set(data.map(r => r.user_id))];
-    const { data: profiles } = await supabase
-        .from('profiles')
-        .select('id, username')
-        .in('id', userIds);
-
-    const usernameMap = new Map((profiles || []).map(p => [p.id, p.username]));
+    let usernameMap = new Map();
+    try {
+        const { data: profiles } = await supabase
+            .from('profiles')
+            .select('id, username')
+            .in('id', userIds);
+        usernameMap = new Map((profiles || []).map(p => [p.id, p.username]));
+    } catch (_) {
+        // Profiles unavailable — reviews still render with fallback names
+    }
 
     return data.map(r => ({
         ...r,
@@ -31,9 +35,12 @@ export async function fetchReviews(productId) {
 
 // ── Fetch average ratings for multiple products (store cards) ──
 export async function fetchProductRatings(productIds) {
+    if (!productIds || productIds.length === 0) return new Map();
+
     const { data, error } = await supabase
         .from('reviews')
-        .select('product_id, rating');
+        .select('product_id, rating')
+        .in('product_id', productIds);
 
     if (error) return new Map();
 
@@ -66,6 +73,17 @@ export async function hasPurchased(productId) {
 
 // ── Submit a review via RPC ──
 export async function submitReview(productId, rating, fit, body) {
+    // Client-side validation before hitting the network
+    if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+        return { error: 'Rating must be 1-5' };
+    }
+    if (fit && !['small', 'tts', 'large'].includes(fit)) {
+        return { error: 'Invalid fit value' };
+    }
+    if (!body || body.trim().length < 10 || body.length > 500) {
+        return { error: 'Review must be 10-500 characters' };
+    }
+
     const { data, error } = await supabase.rpc('submit_review', {
         p_product_id: productId,
         p_rating: rating,
@@ -88,6 +106,7 @@ export async function deleteReview(productId) {
 }
 
 // ── Generate star SVGs ──
+let _starGradientId = 0;
 export function renderStars(rating, size = 16) {
     let html = '';
     for (let i = 1; i <= 5; i++) {
@@ -95,10 +114,11 @@ export function renderStars(rating, size = 16) {
             // Full star
             html += `<svg class="rv-star rv-star-full" viewBox="0 0 24 24" width="${size}" height="${size}"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor" stroke="currentColor" stroke-width="1"/></svg>`;
         } else if (i - rating < 1 && i - rating > 0) {
-            // Half star
+            // Half star — unique gradient ID to avoid SVG collisions
+            const gid = `rv-half-${++_starGradientId}`;
             html += `<svg class="rv-star rv-star-half" viewBox="0 0 24 24" width="${size}" height="${size}">
-                <defs><linearGradient id="half-${size}"><stop offset="50%" stop-color="currentColor"/><stop offset="50%" stop-color="transparent"/></linearGradient></defs>
-                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="url(#half-${size})" stroke="currentColor" stroke-width="1"/>
+                <defs><linearGradient id="${gid}"><stop offset="50%" stop-color="currentColor"/><stop offset="50%" stop-color="transparent"/></linearGradient></defs>
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="url(#${gid})" stroke="currentColor" stroke-width="1"/>
             </svg>`;
         } else {
             // Empty star
@@ -242,7 +262,7 @@ function renderReviewCard(review) {
         <div class="rv-card-header">
             <div class="rv-card-user">
                 <span class="rv-username">${escapeHtml(review.username)}</span>
-                <span class="rv-verified">✓ VERIFIED</span>
+                <span class="rv-verified" title="Verified purchase">✓ VERIFIED</span>
             </div>
             <div class="rv-card-stars">${renderStars(review.rating, 14)}</div>
         </div>
@@ -335,25 +355,35 @@ export function setupReviewForm(productId, onSubmitted) {
     }
     validateForm();
 
-    // Submit
+    // Submit (with double-submit guard)
+    const isEdit = !!form.querySelector('#rv-delete-btn');
+    const defaultLabel = isEdit ? 'UPDATE REVIEW' : 'POST REVIEW';
+    let submitting = false;
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
+        if (submitting) return;
+        submitting = true;
         submitBtn.disabled = true;
         submitBtn.textContent = 'SUBMITTING...';
 
         const result = await submitReview(productId, selectedRating, selectedFit, textarea.value.trim());
 
         if (result.error) {
+            submitting = false;
             submitBtn.textContent = result.error;
             setTimeout(() => {
-                submitBtn.textContent = 'POST REVIEW';
+                submitBtn.textContent = defaultLabel;
                 submitBtn.disabled = false;
             }, 2500);
             return;
         }
 
         submitBtn.textContent = 'POSTED ✓';
-        setTimeout(() => onSubmitted(), 600);
+        setTimeout(() => {
+            submitting = false;
+            onSubmitted();
+        }, 600);
     });
 
     // Delete
