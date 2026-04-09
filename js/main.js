@@ -296,9 +296,10 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         const user = await getCurrentUser();
         if (user) {
-            rankBtn.classList.add('hidden');
             return;
         }
+        // Guest — show the FAB
+        rankBtn.classList.remove('hidden');
 
         function openModal() {
             modal.classList.add('active');
