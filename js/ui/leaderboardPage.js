@@ -11,6 +11,13 @@ import { initializeMenu } from './menu.js';
 
 const userSvg = `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="32" cy="20" r="12"/><path d="M8 58C8 44 18 36 32 36C46 36 56 44 56 58" stroke-linecap="round"/></svg>`;
 
+// ── Build avatar HTML with hidden fallback for img error ──
+function buildAvatarHtml(user) {
+    return user.avatar_url
+        ? `<img src="${escapeHtml(user.avatar_url)}" alt="${escapeHtml(user.username)}"/><div class="lb-avatar-fallback" style="display:none">${userSvg}</div>`
+        : userSvg;
+}
+
 // ── Abbreviate currency amounts ──
 function abbreviateAmount(amount) {
     if (amount >= 1_000_000) return `${(amount / 1_000_000).toFixed(1).replace(/\.0$/, '')}M`;
@@ -81,9 +88,7 @@ function renderPodium(top3) {
         const pulseColor = rank === 1 ? 'rgba(255,215,0,0.3)' :
                           rank === 2 ? 'rgba(255,0,255,0.25)' : 'rgba(0,212,255,0.25)';
 
-        const avatarContent = user.avatar_url
-            ? `<img src="${escapeHtml(user.avatar_url)}" alt="${escapeHtml(user.username)}"/><div class="lb-avatar-fallback" style="display:none">${userSvg}</div>`
-            : userSvg;
+        const avatarContent = buildAvatarHtml(user);
 
         return `
             <div class="lb-podium-card" data-rank="${rank}" style="--lb-pulse-color: ${pulseColor}">
@@ -149,9 +154,7 @@ function renderTable(users, currentUserId, startPos = 4) {
         const spent = formatPrice(user.total_spent || 0, { compact: true });
         const isYou = currentUserId && user.id === currentUserId;
 
-        const avatarContent = user.avatar_url
-            ? `<img src="${escapeHtml(user.avatar_url)}" alt="${escapeHtml(user.username)}"/><div class="lb-avatar-fallback" style="display:none">${userSvg}</div>`
-            : userSvg;
+        const avatarContent = buildAvatarHtml(user);
 
         const rankAttr = pos <= 3 ? ` data-rank="${pos}"` : '';
 
