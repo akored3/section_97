@@ -14,23 +14,27 @@ export async function fetchReviews(productId) {
     if (error) return [];
     if (data.length === 0) return [];
 
-    // Batch-fetch usernames from profiles (non-fatal if this fails)
+    // Batch-fetch usernames + avatars from profiles (non-fatal if this fails)
     const userIds = [...new Set(data.map(r => r.user_id))];
-    let usernameMap = new Map();
+    let profileMap = new Map();
     try {
         const { data: profiles } = await supabase
             .from('profiles')
-            .select('id, username')
+            .select('id, username, avatar_url')
             .in('id', userIds);
-        usernameMap = new Map((profiles || []).map(p => [p.id, p.username]));
+        profileMap = new Map((profiles || []).map(p => [p.id, { username: p.username, avatar: p.avatar_url }]));
     } catch (_) {
         // Profiles unavailable — reviews still render with fallback names
     }
 
-    return data.map(r => ({
-        ...r,
-        username: usernameMap.get(r.user_id) || 'ANONYMOUS'
-    }));
+    return data.map(r => {
+        const profile = profileMap.get(r.user_id);
+        return {
+            ...r,
+            username: profile?.username || 'ANONYMOUS',
+            avatar: profile?.avatar || null
+        };
+    });
 }
 
 // ── Fetch average ratings for multiple products (store cards) ──
@@ -254,18 +258,31 @@ export function renderReviewSection(reviews, canReview, userReview, productId) {
     container.innerHTML = html;
 }
 
+// ── Generate initials fallback avatar ──
+function avatarFallback(username) {
+    const initial = (username || '?')[0].toUpperCase();
+    return `<div class="rv-avatar rv-avatar-fallback">${initial}</div>`;
+}
+
 // ── Single review card ──
 function renderReviewCard(review) {
     const date = new Date(review.created_at);
     const dateStr = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
 
+    const avatarHtml = review.avatar
+        ? `<img class="rv-avatar" src="${escapeHtml(review.avatar)}" alt="${escapeHtml(review.username)}" onerror="this.outerHTML='${avatarFallback(review.username).replace(/'/g, "\\'")}'"/>`
+        : avatarFallback(review.username);
+
     return `<div class="rv-card">
         <div class="rv-card-header">
-            <div class="rv-card-user">
-                <span class="rv-username">${escapeHtml(review.username)}</span>
-                <span class="rv-verified" title="Verified purchase">✓ VERIFIED</span>
+            ${avatarHtml}
+            <div class="rv-card-meta">
+                <div class="rv-card-user">
+                    <span class="rv-username">${escapeHtml(review.username)}</span>
+                    <span class="rv-verified" title="Verified purchase">✓ VERIFIED</span>
+                </div>
+                <div class="rv-card-stars">${renderStars(review.rating, 14)}</div>
             </div>
-            <div class="rv-card-stars">${renderStars(review.rating, 14)}</div>
         </div>
         <p class="rv-card-body">${escapeHtml(review.body)}</p>
         <div class="rv-card-footer">

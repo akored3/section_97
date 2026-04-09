@@ -9344,11 +9344,40 @@ html[data-auth-mode="signup"] #signup-form { display: flex !important; }
     to { opacity: 1; transform: translateY(0); }
 }
 
+/* ── Review avatars ── */
+.rv-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--shape-full);
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 1.5px solid var(--outline-accent);
+    box-shadow: 0 0 8px var(--glow-accent);
+}
+
+.rv-avatar-fallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface-3);
+    color: var(--accent);
+    font: 700 0.85rem/1 var(--font-display);
+    letter-spacing: 1px;
+}
+
 .rv-card-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: var(--space-sm);
     margin-bottom: 0.75rem;
+}
+
+.rv-card-meta {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 0;
 }
 
 .rv-card-user {
@@ -9502,9 +9531,18 @@ html[data-auth-mode="signup"] #signup-form { display: flex !important; }
     }
 
     .rv-card-header {
+        gap: var(--space-sm);
+    }
+
+    .rv-card-meta {
         flex-direction: column;
         align-items: flex-start;
-        gap: var(--space-xs);
+        gap: 2px;
+    }
+
+    .rv-avatar {
+        width: 32px;
+        height: 32px;
     }
 
     .rv-form {
