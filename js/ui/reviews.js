@@ -142,6 +142,25 @@ export function renderCardRating(avg, count) {
     </div>`;
 }
 
+// ── Inject star ratings into store product cards (fire-and-forget) ──
+export function injectCardRatings(productIds) {
+    fetchProductRatings(productIds).then(ratings => {
+        document.querySelectorAll('.product-card').forEach(card => {
+            const id = parseInt(card.querySelector('.add-to-cart-btn')?.dataset.id);
+            const info = ratings.get(id);
+            if (info) {
+                const priceRow = card.querySelector('.product-price-row');
+                if (priceRow) {
+                    const ratingEl = document.createElement('div');
+                    ratingEl.innerHTML = renderCardRating(info.avg, info.count);
+                    const ratingDiv = ratingEl.firstElementChild;
+                    if (ratingDiv) priceRow.parentNode.insertBefore(ratingDiv, priceRow);
+                }
+            }
+        });
+    });
+}
+
 // ── Fit label map ──
 const FIT_LABELS = { small: 'RUNS SMALL', tts: 'TRUE TO SIZE', large: 'RUNS LARGE' };
 

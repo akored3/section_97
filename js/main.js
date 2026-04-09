@@ -4,190 +4,19 @@ import { renderProducts } from './components/productRenderer.js';
 import { initializeFilters, initializeSearch } from './components/filters.js';
 import { initializeTheme } from './ui/theme.js';
 import { initializeMenu } from './ui/menu.js';
-import { getCurrentUser, onAuthStateChange, signOut } from './auth/auth.js';
+import { getCurrentUser, onAuthStateChange } from './auth/auth.js';
+import { updateAuthButton, initializeAuthDropdown, isUserLoggedIn } from './auth/authUI.js';
+import { initializeIdleTimeout } from './auth/idleTimeout.js';
 import { initializeLazyLoading } from './ui/lazyLoad.js';
 import { initializeCart, setupCartDrawer, setupAddToCartButtons, handleAuthChange, updateBadgeIfGuest } from './ui/cart.js';
 import { initPageLoader } from './ui/progressBar.js';
 import { initializeWishlist, handleWishlistAuth, setupWishlistDrawer, setProductsCache, fetchLikeCounts } from './ui/wishlist.js';
 import { initScrollSnap } from './ui/scrollSnap.js';
 import { initializeCurrency } from './config/currency.js';
-import { fetchProductRatings, renderCardRating } from './ui/reviews.js';
+import { injectCardRatings } from './ui/reviews.js';
+import { initializeRankUpFAB } from './ui/rankUpFAB.js';
 
-// Track if user is logged in
-let isLoggedIn = false;
-
-
-// Default user SVG icon markup (used to restore when logged out)
-const defaultUserSvg = `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><circle cx="32" cy="20" r="12"/><path d="M8 58C8 44 18 36 32 36C46 36 56 44 56 58"/><path d="M24 20H40" stroke-width="0.5" stroke-dasharray="2 2" opacity="0.3"/></svg>`;
-
-// Swap the SVG icon with the user's avatar photo (only if they have one)
-function swapAuthIcon(el, user) {
-    if (!el || !user.avatar) return;
-    if (el.querySelector('.auth-avatar')) return;
-    const svg = el.querySelector('svg');
-    if (svg) {
-        const img = document.createElement('img');
-        img.className = 'auth-avatar';
-        img.alt = `${user.username}'s avatar`;
-        img.src = user.avatar;
-        img.onerror = () => {
-            img.onerror = null;
-            const temp = document.createElement('template');
-            temp.innerHTML = defaultUserSvg.trim();
-            img.replaceWith(temp.content.firstChild);
-        };
-        svg.replaceWith(img);
-    }
-}
-
-// Restore the default SVG icon when logged out
-function restoreAuthIcon(el) {
-    if (!el) return;
-    const img = el.querySelector('.auth-avatar');
-    if (img) {
-        const temp = document.createElement('template');
-        temp.innerHTML = defaultUserSvg.trim();
-        img.replaceWith(temp.content.firstChild);
-    }
-}
-
-// Update auth button based on login state (desktop + mobile)
-async function updateAuthButton() {
-    const authText = document.getElementById('auth-text');
-    const authBtn = document.getElementById('auth-btn');
-    const mobileLoginBtn = document.getElementById('mobile-login-btn');
-    const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
-
-    const user = await getCurrentUser();
-    isLoggedIn = !!user;
-
-    // Cache username + avatar in localStorage to prevent flash on next page load
-    try {
-        if (user && user.username) {
-            localStorage.setItem('section97-username', user.username);
-            if (user.avatar) {
-                localStorage.setItem('section97-avatar', user.avatar);
-            } else {
-                localStorage.removeItem('section97-avatar');
-            }
-        } else {
-            localStorage.removeItem('section97-username');
-            localStorage.removeItem('section97-avatar');
-        }
-    } catch (e) { /* storage unavailable */ }
-
-    // Desktop auth button
-    if (authText && authBtn) {
-        if (user) {
-            authText.textContent = user.username || 'Account';
-            authBtn.title = `Logged in as ${user.username}`;
-            swapAuthIcon(authBtn, user);
-        } else {
-            authText.textContent = 'Login';
-            authBtn.title = 'Login or Sign up';
-            restoreAuthIcon(authBtn);
-        }
-    }
-
-    // Mobile auth section
-    const mobileUserInfo = document.getElementById('mobile-user-info');
-    const mobileUsername = document.getElementById('mobile-username');
-
-    if (mobileLoginBtn && mobileLogoutBtn) {
-        if (user) {
-            mobileLoginBtn.classList.add('hidden');
-            if (mobileUserInfo) {
-                mobileUserInfo.classList.remove('hidden');
-                swapAuthIcon(mobileUserInfo, user);
-            }
-            if (mobileUsername) mobileUsername.textContent = user.username || 'Account';
-            mobileLogoutBtn.classList.remove('hidden');
-        } else {
-            mobileLoginBtn.classList.remove('hidden');
-            if (mobileUserInfo) mobileUserInfo.classList.add('hidden');
-            mobileLogoutBtn.classList.add('hidden');
-        }
-    }
-}
-
-// Initialize auth dropdown behavior (desktop + mobile)
-function initializeAuthDropdown() {
-    const authBtn = document.getElementById('auth-btn');
-    const dropdown = document.getElementById('auth-dropdown');
-    const logoutBtn = document.getElementById('logout-btn');
-    const mobileLogoutBtn = document.getElementById('mobile-logout-btn');
-    const mobileMenu = document.getElementById('mobile-menu');
-
-    // Desktop dropdown
-    if (authBtn && dropdown) {
-        authBtn.setAttribute('aria-expanded', 'false');
-
-        // Toggle dropdown on click (if logged in) or redirect (if not)
-        authBtn.addEventListener('click', () => {
-            if (isLoggedIn) {
-                const isOpen = dropdown.classList.toggle('active');
-                authBtn.setAttribute('aria-expanded', isOpen);
-            } else {
-                window.location.href = 'auth.html';
-            }
-        });
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.auth-wrapper')) {
-                dropdown.classList.remove('active');
-                authBtn.setAttribute('aria-expanded', 'false');
-            }
-        });
-    }
-
-    // Desktop logout handler
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', async () => {
-            const result = await signOut();
-            if (result.success) {
-                dropdown.classList.remove('active');
-                updateAuthButton();
-                handleAuthChange(null);
-            }
-        });
-    }
-
-    // Mobile logout handler
-    if (mobileLogoutBtn) {
-        mobileLogoutBtn.addEventListener('click', async () => {
-            const result = await signOut();
-            if (result.success) {
-                if (mobileMenu) mobileMenu.classList.remove('active');
-                updateAuthButton();
-                handleAuthChange(null);
-            }
-        });
-    }
-}
-
-// Session idle timeout - logs out after 30 minutes of inactivity
-function initializeIdleTimeout() {
-    const IDLE_LIMIT = 30 * 60 * 1000; // 30 minutes
-    let idleTimer;
-
-    function resetTimer() {
-        clearTimeout(idleTimer);
-        idleTimer = setTimeout(async () => {
-            if (isLoggedIn) {
-                await signOut();
-                handleAuthChange(null);
-                window.location.href = 'auth.html';
-            }
-        }, IDLE_LIMIT);
-    }
-
-    ['click', 'keydown', 'mousemove', 'touchstart'].forEach(event => {
-        document.addEventListener(event, resetTimer, { passive: true });
-    });
-
-    resetTimer();
-}
+import './ui/imgFallback.js';
 
 // Safe wrapper - logs error but doesn't kill the page
 async function safeInit(name, fn) {
@@ -196,8 +25,6 @@ async function safeInit(name, fn) {
     } catch (e) {
     }
 }
-
-import './ui/imgFallback.js';
 
 // Initialize everything when DOM is ready
 document.addEventListener('DOMContentLoaded', async function() {
@@ -216,7 +43,9 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     await safeInit('Auth', async () => {
         updateAuthButton();
-        initializeAuthDropdown();
+        initializeAuthDropdown({
+            onLogout: () => handleAuthChange(null)
+        });
         onAuthStateChange((event, session) => {
             updateAuthButton();
             handleAuthChange(session?.user?.id || null);
@@ -242,23 +71,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         setupAddToCartButtons();
         fetchLikeCounts(); // Fire-and-forget — updates counts when ready
         initScrollSnap(); // JS-based snap on idle (replaces CSS scroll-snap)
-
-        // Inject star ratings into cards (non-blocking)
-        fetchProductRatings(products.map(p => p.id)).then(ratings => {
-            document.querySelectorAll('.product-card').forEach(card => {
-                const id = parseInt(card.querySelector('.add-to-cart-btn')?.dataset.id);
-                const info = ratings.get(id);
-                if (info) {
-                    const priceRow = card.querySelector('.product-price-row');
-                    if (priceRow) {
-                        const ratingEl = document.createElement('div');
-                        ratingEl.innerHTML = renderCardRating(info.avg, info.count);
-                        const ratingDiv = ratingEl.firstElementChild;
-                        if (ratingDiv) priceRow.parentNode.insertBefore(ratingDiv, priceRow);
-                    }
-                }
-            });
-        });
+        injectCardRatings(products.map(p => p.id)); // Non-blocking star ratings on cards
     } catch (e) {
         const container = document.getElementById('product-container');
         if (container) {
@@ -284,72 +97,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     });
     await safeInit('Theme', () => initializeTheme());
     await safeInit('Menu', () => initializeMenu());
-    await safeInit('IdleTimeout', () => initializeIdleTimeout());
-
-    // Rank Up prompt — guests only
-    safeInit('RankUp', async () => {
-        const rankBtn = document.getElementById('rank-up-btn');
-        const modal = document.getElementById('rankup-modal');
-        const overlay = document.getElementById('rankup-overlay');
-        const closeBtn = document.getElementById('rankup-close');
-        if (!rankBtn || !modal) return;
-
-        const user = await getCurrentUser();
-        if (!user) {
-            rankBtn.classList.remove('hidden');
-        }
-
-        function openModal() {
-            modal.classList.add('active');
-            overlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-        function closeModal() {
-            modal.classList.remove('active');
-            overlay.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        rankBtn.addEventListener('click', openModal);
-        if (closeBtn) closeBtn.addEventListener('click', closeModal);
-        if (overlay) overlay.addEventListener('click', closeModal);
-
-        // Hide button when user logs in
-        onAuthStateChange((event, session) => {
-            if (session?.user) {
-                rankBtn.classList.add('hidden');
-                closeModal();
-            } else {
-                rankBtn.classList.remove('hidden');
-            }
-        });
-
-        // Periodic vibrate on desktop to draw attention
-        if (window.matchMedia('(hover: hover)').matches) {
-            setInterval(() => {
-                if (rankBtn.classList.contains('hidden')) return;
-                rankBtn.classList.add('fab-vibrate');
-                rankBtn.addEventListener('animationend', () => {
-                    rankBtn.classList.remove('fab-vibrate');
-                }, { once: true });
-            }, 6000);
-        }
-
-        // Collapse FAB while scrolling on touch devices
-        if (window.matchMedia('(hover: none)').matches) {
-            let scrollTimer;
-            window.addEventListener('scroll', () => {
-                rankBtn.classList.add('fab-collapsed');
-                clearTimeout(scrollTimer);
-                scrollTimer = setTimeout(() => {
-                    rankBtn.classList.remove('fab-collapsed');
-                    rankBtn.classList.add('fab-vibrate');
-                    rankBtn.addEventListener('animationend', () => {
-                        rankBtn.classList.remove('fab-vibrate');
-                    }, { once: true });
-                }, 800);
-            }, { passive: true });
-        }
-    });
-
+    await safeInit('IdleTimeout', () => initializeIdleTimeout(isUserLoggedIn, () => handleAuthChange(null)));
+    await safeInit('RankUp', () => initializeRankUpFAB());
 });
