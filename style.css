@@ -9345,6 +9345,12 @@ html[data-auth-mode="signup"] #signup-form { display: flex !important; }
 }
 
 /* ── Review avatars ── */
+.rv-avatar-wrap {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+}
+
 .rv-avatar {
     width: 36px;
     height: 36px;
@@ -9540,6 +9546,7 @@ html[data-auth-mode="signup"] #signup-form { display: flex !important; }
         gap: 2px;
     }
 
+    .rv-avatar-wrap,
     .rv-avatar {
         width: 32px;
         height: 32px;

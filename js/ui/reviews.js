@@ -269,9 +269,13 @@ function renderReviewCard(review) {
     const date = new Date(review.created_at);
     const dateStr = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
 
+    const initial = (review.username || '?')[0].toUpperCase();
     const avatarHtml = review.avatar
-        ? `<img class="rv-avatar" src="${escapeHtml(review.avatar)}" alt="${escapeHtml(review.username)}" onerror="this.outerHTML='${avatarFallback(review.username).replace(/'/g, "\\'")}'"/>`
-        : avatarFallback(review.username);
+        ? `<div class="rv-avatar-wrap">
+            <img class="rv-avatar" src="${escapeHtml(review.avatar)}" alt="${escapeHtml(review.username)}">
+            <div class="rv-avatar rv-avatar-fallback" style="display:none">${initial}</div>
+           </div>`
+        : `<div class="rv-avatar rv-avatar-fallback">${initial}</div>`;
 
     return `<div class="rv-card">
         <div class="rv-card-header">
