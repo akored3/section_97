@@ -9357,16 +9357,16 @@ html[data-auth-mode="signup"] #signup-form { display: flex !important; }
     border-radius: var(--shape-full);
     object-fit: cover;
     flex-shrink: 0;
-    border: 1.5px solid var(--outline-accent);
-    box-shadow: 0 0 8px var(--glow-accent);
+    border: 1.5px solid rgba(255, 215, 0, 0.5);
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.3);
 }
 
 .rv-avatar-fallback {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--surface-3);
-    color: var(--accent);
+    background: rgba(255, 215, 0, 0.08);
+    color: #FFD700;
     font: 700 0.85rem/1 var(--font-display);
     letter-spacing: 1px;
 }
