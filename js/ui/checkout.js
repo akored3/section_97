@@ -4,7 +4,7 @@ import { getCurrentUser } from '../auth/auth.js';
 import { supabase, PAYSTACK_PUBLIC_KEY } from '../config/supabase.js';
 import { escapeHtml } from '../components/productRenderer.js';
 import { initializeCart, getCart, getCartTotal, updateQuantity, removeFromCart, clearCartFull, handleAuthChange } from './cart.js';
-import { formatPrice, isNGN, initializeCurrency } from '../config/currency.js';
+import { formatPrice, initializeCurrency } from '../config/currency.js';
 import { initPageLoader } from './progressBar.js';
 
 // ─── State ───────────────────────────────────────

@@ -38,7 +38,7 @@ export async function fetchReviews(productId) {
 }
 
 // ── Fetch average ratings for multiple products (store cards) ──
-export async function fetchProductRatings(productIds) {
+async function fetchProductRatings(productIds) {
     if (!productIds || productIds.length === 0) return new Map();
 
     const { data, error } = await supabase
@@ -101,7 +101,7 @@ export async function submitReview(productId, rating, fit, body) {
 }
 
 // ── Delete own review ──
-export async function deleteReview(productId) {
+async function deleteReview(productId) {
     const { data, error } = await supabase.rpc('delete_review', {
         p_product_id: productId
     });

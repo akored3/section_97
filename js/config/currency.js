@@ -9,7 +9,6 @@ const ER_API_KEY = '8b0197e597d61f073a039767';
 // ─── State ───────────────────────────────────────
 let userCurrency = BASE_CURRENCY;
 let exchangeRate = 1;
-let currencyReady = false;
 let readyCallbacks = [];
 
 // ─── IP Detection ───────────────────────────────
@@ -95,7 +94,6 @@ export async function initializeCurrency() {
     if (cached && cached.currency === currentCurrency) {
         userCurrency = cached.currency;
         exchangeRate = cached.rate;
-        currencyReady = true;
         readyCallbacks.forEach(cb => cb());
         readyCallbacks = [];
         return;
@@ -171,28 +169,3 @@ function formatCurrencySymbol() {
     }
 }
 
-// ─── Getters ────────────────────────────────────
-
-export function getUserCurrency() {
-    return userCurrency;
-}
-
-export function getExchangeRate() {
-    return exchangeRate;
-}
-
-export function isNGN() {
-    return userCurrency === BASE_CURRENCY;
-}
-
-export function convertFromNGN(ngnAmount) {
-    return ngnAmount * exchangeRate;
-}
-
-export function onCurrencyReady(callback) {
-    if (currencyReady) {
-        callback();
-    } else {
-        readyCallbacks.push(callback);
-    }
-}

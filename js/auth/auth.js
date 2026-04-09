@@ -174,9 +174,6 @@ export async function signUp(email, password) {
             .single();
 
         if (profileError) throw profileError;
-        if (!updatedProfile?.username) {
-        }
-
         return {
             success: true,
             user: authData.user,

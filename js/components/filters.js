@@ -137,15 +137,6 @@ export function initializeFilters(products) {
     }
 }
 
-export function getCurrentFilter() {
-    return currentFilter;
-}
-
-export function clearSearch() {
-    currentSearchTerm = '';
-    applyFilters();
-}
-
 export function initializeSearch() {
     const searchToggle = document.getElementById('search-toggle');
     const searchContainer = document.getElementById('search-container');
