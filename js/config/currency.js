@@ -105,7 +105,6 @@ export async function initializeCurrency() {
 
     saveCache(userCurrency, exchangeRate);
 
-    currencyReady = true;
     readyCallbacks.forEach(cb => cb());
     readyCallbacks = [];
 }
