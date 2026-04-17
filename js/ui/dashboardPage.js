@@ -2,6 +2,7 @@
 import './imgFallback.js';
 import { supabase } from '../config/supabase.js';
 import { getCurrentUser } from '../auth/auth.js';
+import { escapeHtml } from '../components/productRenderer.js';
 
 // ─── State ───────────────────────────────────────
 let allOrders = [];
@@ -53,12 +54,6 @@ async function uploadImage(file, folder = 'products') {
 }
 
 // ─── Helpers ─────────────────────────────────────
-function escHtml(str) {
-    const d = document.createElement('div');
-    d.textContent = str;
-    return d.innerHTML;
-}
-
 function formatDate(dateStr) {
     const d = new Date(dateStr);
     return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
@@ -352,8 +347,8 @@ function renderTable() {
 
     body.innerHTML = pageOrders.map(order => {
         const itemCount = (order.order_items || []).reduce((s, i) => s + i.quantity, 0);
-        const customerName = escHtml(getCustomerName(order));
-        const customerEmail = escHtml(getCustomerEmail(order));
+        const customerName = escapeHtml(getCustomerName(order));
+        const customerEmail = escapeHtml(getCustomerEmail(order));
 
         return `
             <tr data-order-id="${order.id}">
@@ -475,11 +470,11 @@ function openDetail(order) {
     const itemsHtml = items.map(item => `
         <div class="detail-item">
             <div class="di-thumb">
-                ${item.product_image ? `<img src="${escHtml(item.product_image)}" alt="${escHtml(item.product_name)}">` : ''}
+                ${item.product_image ? `<img src="${escapeHtml(item.product_image)}" alt="${escapeHtml(item.product_name)}">` : ''}
             </div>
             <div class="di-info">
-                <div class="di-name">${escHtml(item.product_name)}</div>
-                <div class="di-meta">SIZE: ${escHtml(item.size || 'N/A')} // QTY: ${item.quantity}</div>
+                <div class="di-name">${escapeHtml(item.product_name)}</div>
+                <div class="di-meta">SIZE: ${escapeHtml(item.size || 'N/A')} // QTY: ${item.quantity}</div>
             </div>
             <div class="di-price">${formatPrice(Number(item.product_price || item.price) * item.quantity)}</div>
         </div>
@@ -495,11 +490,11 @@ function openDetail(order) {
             <div class="detail-section-title"><div class="ds-bar"></div>CUSTOMER INFO</div>
             <div class="info-row">
                 <span class="info-label">NAME</span>
-                <span class="info-value">${escHtml(getCustomerName(order))}</span>
+                <span class="info-value">${escapeHtml(getCustomerName(order))}</span>
             </div>
             <div class="info-row">
                 <span class="info-label">EMAIL</span>
-                <span class="info-value">${escHtml(getCustomerEmail(order))}</span>
+                <span class="info-value">${escapeHtml(getCustomerEmail(order))}</span>
             </div>
             <div class="info-row">
                 <span class="info-label">TYPE</span>
@@ -508,7 +503,7 @@ function openDetail(order) {
             ${order.shipping_phone ? `
             <div class="info-row">
                 <span class="info-label">PHONE</span>
-                <span class="info-value">${escHtml(order.shipping_phone)}</span>
+                <span class="info-value">${escapeHtml(order.shipping_phone)}</span>
             </div>` : ''}
         </div>
 
@@ -517,12 +512,12 @@ function openDetail(order) {
             <div class="detail-section-title"><div class="ds-bar"></div>SHIPPING</div>
             <div class="info-row">
                 <span class="info-label">ADDRESS</span>
-                <span class="info-value">${escHtml(order.shipping_address || 'N/A')}</span>
+                <span class="info-value">${escapeHtml(order.shipping_address || 'N/A')}</span>
             </div>
             ${order.shipping_city ? `
             <div class="info-row">
                 <span class="info-label">CITY</span>
-                <span class="info-value">${escHtml(order.shipping_city)}</span>
+                <span class="info-value">${escapeHtml(order.shipping_city)}</span>
             </div>` : ''}
         </div>
 
@@ -537,7 +532,7 @@ function openDetail(order) {
             <div class="detail-section-title"><div class="ds-bar"></div>PAYMENT</div>
             <div class="info-row">
                 <span class="info-label">REFERENCE</span>
-                <span class="info-value mono">${escHtml(order.payment_reference || 'N/A')}</span>
+                <span class="info-value mono">${escapeHtml(order.payment_reference || 'N/A')}</span>
             </div>
             <div class="info-row">
                 <span class="info-label">ITEMS SUBTOTAL</span>
@@ -710,12 +705,12 @@ function renderProductsGrid() {
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
                 </button>
             </div>
-            <img class="prod-card-img" src="${escHtml(p.image_front)}" alt="${escHtml(p.name)}">
+            <img class="prod-card-img" src="${escapeHtml(p.image_front)}" alt="${escapeHtml(p.name)}">
             <div class="prod-card-body">
-                <div class="prod-card-name">${escHtml(p.name)}</div>
+                <div class="prod-card-name">${escapeHtml(p.name)}</div>
                 <div class="prod-card-meta">
-                    <span class="prod-card-brand">${escHtml(p.brand || '—')}</span>
-                    <span class="prod-card-cat">${escHtml(p.category)}</span>
+                    <span class="prod-card-brand">${escapeHtml(p.brand || '—')}</span>
+                    <span class="prod-card-cat">${escapeHtml(p.category)}</span>
                 </div>
                 <div class="prod-card-footer">
                     <span class="prod-card-price">${formatPrice(p.price)}</span>
