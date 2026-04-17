@@ -491,10 +491,19 @@
         }
 
         @media (hover: hover) {
+            .rank-up-fab {
+                background: var(--accent);
+                border-color: var(--accent);
+                box-shadow: 0 0 18px rgba(0, 255, 100, 0.35);
+            }
+            .rank-up-fab .fab-label {
+                color: #0a0a0f;
+            }
+            .rank-up-fab::after {
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+            }
             .rank-up-fab:hover {
-                background: rgba(0, 255, 100, 0.15);
-                border-color: rgba(0, 255, 100, 0.5);
-                box-shadow: 0 0 25px rgba(0, 255, 100, 0.3);
+                box-shadow: 0 0 28px rgba(0, 255, 100, 0.55);
                 transform: translateY(-2px);
             }
         }
@@ -506,6 +515,22 @@
         :root[data-theme="light"] .rank-up-fab:hover {
             background: rgba(0, 168, 22, 0.12);
             border-color: rgba(0, 168, 22, 0.4);
+        }
+
+        @media (hover: hover) {
+            :root[data-theme="light"] .rank-up-fab {
+                background: var(--accent);
+                border-color: var(--accent);
+                box-shadow: 0 0 18px rgba(0, 168, 22, 0.3);
+            }
+            :root[data-theme="light"] .rank-up-fab .fab-label {
+                color: #0a0a0f;
+            }
+            :root[data-theme="light"] .rank-up-fab:hover {
+                background: var(--accent);
+                border-color: var(--accent);
+                box-shadow: 0 0 28px rgba(0, 168, 22, 0.5);
+            }
         }
 
         /* ── Rank Up Modal ── */
