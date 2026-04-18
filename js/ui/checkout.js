@@ -6,6 +6,7 @@ import { escapeHtml } from '../components/productRenderer.js';
 import { initializeCart, getCart, getCartTotal, updateQuantity, removeFromCart, clearCartFull, handleAuthChange } from './cart.js';
 import { formatPrice, initializeCurrency } from '../config/currency.js';
 import { initPageLoader } from './progressBar.js';
+import { celebrateOrder } from './confetti.js';
 
 // ─── State ───────────────────────────────────────
 let currentStep = 1;
@@ -101,6 +102,8 @@ function goToStep(step) {
     currentStep = step;
     updateStepper(step);
     updateActionButton(step);
+
+    if (step === 4) celebrateOrder();
 
     // Show/hide back button
     const backBtn = document.getElementById('checkout-back-btn');
