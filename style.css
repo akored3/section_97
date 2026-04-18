@@ -104,9 +104,9 @@
             --text-body-lg: 400 1rem/1.6 var(--font-body);
             --text-body-md: 400 0.9rem/1.5 var(--font-body);
             --text-body-sm: 400 0.85rem/1.5 var(--font-body);
-            --text-label-lg: 700 0.85rem/1 var(--font-mono);
-            --text-label-md: 600 0.75rem/1 var(--font-mono);
-            --text-label-sm: 600 0.7rem/1 var(--font-mono);
+            --text-label-lg: 700 0.85rem/1 var(--font-body);
+            --text-label-md: 600 0.75rem/1 var(--font-body);
+            --text-label-sm: 600 0.7rem/1 var(--font-body);
 
             /* ── Spacing ── */
             --space-xs: 4px;
@@ -132,7 +132,7 @@
             --bg-secondary: #F0F4ED;
             --text-primary: #1a1f1a;
             --text-secondary: #4a5248;
-            --text-muted: #8a8a8a;
+            --text-muted: #6a6a6a;
             --accent: #00a840;
             --accent-hover: #008c35;
             --accent-dim: #007a2e;
@@ -174,7 +174,7 @@
             --bg-secondary: #111118;
             --text-primary: #e8e8e8;
             --text-secondary: #999999;
-            --text-muted: #666666;
+            --text-muted: #8a8a8a;
             --accent: #00ff64;
             --accent-hover: #33ff85;
             --accent-dim: #009940;
@@ -1879,7 +1879,7 @@
         }
 
         .card-size-chip {
-            font-family: var(--font-mono);
+            font-family: var(--font-body);
             font-size: 0.8125rem;
             font-weight: 600;
             padding: 8px 16px;
@@ -1920,8 +1920,8 @@
             right: -10px;
             background: var(--error);
             color: #fff;
-            font-family: var(--font-mono);
-            font-size: 0.55rem;
+            font-family: var(--font-body);
+            font-size: 0.65rem;
             font-weight: 700;
             letter-spacing: 0.5px;
             padding: 2px 5px;
@@ -2001,7 +2001,7 @@
             top: 12px; left: 12px;
             z-index: 5;
             padding: 3px 10px;
-            font-family: var(--font-mono);
+            font-family: var(--font-body);
             font-size: 0.65rem;
             font-weight: 700;
             letter-spacing: 0.15em;
@@ -2020,7 +2020,7 @@
             top: 10px; right: 10px;
             z-index: 5;
             padding: 5px 12px;
-            font-family: var(--font-mono);
+            font-family: var(--font-body);
             font-size: 0.7rem;
             font-weight: 700;
             letter-spacing: 0.14em;
@@ -2547,7 +2547,7 @@
         }
 
         .s97-progress__label {
-            font-family: var(--font-mono);
+            font-family: var(--font-body);
             font-size: 0.8rem;
             font-weight: 600;
             color: var(--text-secondary);
@@ -2555,7 +2555,7 @@
         }
 
         .s97-progress__percent {
-            font-family: var(--font-mono);
+            font-family: var(--font-body);
             font-size: 0.85rem;
             font-weight: 700;
             color: var(--accent);
@@ -2652,8 +2652,8 @@
         }
 
         .s97-progress__tick-label {
-            font-family: var(--font-mono);
-            font-size: 0.55rem;
+            font-family: var(--font-body);
+            font-size: 0.6rem;
             font-weight: 600;
             color: var(--text-muted);
             letter-spacing: 0.1em;
@@ -2696,8 +2696,8 @@
         }
 
         .s97-progress__indicator-label {
-            font-family: var(--font-mono);
-            font-size: 0.6rem;
+            font-family: var(--font-body);
+            font-size: 0.65rem;
             font-weight: 600;
             color: var(--text-muted);
             letter-spacing: 0.12em;
@@ -2714,8 +2714,8 @@
         }
 
         .s97-progress__state {
-            font-family: var(--font-mono);
-            font-size: 0.6rem;
+            font-family: var(--font-body);
+            font-size: 0.65rem;
             font-weight: 600;
             color: var(--text-muted);
             letter-spacing: 0.12em;
@@ -3664,7 +3664,7 @@
     gap: var(--space-sm);
     color: var(--text-primary);
     text-decoration: none;
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     font-size: clamp(0.65rem, 2vw, 0.75rem);
     font-weight: 700;
     letter-spacing: 1px;
@@ -4003,8 +4003,8 @@
     right: -10px;
     background: var(--error);
     color: #fff;
-    font-family: var(--font-mono);
-    font-size: 0.6rem;
+    font-family: var(--font-body);
+    font-size: 0.7rem;
     font-weight: 700;
     letter-spacing: 0.5px;
     padding: 2px 6px;
@@ -4832,9 +4832,9 @@ a.dropdown-item {
     background: rgba(255, 60, 60, 0.08);
     border: 2px solid rgba(255, 100, 100, 0.2);
     color: var(--error-hover);
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    font-weight: 600;
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 700;
     letter-spacing: 2px;
     cursor: pointer;
     box-shadow: 0 0 12px rgba(255, 60, 60, 0.05);
@@ -5376,8 +5376,9 @@ a.dropdown-item {
 
 /* Achievement progress indicator */
 .profile-achievement-progress {
-    font-family: var(--font-mono);
-    font-size: 0.5rem;
+    font-family: var(--font-body);
+    font-size: 0.65rem;
+    font-weight: 600;
     letter-spacing: 0.5px;
     color: var(--text-muted);
     text-align: center;
@@ -5978,9 +5979,9 @@ a.dropdown-item {
 }
 
 .profile-order-item-price {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    font-weight: 600;
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 700;
     color: var(--text-secondary);
     white-space: nowrap;
 }
@@ -6834,7 +6835,7 @@ html[data-auth-mode="signup"] #signup-form { display: flex !important; }
 /* Forgot password link */
 .forgot-link {
     font: var(--text-label-sm);
-    color: rgba(0, 255, 100, 0.4);
+    color: var(--text-muted);
     text-decoration: none;
     text-align: right;
     letter-spacing: 1px;
@@ -6846,7 +6847,7 @@ html[data-auth-mode="signup"] #signup-form { display: flex !important; }
 }
 
 :root[data-theme="light"] .forgot-link {
-    color: rgba(0, 140, 18, 0.45);
+    color: var(--text-muted);
 }
 
 :root[data-theme="light"] .forgot-link:hover {
@@ -7025,7 +7026,7 @@ html[data-auth-mode="signup"] #signup-form { display: flex !important; }
 /* Page footer */
 .auth-page-footer {
     font: var(--text-label-sm);
-    color: rgba(0, 255, 100, 0.25);
+    color: var(--text-muted);
     letter-spacing: 2px;
     margin-top: var(--space-xl);
     text-align: center;
@@ -7045,7 +7046,7 @@ html[data-auth-mode="signup"] #signup-form { display: flex !important; }
     color: var(--text-primary);
     text-decoration: none;
     margin-bottom: var(--space-lg);
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 1px;
@@ -7207,7 +7208,7 @@ html[data-auth-mode="signup"] #signup-form { display: flex !important; }
     gap: var(--space-sm);
     color: var(--text-primary);
     text-decoration: none;
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 1px;
@@ -7789,7 +7790,7 @@ html[data-auth-mode="signup"] #signup-form { display: flex !important; }
 
 .checkout-order-id {
     display: inline-block;
-    font: var(--text-label-lg);
+    font: 700 1rem/1.2 var(--font-display);
     color: var(--accent);
     padding: var(--space-sm) var(--space-lg);
     border: 1px solid var(--outline-accent);
@@ -8283,7 +8284,7 @@ html[data-auth-mode="signup"] #signup-form { display: flex !important; }
     gap: var(--space-sm);
     color: var(--text-primary);
     text-decoration: none;
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 1px;
