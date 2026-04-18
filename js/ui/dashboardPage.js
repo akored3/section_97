@@ -67,6 +67,10 @@ function shortId(uuid) {
     return `ORD-${uuid.slice(0, 6).toUpperCase()}`;
 }
 
+function getInitials(name) {
+    return (name || '').split(/\s+/).map(s => s[0]).filter(Boolean).slice(0, 2).join('').toUpperCase() || '?';
+}
+
 const STATUS_FLOW = ['pending', 'processing', 'shipped', 'delivered'];
 const STATUS_ICONS = {
     pending: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
@@ -326,6 +330,23 @@ function getCustomerEmail(order) {
 }
 
 // ─── Render Table ────────────────────────────────
+function renderOrdersSkeleton() {
+    const body = document.getElementById('ordersBody');
+    if (!body) return;
+    const widths = [
+        [70, 120, 50, 70, 60, 80, 24],
+        [80, 150, 55, 70, 70, 90, 24],
+        [65, 100, 45, 70, 55, 75, 24],
+        [75, 140, 60, 70, 65, 85, 24],
+        [70, 110, 50, 70, 60, 80, 24],
+        [80, 130, 55, 70, 70, 85, 24],
+    ];
+    body.innerHTML = widths.map(row => `
+        <tr class="skel-row">
+            ${row.map(w => `<td><span class="skel-bar" style="width:${w}px"></span></td>`).join('')}
+        </tr>`).join('');
+}
+
 function renderTable() {
     const body = document.getElementById('ordersBody');
     const totalPages = Math.max(1, Math.ceil(filteredOrders.length / PAGE_SIZE));
@@ -480,7 +501,22 @@ function openDetail(order) {
         </div>
     `).join('');
 
+    const ccName = getCustomerName(order);
+    const ccIsRegistered = !!order.user_id;
+    const itemCount = items.reduce((s, i) => s + i.quantity, 0);
+
     body.innerHTML = `
+        <div class="customer-context">
+            <div class="cc-avatar">${escapeHtml(getInitials(ccName))}</div>
+            <div class="cc-info">
+                <div class="cc-name">${escapeHtml(ccName)}</div>
+                <div class="cc-meta">
+                    <span class="cc-type ${ccIsRegistered ? 'registered' : 'guest'}">${ccIsRegistered ? 'REGISTERED' : 'GUEST'}</span>
+                    <span class="cc-items">${itemCount} ITEM${itemCount === 1 ? '' : 'S'}</span>
+                </div>
+            </div>
+        </div>
+
         <div class="pipeline">${pipelineHtml}</div>
 
         ${actionsHtml ? `<div class="status-actions">${actionsHtml}</div>` : ''}
@@ -603,6 +639,17 @@ function setupDetailPanel() {
     // Close on Escape
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closeDetail();
+    });
+}
+
+// ─── Global shortcuts ───────────────────────────
+function setupShortcuts() {
+    document.addEventListener('keydown', (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+            e.preventDefault();
+            const input = document.getElementById('searchInput');
+            if (input) { input.focus(); input.select(); }
+        }
     });
 }
 
@@ -1018,6 +1065,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     startClock();
     setupSidebar();
     setupDetailPanel();
+    setupShortcuts();
 
     const skeleton = document.getElementById('dashSkeleton');
     const authGate = document.getElementById('authGate');
@@ -1053,14 +1101,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     const initials = (user.username || 'OP').slice(0, 2).toUpperCase();
     document.getElementById('adminInitials').textContent = initials;
 
-    // 4. Load orders
+    // 4. Reveal dashboard chrome with shimmer rows while orders load
+    skeleton.classList.add('hidden');
+    layout.classList.remove('hidden');
+    renderOrdersSkeleton();
+
+    // 5. Load orders
     allOrders = await fetchOrders();
     filteredOrders = allOrders;
 
-    // 5. Render everything
-    skeleton.classList.add('hidden');
-    layout.classList.remove('hidden');
-
+    // 6. Render real data
     renderOverview(allOrders);
     fetchAndSubscribeUsers();
     renderFilterCounts(allOrders);

@@ -364,6 +364,16 @@
         box-shadow: var(--sw-card-shadow);
     }
     .ov-card:hover { border-color: var(--sw-card-border-hover); }
+    .ov-card.ov-card-pending {
+        border-color: var(--status-pending-border);
+        background: linear-gradient(135deg, var(--sw-card-bg) 0%, rgba(255, 170, 0, 0.04) 100%);
+        box-shadow: var(--sw-card-shadow), 0 0 16px rgba(255, 170, 0, 0.08);
+    }
+    .ov-card.ov-card-pending:hover {
+        border-color: var(--status-pending);
+        box-shadow: var(--sw-card-shadow), 0 0 24px rgba(255, 170, 0, 0.20);
+    }
+    .ov-card.ov-card-pending .ov-card-value { color: var(--status-pending); }
     .ov-card-code {
         position: absolute; top: 5px; right: 8px;
         font-family: 'Share Tech Mono', monospace;
@@ -465,6 +475,16 @@
         width: 160px;
     }
     .search-input::placeholder { color: var(--sw-text-muted); }
+    .search-box kbd {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.65rem;
+        color: var(--sw-text-muted);
+        padding: 2px 6px;
+        border: 1px solid var(--sw-input-border);
+        background: var(--sw-input-bg);
+        letter-spacing: 0.08em;
+    }
+    @media (max-width: 768px) { .search-box kbd { display: none; } }
     /* Orders table */
     .orders-panel {
         position: relative;
@@ -512,10 +532,19 @@
     }
     .orders-table tbody tr {
         cursor: pointer;
-        transition: background 0.2s;
+        transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
         border-bottom: 1px solid var(--sw-divider);
+        position: relative;
     }
     .orders-table tbody tr:hover { background: var(--sw-row-hover); }
+    @media (hover: hover) {
+        .orders-table tbody tr:hover {
+            background: var(--sw-row-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 0 0 1px var(--sw-accent-glow-wide);
+            z-index: 2;
+        }
+    }
     .orders-table tbody tr:last-child { border-bottom: none; }
     .orders-table td {
         padding: 14px 16px;
@@ -569,12 +598,17 @@
         animation: dotPulse 2s infinite;
     }
     @keyframes dotPulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-    .status-pending    { color: var(--status-pending);    background: var(--status-pending-bg);    border: 1px solid var(--status-pending-border); }
-    .status-processing { color: var(--status-processing); background: var(--status-processing-bg); border: 1px solid var(--status-processing-border); }
+    .status-pending    { color: var(--status-pending);    background: var(--status-pending-bg);    border: 1px solid var(--status-pending-border);    box-shadow: 0 0 8px rgba(255, 170, 0, 0.15); }
+    .status-processing { color: var(--status-processing); background: var(--status-processing-bg); border: 1px solid var(--status-processing-border); box-shadow: 0 0 8px rgba(255, 0, 255, 0.15); }
     .status-shipped    { color: var(--status-shipped);    background: var(--status-shipped-bg);    border: 1px solid var(--status-shipped-border); }
     .status-delivered  { color: var(--status-delivered);  background: var(--status-delivered-bg);  border: 1px solid var(--status-delivered-border); }
     .status-cancelled  { color: var(--status-cancelled);  background: var(--status-cancelled-bg);  border: 1px solid var(--status-cancelled-border); }
     .status-completed  { color: var(--status-delivered);  background: var(--status-delivered-bg);  border: 1px solid var(--status-delivered-border); }
+    /* Urgency cadence: faster pulse on action-required states, silent on settled states */
+    .status-pending .s-dot, .status-processing .s-dot { animation: dotPulse 1.2s infinite; }
+    .status-delivered .s-dot, .status-cancelled .s-dot, .status-completed .s-dot { animation: none; opacity: 0.5; }
+    [data-theme="light"] .status-pending,
+    [data-theme="light"] .status-processing { box-shadow: none; }
     .action-eye {
         width: 28px; height: 28px;
         display: flex; align-items: center; justify-content: center;
@@ -663,6 +697,41 @@
     }
     .close-panel:hover { border-color: var(--sw-accent); color: var(--sw-accent); }
     .detail-body { padding: 22px; flex: 1; }
+    /* Customer context strip — identity at a glance */
+    .customer-context {
+        display: flex; align-items: center; gap: 12px;
+        padding: 14px 16px;
+        margin-bottom: 16px;
+        background: var(--sw-card-bg2);
+        border: 1px solid var(--sw-divider);
+        border-left: 2px solid var(--sw-accent);
+    }
+    .cc-avatar {
+        width: 40px; height: 40px;
+        flex-shrink: 0;
+        display: flex; align-items: center; justify-content: center;
+        border: 1px solid var(--sw-accent);
+        background: var(--sw-accent-glow-wide);
+        color: var(--sw-accent);
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.85rem; font-weight: 700;
+        letter-spacing: 0.04em;
+    }
+    .cc-name {
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 1rem; font-weight: 700;
+        color: var(--sw-text);
+    }
+    .cc-meta {
+        display: flex; gap: 10px;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.65rem;
+        color: var(--sw-text-muted);
+        letter-spacing: 0.1em;
+        margin-top: 3px;
+    }
+    .cc-type.registered { color: var(--sw-accent); }
+    .cc-type.guest { color: var(--sw-tertiary); }
     /* Pipeline */
     .pipeline {
         display: flex; align-items: center; gap: 0;
@@ -911,6 +980,27 @@
         animation: skeletonPulse 1.5s ease-in-out infinite;
     }
     @keyframes skeletonPulse { 0%,100%{opacity:0.5} 50%{opacity:1} }
+    /* Shimmer skeleton rows — initial orders-table load */
+    .skel-row td { padding: 14px 16px; }
+    .skel-row { border-bottom: 1px solid var(--sw-divider); }
+    .skel-bar {
+        display: inline-block;
+        height: 12px;
+        background: linear-gradient(
+            90deg,
+            var(--sw-divider) 0%,
+            var(--sw-row-hover) 50%,
+            var(--sw-divider) 100%
+        );
+        background-size: 200% 100%;
+        animation: skelShimmer 1.4s ease-in-out infinite;
+        border-radius: 2px;
+        vertical-align: middle;
+    }
+    @keyframes skelShimmer {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
     /* Empty state */
     .empty-state {
         text-align: center;
@@ -1956,14 +2046,14 @@
                         <div class="ov-card-value" style="color:var(--sw-accent);" id="ovTotal">—</div>
                         <div class="ov-card-delta delta-neutral" id="ovTotalDelta">LOADING...</div>
                     </div>
-                    <div class="ov-card cb">
+                    <div class="ov-card ov-card-pending cb">
                         <div class="cb-b"></div><div class="scanlines"></div><div class="shine" style="animation-delay:3s;"></div>
                         <span class="ov-card-code">OV_02</span>
                         <div class="ov-card-icon">
                             <div class="ov-icon-box" style="border-color: var(--sw-warning); color: var(--sw-warning);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
                         </div>
                         <div class="ov-card-label">Pending</div>
-                        <div class="ov-card-value" style="color:var(--sw-warning);" id="ovPending">—</div>
+                        <div class="ov-card-value" id="ovPending">—</div>
                         <div class="ov-card-delta delta-down" id="ovPendingDelta">REQUIRES ACTION</div>
                     </div>
                     <div class="ov-card cb">
@@ -2025,6 +2115,7 @@
                         <div class="search-box">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                             <input class="search-input" type="text" placeholder="SEARCH ORDERS..." id="searchInput">
+                            <kbd>⌘K</kbd>
                         </div>
                     </div>
 
