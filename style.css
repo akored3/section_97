@@ -499,6 +499,10 @@
             .rank-up-fab .fab-label {
                 color: #0a0a0f;
             }
+            .rank-up-fab svg {
+                width: 24px;
+                height: 24px;
+            }
             .rank-up-fab::after {
                 background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
             }
