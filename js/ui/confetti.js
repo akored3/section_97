@@ -1,23 +1,38 @@
 // Order-confirmed celebration — themed canvas-confetti burst
 // Lazy-loaded; fires once per successful order placement.
+// Uses a non-worker instance (useWorker: false) to comply with our CSP,
+// which doesn't allow blob: URLs in worker-src / script-src.
 
 let confettiPromise = null;
 
-function loadConfetti() {
-    if (confettiPromise) return confettiPromise;
-    if (window.confetti) {
-        confettiPromise = Promise.resolve(window.confetti);
-        return confettiPromise;
-    }
-    confettiPromise = new Promise((resolve, reject) => {
+function loadVendorScript() {
+    if (window.confetti) return Promise.resolve();
+    return new Promise((resolve, reject) => {
         const s = document.createElement('script');
         s.src = 'js/vendor/canvas-confetti.min.js';
-        s.onload = () => resolve(window.confetti);
-        s.onerror = () => {
-            confettiPromise = null;
-            reject(new Error('canvas-confetti failed to load'));
-        };
+        s.onload = () => (window.confetti ? resolve() : reject(new Error('confetti global missing')));
+        s.onerror = () => reject(new Error('canvas-confetti failed to load'));
         document.head.appendChild(s);
+    });
+}
+
+function getConfettiFn() {
+    if (confettiPromise) return confettiPromise;
+    confettiPromise = loadVendorScript().then(() => {
+        const canvas = document.createElement('canvas');
+        Object.assign(canvas.style, {
+            position: 'fixed',
+            inset: '0',
+            width: '100%',
+            height: '100%',
+            pointerEvents: 'none',
+            zIndex: '1000',
+        });
+        document.body.appendChild(canvas);
+        return window.confetti.create(canvas, { resize: true, useWorker: false });
+    }).catch(err => {
+        confettiPromise = null;
+        throw err;
     });
     return confettiPromise;
 }
@@ -30,18 +45,16 @@ export async function celebrateOrder() {
 
     let confetti;
     try {
-        confetti = await loadConfetti();
+        confetti = await getConfettiFn();
     } catch {
         return;
     }
-    if (!confetti) return;
 
     const base = {
         particleCount: 60,
         spread: 60,
         startVelocity: 50,
         ticks: 220,
-        zIndex: 1000,
         disableForReducedMotion: true,
         colors: NEON_PALETTE,
         shapes: ['square', 'star'],
@@ -61,7 +74,6 @@ export async function celebrateOrder() {
             shapes: ['star'],
             scalar: 1.2,
             ticks: 260,
-            zIndex: 1000,
             disableForReducedMotion: true,
         });
     }, 220);
