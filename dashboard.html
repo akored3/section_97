@@ -804,7 +804,7 @@
         letter-spacing: 0.1em;
         text-transform: uppercase;
         cursor: pointer;
-        transition: all 0.25s;
+        transition: background 0.25s, color 0.25s, box-shadow 0.25s, border-color 0.25s;
         display: flex; align-items: center; gap: 6px;
         clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
         position: relative;
@@ -1187,7 +1187,7 @@
         background: var(--sw-card-bg);
         border: 1px solid var(--sw-card-border);
         overflow: hidden;
-        transition: all 0.3s;
+        transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
     }
     .prod-card:hover { border-color: var(--sw-card-border-hover); }
     .prod-card-img {
@@ -1251,8 +1251,7 @@
         border: 1px solid var(--sw-card-border);
         color: var(--sw-text-muted);
         cursor: pointer;
-        backdrop-filter: blur(8px);
-        transition: all 0.2s;
+        transition: border-color 0.2s, color 0.2s, background 0.2s;
     }
     .prod-action-btn:hover { border-color: var(--sw-accent); color: var(--sw-accent); }
     .prod-action-btn.danger:hover { border-color: var(--sw-danger); color: var(--sw-danger); }
@@ -1269,8 +1268,7 @@
         border: 1.5px solid var(--sw-card-border);
         background: var(--sw-card-bg);
         display: flex; align-items: center; justify-content: center;
-        transition: all 0.2s;
-        backdrop-filter: blur(8px);
+        transition: border-color 0.2s, background 0.2s;
     }
     .prod-select-checkbox input:checked + .prod-checkmark,
     .select-all-label input:checked + .prod-checkmark {
@@ -1680,6 +1678,21 @@
         font-size: 0.55rem; color: #333; letter-spacing: 0.15em;
         text-align: center; z-index: 10; position: relative;
         opacity: 0; animation: termFadeIn 0.5s ease-out 2.5s forwards;
+    }
+
+    /* Pause shimmer/shine on hidden sections to save GPU */
+    .section-panel:not(.active) .skel-bar,
+    .section-panel:not(.active) .btn-shine,
+    .section-panel:not(.active) .shine { animation: none; }
+
+    /* Respect users who prefer reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+        }
     }
     </style>
 </head>

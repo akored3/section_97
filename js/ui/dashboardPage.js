@@ -129,11 +129,13 @@ function setupTheme() {
 function startClock() {
     const el = document.getElementById('liveClock');
     const tick = () => {
+        if (document.hidden) return;
         const now = new Date();
         el.textContent = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
     };
     tick();
     setInterval(tick, 1000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); });
 }
 
 // ─── Mobile Sidebar ──────────────────────────────
@@ -237,20 +239,25 @@ async function fetchAndSubscribeUsers() {
     el.textContent = userCount;
     delta.textContent = 'REGISTERED';
 
+    let pulseTimer = null;
+    const pulseBadge = () => {
+        delta.textContent = 'JUST UPDATED';
+        if (pulseTimer) clearTimeout(pulseTimer);
+        pulseTimer = setTimeout(() => { delta.textContent = 'REGISTERED'; pulseTimer = null; }, 3000);
+    };
+
     // Realtime subscription — listen for new signups
     supabase
         .channel('admin-user-count')
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'profiles' }, () => {
             userCount++;
             el.textContent = userCount;
-            delta.textContent = 'JUST UPDATED';
-            setTimeout(() => { delta.textContent = 'REGISTERED'; }, 3000);
+            pulseBadge();
         })
         .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'profiles' }, () => {
             userCount = Math.max(0, userCount - 1);
             el.textContent = userCount;
-            delta.textContent = 'JUST UPDATED';
-            setTimeout(() => { delta.textContent = 'REGISTERED'; }, 3000);
+            pulseBadge();
         })
         .subscribe();
 }
@@ -434,23 +441,10 @@ function renderPagination(total, totalPages) {
 }
 
 // ─── Order Detail Panel ──────────────────────────
-function openDetail(order) {
-    const overlay = document.getElementById('detailOverlay');
-    const panel = document.getElementById('detailPanel');
-    const title = document.getElementById('detailTitle');
-    const sub = document.getElementById('detailSub');
-    const body = document.getElementById('detailBody');
+let currentDetailOrderId = null;
 
-    title.textContent = `ORDER ${shortId(order.id)}`;
-    sub.textContent = `CMD.VIEW // ${formatDate(order.created_at)}`;
-
-    const items = order.order_items || [];
-    const subtotal = items.reduce((s, i) => s + (Number(i.product_price || i.price) * i.quantity), 0);
-    const next = nextStatus(order.status);
-    const isFinal = order.status === 'delivered' || order.status === 'cancelled';
-
-    // Pipeline — 'completed' legacy orders show as fully done (payment verified, needs processing)
-    const pipelineHtml = STATUS_FLOW.map((step, i) => {
+function buildPipelineHtml(order) {
+    return STATUS_FLOW.map((step, i) => {
         const isCompleted = order.status === 'completed';
         const stepIdx = isCompleted ? -1 : STATUS_FLOW.indexOf(order.status);
         const isDone = isCompleted ? false : i < stepIdx;
@@ -469,23 +463,61 @@ function openDetail(order) {
         }
         return html;
     }).join('');
+}
 
-    // Status actions
-    let actionsHtml = '';
-    if (!isFinal) {
-        if (next) {
-            actionsHtml += `
-                <button class="status-action-btn advance-btn" data-order-id="${order.id}" data-status="${next}">
-                    <span class="btn-shine"></span>
-                    ${STATUS_ICONS[next]} ADVANCE TO ${next.toUpperCase()}
-                </button>`;
-        }
-        actionsHtml += `
-            <button class="status-action-btn cancel-btn" data-order-id="${order.id}" data-status="cancelled">
+function buildActionsHtml(order) {
+    const next = nextStatus(order.status);
+    const isFinal = order.status === 'delivered' || order.status === 'cancelled';
+    if (isFinal) return '';
+    let html = '';
+    if (next) {
+        html += `
+            <button class="status-action-btn advance-btn" data-order-id="${order.id}" data-status="${next}">
                 <span class="btn-shine"></span>
-                ${STATUS_ICONS.cancelled} CANCEL ORDER
+                ${STATUS_ICONS[next]} ADVANCE TO ${next.toUpperCase()}
             </button>`;
     }
+    html += `
+        <button class="status-action-btn cancel-btn" data-order-id="${order.id}" data-status="cancelled">
+            <span class="btn-shine"></span>
+            ${STATUS_ICONS.cancelled} CANCEL ORDER
+        </button>`;
+    return html;
+}
+
+// Patch only the parts that change on a status advance — no full rebuild
+function patchDetailStatus(order) {
+    const pipeline = document.querySelector('#detailBody .pipeline');
+    const actions = document.querySelector('#detailBody .status-actions');
+    const actionsHolder = document.querySelector('#detailBody .status-actions-holder');
+    if (pipeline) pipeline.innerHTML = buildPipelineHtml(order);
+    const newActionsHtml = buildActionsHtml(order);
+    if (actionsHolder) actionsHolder.innerHTML = newActionsHtml ? `<div class="status-actions">${newActionsHtml}</div>` : '';
+}
+
+function openDetail(order) {
+    const overlay = document.getElementById('detailOverlay');
+    const panel = document.getElementById('detailPanel');
+    const title = document.getElementById('detailTitle');
+    const sub = document.getElementById('detailSub');
+    const body = document.getElementById('detailBody');
+
+    title.textContent = `ORDER ${shortId(order.id)}`;
+    sub.textContent = `CMD.VIEW // ${formatDate(order.created_at)}`;
+
+    // Re-opening the same order (e.g., after a status advance) — patch, don't rebuild
+    if (currentDetailOrderId === order.id && panel.classList.contains('open')) {
+        patchDetailStatus(order);
+        return;
+    }
+    currentDetailOrderId = order.id;
+
+    const items = order.order_items || [];
+    const subtotal = items.reduce((s, i) => s + (Number(i.product_price || i.price) * i.quantity), 0);
+
+    const pipelineHtml = buildPipelineHtml(order);
+    const actionsInner = buildActionsHtml(order);
+    const actionsHtml = actionsInner ? `<div class="status-actions">${actionsInner}</div>` : '';
 
     // Items list
     const itemsHtml = items.map(item => `
@@ -519,7 +551,7 @@ function openDetail(order) {
 
         <div class="pipeline">${pipelineHtml}</div>
 
-        ${actionsHtml ? `<div class="status-actions">${actionsHtml}</div>` : ''}
+        <div class="status-actions-holder">${actionsHtml}</div>
 
         <div class="detail-section cb">
             <div class="cb-b"></div><div class="scanlines"></div>
@@ -581,60 +613,65 @@ function openDetail(order) {
         </div>
     `;
 
-    // Status action buttons
-    body.querySelectorAll('.status-action-btn').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
-            e.stopPropagation();
-            const orderId = btn.dataset.orderId;
-            const newStatus = btn.dataset.status;
-
-            const label = newStatus === 'cancelled' ? 'Cancel this order?' : `Advance to ${newStatus}?`;
-            if (!confirm(label)) return;
-
-            btn.disabled = true;
-            btn.style.opacity = '0.5';
-
-            try {
-                const { error } = await supabase.rpc('admin_update_order_status', {
-                    p_order_id: orderId,
-                    p_new_status: newStatus
-                });
-
-                if (error) throw error;
-
-                showToast(`STATUS UPDATED → ${newStatus.toUpperCase()}`);
-
-                // Refresh data
-                allOrders = await fetchOrders();
-                renderOverview(allOrders);
-                renderFilterCounts(allOrders);
-                applyFilters();
-
-                // Refresh detail panel with updated order
-                const updated = allOrders.find(o => o.id === orderId);
-                if (updated) openDetail(updated);
-                else closeDetail();
-
-            } catch (err) {
-                showToast(`FAILED: ${err.message}`, true);
-                btn.disabled = false;
-                btn.style.opacity = '1';
-            }
-        });
-    });
-
     overlay.classList.add('open');
     panel.classList.add('open');
+}
+
+// Handle a click on any status-action button (delegated — bound once on init)
+async function handleStatusActionClick(btn) {
+    const orderId = btn.dataset.orderId;
+    const newStatus = btn.dataset.status;
+
+    const label = newStatus === 'cancelled' ? 'Cancel this order?' : `Advance to ${newStatus}?`;
+    if (!confirm(label)) return;
+
+    btn.disabled = true;
+    btn.style.opacity = '0.5';
+
+    try {
+        const { error } = await supabase.rpc('admin_update_order_status', {
+            p_order_id: orderId,
+            p_new_status: newStatus
+        });
+        if (error) throw error;
+
+        showToast(`STATUS UPDATED → ${newStatus.toUpperCase()}`);
+
+        // Local mutation — no network refetch
+        const idx = allOrders.findIndex(o => o.id === orderId);
+        if (idx >= 0) allOrders[idx].status = newStatus;
+
+        renderOverview(allOrders);
+        renderFilterCounts(allOrders);
+        applyFilters();
+
+        // Re-open same order — openDetail will patch in place, not rebuild
+        if (idx >= 0) openDetail(allOrders[idx]);
+        else closeDetail();
+    } catch (err) {
+        showToast(`FAILED: ${err.message}`, true);
+        btn.disabled = false;
+        btn.style.opacity = '1';
+    }
 }
 
 function closeDetail() {
     document.getElementById('detailOverlay').classList.remove('open');
     document.getElementById('detailPanel').classList.remove('open');
+    currentDetailOrderId = null;
 }
 
 function setupDetailPanel() {
     document.getElementById('detailOverlay').addEventListener('click', closeDetail);
     document.getElementById('closeDetailBtn').addEventListener('click', closeDetail);
+
+    // Delegated click for status-action buttons — bound once, handles every re-render
+    document.getElementById('detailBody').addEventListener('click', (e) => {
+        const btn = e.target.closest('.status-action-btn');
+        if (!btn || btn.disabled) return;
+        e.stopPropagation();
+        handleStatusActionClick(btn);
+    });
 
     // Close on Escape
     document.addEventListener('keydown', (e) => {
@@ -752,7 +789,7 @@ function renderProductsGrid() {
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
                 </button>
             </div>
-            <img class="prod-card-img" src="${escapeHtml(p.image_front)}" alt="${escapeHtml(p.name)}">
+            <img class="prod-card-img" src="${escapeHtml(p.image_front)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async" width="260" height="180">
             <div class="prod-card-body">
                 <div class="prod-card-name">${escapeHtml(p.name)}</div>
                 <div class="prod-card-meta">
@@ -766,19 +803,20 @@ function renderProductsGrid() {
             </div>
         </div>`;
     }).join('');
+}
 
-    // Bind checkbox change events
-    grid.querySelectorAll('[data-select-id]').forEach(cb => {
-        cb.addEventListener('change', () => {
-            const id = parseInt(cb.dataset.selectId);
-            if (cb.checked) {
-                selectedProducts.add(id);
-            } else {
-                selectedProducts.delete(id);
-            }
-            cb.closest('.prod-card').classList.toggle('selected', cb.checked);
-            updateBulkToolbar();
-        });
+function setupProductsGridEvents() {
+    const grid = document.getElementById('productsGrid');
+    if (!grid || grid.dataset.eventsBound) return;
+    grid.dataset.eventsBound = '1';
+    grid.addEventListener('change', (e) => {
+        const cb = e.target.closest('[data-select-id]');
+        if (!cb) return;
+        const id = parseInt(cb.dataset.selectId);
+        if (cb.checked) selectedProducts.add(id);
+        else selectedProducts.delete(id);
+        cb.closest('.prod-card').classList.toggle('selected', cb.checked);
+        updateBulkToolbar();
     });
 }
 
@@ -826,7 +864,10 @@ async function bulkDeleteProducts() {
         selectedProducts.clear();
         updateBulkToolbar();
         showToast(`${count} PRODUCT${count > 1 ? 'S' : ''} DELETED`);
-        await loadProducts();
+        const idSet = new Set(ids);
+        allProducts = allProducts.filter(p => !idSet.has(p.id));
+        document.getElementById('productsCount').textContent = `${allProducts.length} PRODUCTS`;
+        renderProductsGrid();
     } catch (err) {
         showToast('BULK DELETE FAILED', true);
     }
@@ -972,6 +1013,17 @@ async function submitProduct() {
                 if (sErr) throw sErr;
             }
 
+            // Local mutation — no refetch
+            const idx = allProducts.findIndex(p => p.id === editingProductId);
+            if (idx >= 0) {
+                allProducts[idx] = {
+                    ...allProducts[idx],
+                    name, price, brand, category, stock,
+                    image_front: imageFront, image_back: imageBack,
+                    product_sizes: sizes.map(s => ({ size: s.size, stock: s.stock })),
+                };
+            }
+
             showToast('PRODUCT UPDATED');
         } else {
             // Insert new product
@@ -989,11 +1041,18 @@ async function submitProduct() {
                 if (sErr) throw sErr;
             }
 
+            // Local mutation — prepend to match .order('id', { ascending: false })
+            allProducts.unshift({
+                ...newProd,
+                product_sizes: sizes.map(s => ({ size: s.size, stock: s.stock })),
+            });
+
             showToast('PRODUCT DEPLOYED');
         }
 
         closeProductModal();
-        await loadProducts();
+        document.getElementById('productsCount').textContent = `${allProducts.length} PRODUCTS`;
+        renderProductsGrid();
     } catch (err) {
         showToast('FAILED TO SAVE PRODUCT', true);
     } finally {
@@ -1010,7 +1069,9 @@ async function deleteProduct(id) {
         const { error } = await supabase.from('products').delete().eq('id', id);
         if (error) throw error;
         showToast('PRODUCT DELETED');
-        await loadProducts();
+        allProducts = allProducts.filter(p => p.id !== id);
+        document.getElementById('productsCount').textContent = `${allProducts.length} PRODUCTS`;
+        renderProductsGrid();
     } catch (err) {
         showToast('FAILED TO DELETE PRODUCT', true);
     }
@@ -1120,4 +1181,5 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Section nav + product management
     setupSectionNav();
     setupProductModal();
+    setupProductsGridEvents();
 });
