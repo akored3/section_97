@@ -22,14 +22,35 @@ function setupImageUpload(inputId, previewId, zoneId, setter) {
     const preview = document.getElementById(previewId);
     const zone = document.getElementById(zoneId);
 
-    input.addEventListener('change', () => {
-        const file = input.files[0];
-        if (!file) return;
+    const applyFile = (file) => {
+        if (!file || !file.type.startsWith('image/')) return;
         setter(file);
-        // Revoke previous blob URL to free memory
         if (preview.src.startsWith('blob:')) URL.revokeObjectURL(preview.src);
         preview.src = URL.createObjectURL(file);
         zone.classList.add('has-image');
+    };
+
+    input.addEventListener('change', () => applyFile(input.files[0]));
+
+    // Drag-and-drop
+    ['dragenter', 'dragover'].forEach(evt => {
+        zone.addEventListener(evt, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            zone.classList.add('drag-over');
+        });
+    });
+    ['dragleave', 'drop'].forEach(evt => {
+        zone.addEventListener(evt, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (evt === 'dragleave' && zone.contains(e.relatedTarget)) return;
+            zone.classList.remove('drag-over');
+        });
+    });
+    zone.addEventListener('drop', (e) => {
+        const file = e.dataTransfer?.files?.[0];
+        applyFile(file);
     });
 }
 
@@ -738,6 +759,13 @@ function renderSizesGrid(category) {
             <input class="size-input" type="number" min="0" value="0" data-size="${s}" placeholder="0">
         </div>`
     ).join('');
+    // Chip active state reflects stock > 0
+    grid.querySelectorAll('.size-input').forEach(inp => {
+        const field = inp.closest('.size-field');
+        const sync = () => field.classList.toggle('is-active', (parseInt(inp.value) || 0) > 0);
+        sync();
+        inp.addEventListener('input', sync);
+    });
 }
 
 async function loadProducts() {
@@ -925,7 +953,10 @@ function openProductModal(product = null) {
     if (product && product.product_sizes) {
         product.product_sizes.forEach(ps => {
             const inp = document.querySelector(`.size-input[data-size="${ps.size}"]`);
-            if (inp) inp.value = ps.stock;
+            if (inp) {
+                inp.value = ps.stock;
+                inp.dispatchEvent(new Event('input'));
+            }
         });
     }
 

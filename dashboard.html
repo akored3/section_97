@@ -1454,12 +1454,33 @@
         display: flex; align-items: center; justify-content: center;
         cursor: pointer;
         overflow: hidden;
-        transition: border-color 0.2s;
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
     }
     .img-upload-zone:hover, .img-upload-zone:focus-within {
         border-color: var(--sw-accent);
     }
+    .img-upload-zone.drag-over {
+        border-color: var(--sw-accent);
+        border-style: solid;
+        box-shadow: 0 0 16px var(--sw-accent-glow-wide), inset 0 0 16px var(--sw-accent-glow-wide);
+    }
+    .img-upload-zone.drag-over .img-upload-placeholder span { color: var(--sw-accent); }
     .img-upload-zone.has-image { border-style: solid; }
+    .img-upload-zone::before {
+        content: attr(data-label);
+        position: absolute; top: 6px; left: 6px;
+        z-index: 2;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.55rem;
+        letter-spacing: 0.15em;
+        color: var(--sw-accent);
+        background: rgba(0, 0, 0, 0.6);
+        padding: 2px 6px;
+        pointer-events: none;
+    }
+    [data-theme="light"] .img-upload-zone::before {
+        background: rgba(255, 255, 255, 0.85);
+    }
     .img-upload-input {
         position: absolute; inset: 0;
         width: 100%; height: 100%;
@@ -1507,7 +1528,7 @@
         color: var(--sw-text-muted);
         margin-top: 4px;
     }
-    /* Sizes grid in form */
+    /* Sizes grid in form — chip style */
     .sizes-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
@@ -1518,23 +1539,42 @@
         padding: 6px 10px;
         background: var(--sw-input-bg);
         border: 1px solid var(--sw-input-border);
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+        cursor: text;
+    }
+    .size-field.is-active {
+        border-color: var(--sw-accent);
+        background: var(--sw-accent-glow-wide);
+        box-shadow: 0 0 8px var(--sw-accent-glow-wide);
     }
     .size-label {
         font-family: 'Share Tech Mono', monospace;
         font-size: 0.7rem;
-        color: var(--sw-accent);
+        color: var(--sw-text-muted);
         min-width: 28px;
         letter-spacing: 0.06em;
+        transition: color 0.2s;
     }
+    .size-field.is-active .size-label { color: var(--sw-accent); }
     .size-input {
         width: 100%;
         background: none; border: none; outline: none;
         font-family: 'Rajdhani', sans-serif;
         font-size: 0.9rem; font-weight: 600;
-        color: var(--sw-text);
+        color: var(--sw-text-muted);
         text-align: right;
+        transition: color 0.2s;
     }
+    .size-field.is-active .size-input { color: var(--sw-text); }
     .size-input::placeholder { color: var(--sw-text-muted); font-weight: 400; }
+
+    /* Inline validation — only after user interacts (submit or blur) */
+    .form-input:user-invalid,
+    .form-select:user-invalid,
+    .form-textarea:user-invalid {
+        border-color: var(--sw-danger);
+        box-shadow: inset 0 0 0 1px var(--sw-danger);
+    }
     .modal-footer {
         padding: 16px 22px;
         border-top: 1px solid var(--sw-divider);
@@ -2290,7 +2330,7 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label class="form-label">Front Image <span style="color:var(--sw-danger);">*</span></label>
-                                    <div class="img-upload-zone" id="zone_front" tabindex="0">
+                                    <div class="img-upload-zone" id="zone_front" data-label="FRONT" tabindex="0">
                                         <input type="file" accept="image/*" id="pf_image_front" class="img-upload-input">
                                         <img class="img-upload-preview" id="preview_front" alt="">
                                         <div class="img-upload-placeholder" id="placeholder_front">
@@ -2301,7 +2341,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Back Image <span style="color:var(--sw-text-muted);">(optional)</span></label>
-                                    <div class="img-upload-zone" id="zone_back" tabindex="0">
+                                    <div class="img-upload-zone" id="zone_back" data-label="BACK" tabindex="0">
                                         <input type="file" accept="image/*" id="pf_image_back" class="img-upload-input">
                                         <img class="img-upload-preview" id="preview_back" alt="">
                                         <div class="img-upload-placeholder" id="placeholder_back">
