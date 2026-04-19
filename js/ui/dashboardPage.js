@@ -961,6 +961,7 @@ function openProductModal(product = null) {
     }
 
     overlay.classList.add('open');
+    updateLivePreview();
 }
 
 function closeProductModal() {
@@ -1110,6 +1111,28 @@ async function deleteProduct(id) {
     }
 }
 
+function updateLivePreview() {
+    const name = document.getElementById('pf_name').value.trim() || 'Product name';
+    const price = parseInt(document.getElementById('pf_price').value) || 0;
+    const brand = document.getElementById('pf_brand').value || 'BRAND';
+    const category = document.getElementById('pf_category').value || 'CATEGORY';
+    const stock = parseInt(document.getElementById('pf_stock').value) || 0;
+
+    document.getElementById('previewCardName').textContent = name;
+    document.getElementById('previewCardPrice').textContent = formatPrice(price);
+    document.getElementById('previewCardBrand').textContent = brand.toUpperCase();
+    document.getElementById('previewCardCategory').textContent = category.toUpperCase();
+    document.getElementById('previewCardStock').textContent = `STOCK: ${stock}`;
+
+    const img = document.getElementById('previewCardImg');
+    const frontSrc = document.getElementById('preview_front').getAttribute('src');
+    if (frontSrc) {
+        img.src = frontSrc;
+    } else {
+        img.removeAttribute('src');
+    }
+}
+
 function setupProductModal() {
     document.getElementById('btnAddProduct').addEventListener('click', () => openProductModal());
     document.getElementById('productModalClose').addEventListener('click', closeProductModal);
@@ -1122,10 +1145,24 @@ function setupProductModal() {
     // Update sizes grid when category changes
     document.getElementById('pf_category').addEventListener('change', (e) => {
         renderSizesGrid(e.target.value);
+        updateLivePreview();
     });
 
-    // Image upload listeners
-    setupImageUpload('pf_image_front', 'preview_front', 'zone_front', (f) => { pendingImageFront = f; });
+    // Live preview sync
+    ['pf_name', 'pf_price', 'pf_brand', 'pf_stock'].forEach(id => {
+        document.getElementById(id).addEventListener('input', updateLivePreview);
+    });
+
+    // Cmd/Ctrl + Enter submits while modal is open
+    document.getElementById('productModalOverlay').addEventListener('keydown', (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+            e.preventDefault();
+            submitProduct();
+        }
+    });
+
+    // Image upload listeners — wrap setter to refresh preview
+    setupImageUpload('pf_image_front', 'preview_front', 'zone_front', (f) => { pendingImageFront = f; setTimeout(updateLivePreview, 0); });
     setupImageUpload('pf_image_back', 'preview_back', 'zone_back', (f) => { pendingImageBack = f; });
 
     // Bulk actions

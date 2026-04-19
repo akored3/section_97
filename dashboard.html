@@ -1353,7 +1353,7 @@
     }
     .modal-overlay.open { opacity: 1; pointer-events: all; }
     .modal {
-        width: 560px; max-width: 95vw; max-height: 90vh;
+        width: 880px; max-width: 95vw; max-height: 90vh;
         background: var(--sw-card-bg);
         border: 1px solid var(--sw-card-border);
         backdrop-filter: blur(24px);
@@ -1406,6 +1406,77 @@
         overflow-y: auto;
         flex: 1;
     }
+    .modal-split {
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        gap: 22px;
+        align-items: start;
+    }
+    @media (max-width: 900px) {
+        .modal-split { grid-template-columns: 1fr; }
+    }
+    .modal-split-preview {
+        position: sticky; top: 0;
+        padding: 14px;
+        background: var(--sw-card-bg2, var(--sw-input-bg));
+        border: 1px solid var(--sw-divider);
+        border-left: 2px solid var(--sw-accent);
+    }
+    .preview-label {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.6rem;
+        color: var(--sw-text-muted);
+        letter-spacing: 0.15em;
+        margin-bottom: 10px;
+    }
+    .preview-card {
+        background: var(--sw-card-bg);
+        border: 1px solid var(--sw-card-border);
+        overflow: hidden;
+    }
+    .preview-img {
+        width: 100%;
+        aspect-ratio: 4 / 5;
+        object-fit: cover;
+        background: var(--sw-input-bg);
+        display: block;
+    }
+    .preview-img:not([src]), .preview-img[src=""] {
+        display: block;
+        background: repeating-linear-gradient(45deg, var(--sw-input-bg), var(--sw-input-bg) 8px, var(--sw-divider) 8px, var(--sw-divider) 9px);
+    }
+    .preview-body { padding: 12px; }
+    .preview-name {
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 0.95rem; font-weight: 700;
+        color: var(--sw-text);
+        margin-bottom: 6px;
+        min-height: 1.2em;
+    }
+    .preview-meta {
+        display: flex; justify-content: space-between;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.6rem;
+        color: var(--sw-text-muted);
+        letter-spacing: 0.1em;
+        margin-bottom: 10px;
+    }
+    .preview-footer {
+        display: flex; justify-content: space-between; align-items: center;
+        padding-top: 8px;
+        border-top: 1px solid var(--sw-divider);
+    }
+    .preview-price {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.9rem; font-weight: 700;
+        color: var(--sw-accent);
+    }
+    .preview-stock {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.6rem;
+        color: var(--sw-text-muted);
+        letter-spacing: 0.1em;
+    }
     .form-group { margin-bottom: 16px; }
     .form-label {
         display: block;
@@ -1415,6 +1486,14 @@
         letter-spacing: 0.1em;
         text-transform: uppercase;
         margin-bottom: 6px;
+    }
+    .form-label::before {
+        content: '> ';
+        color: var(--sw-accent);
+    }
+    .form-label::after {
+        content: ' //';
+        color: var(--sw-text-muted);
     }
     .form-input, .form-select, .form-textarea {
         width: 100%;
@@ -2284,7 +2363,8 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form id="productForm" autocomplete="off">
+                        <div class="modal-split">
+                        <form id="productForm" class="modal-split-form" autocomplete="off">
                             <div class="form-group">
                                 <label class="form-label">Product Name</label>
                                 <input class="form-input" type="text" id="pf_name" placeholder="e.g. Black Supreme Hoodie" required>
@@ -2357,6 +2437,24 @@
                                 <div class="sizes-grid" id="sizesGrid"></div>
                             </div>
                         </form>
+                        <aside class="modal-split-preview">
+                            <div class="preview-label">&gt; LIVE PREVIEW //</div>
+                            <div class="preview-card">
+                                <img class="preview-img" id="previewCardImg" alt="">
+                                <div class="preview-body">
+                                    <div class="preview-name" id="previewCardName">Product name</div>
+                                    <div class="preview-meta">
+                                        <span id="previewCardBrand">BRAND</span>
+                                        <span id="previewCardCategory">CATEGORY</span>
+                                    </div>
+                                    <div class="preview-footer">
+                                        <span class="preview-price" id="previewCardPrice">₦0</span>
+                                        <span class="preview-stock" id="previewCardStock">STOCK: 0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </aside>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button class="btn-cancel" id="productModalCancel" type="button">CANCEL</button>
