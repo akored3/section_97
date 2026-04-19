@@ -8,6 +8,7 @@ import { formatPrice, initializeCurrency } from '../config/currency.js';
 import { calculateLevel, getRank } from '../data/ranks.js';
 import { escapeHtml } from '../components/productRenderer.js';
 import { initializeMenu } from './menu.js';
+import { abbreviateAmount } from '../utils/format.js';
 
 const userSvg = `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="32" cy="20" r="12"/><path d="M8 58C8 44 18 36 32 36C46 36 56 44 56 58" stroke-linecap="round"/></svg>`;
 
@@ -16,13 +17,6 @@ function buildAvatarHtml(user) {
     return user.avatar_url
         ? `<img src="${escapeHtml(user.avatar_url)}" alt="${escapeHtml(user.username)}"/><div class="lb-avatar-fallback" style="display:none">${userSvg}</div>`
         : userSvg;
-}
-
-// ── Abbreviate currency amounts ──
-function abbreviateAmount(amount) {
-    if (amount >= 1_000_000) return `${(amount / 1_000_000).toFixed(1).replace(/\.0$/, '')}M`;
-    if (amount >= 1_000) return `${Math.round(amount / 1_000)}k`;
-    return String(amount);
 }
 
 // ── Animated counter ──

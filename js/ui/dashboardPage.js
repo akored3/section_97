@@ -3,6 +3,7 @@ import './imgFallback.js';
 import { supabase } from '../config/supabase.js';
 import { getCurrentUser } from '../auth/auth.js';
 import { escapeHtml } from '../components/productRenderer.js';
+import { shortId, getInitials } from '../utils/format.js';
 
 // ─── State ───────────────────────────────────────
 let allOrders = [];
@@ -82,14 +83,6 @@ function formatDate(dateStr) {
 
 function formatPrice(amount) {
     return `₦${Number(amount).toLocaleString()}`;
-}
-
-function shortId(uuid) {
-    return `ORD-${uuid.slice(0, 6).toUpperCase()}`;
-}
-
-function getInitials(name) {
-    return (name || '').split(/\s+/).map(s => s[0]).filter(Boolean).slice(0, 2).join('').toUpperCase() || '?';
 }
 
 const STATUS_FLOW = ['pending', 'processing', 'shipped', 'delivered'];

@@ -212,6 +212,13 @@ cd section_97
 ### Test Payment
 Use Paystack's test card: `4084 0840 8408 4081`, any future expiry, CVV `408`.
 
+### Running Tests
+Unit tests live in [tests/](tests/) and cover the pure helpers in [js/utils/](js/utils/) and [js/data/ranks.js](js/data/ranks.js). Requires Node 20+ — no `npm install` needed since the runner is built into Node itself.
+
+```bash
+node --test
+```
+
 ---
 
 ## Roadmap
