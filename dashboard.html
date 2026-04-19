@@ -1360,17 +1360,38 @@
         box-shadow: 0 8px 40px rgba(0,0,0,0.3);
         display: flex; flex-direction: column;
         overflow: hidden;
+        transform: scale(0.96) translateY(8px);
+        opacity: 0;
+        transition: transform 0.24s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s ease-out;
+    }
+    .modal-overlay.open .modal {
+        transform: scale(1) translateY(0);
+        opacity: 1;
     }
     .modal-header {
         display: flex; justify-content: space-between; align-items: center;
         padding: 18px 22px;
         border-bottom: 1px solid var(--sw-divider);
     }
+    .modal-title-group { display: flex; flex-direction: column; gap: 3px; }
     .modal-title {
         font-family: 'Orbitron', sans-serif;
         font-size: 0.85rem; font-weight: 700;
         color: var(--sw-text);
         letter-spacing: 0.1em;
+    }
+    .modal-subtitle {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.62rem;
+        color: var(--sw-text-muted);
+        letter-spacing: 0.12em;
+    }
+    .modal-subtitle::after {
+        content: '_';
+        display: inline-block;
+        margin-left: 2px;
+        color: var(--sw-accent);
+        animation: termBlink 1s steps(2, end) infinite;
     }
     .modal-close {
         background: none; border: 1px solid var(--sw-input-border);
@@ -1414,10 +1435,13 @@
     .form-select {
         cursor: pointer;
         appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23808080' stroke-width='1.5'/%3E%3C/svg%3E");
+        background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23a0a0a0' stroke-width='1.5'/%3E%3C/svg%3E");
         background-repeat: no-repeat;
         background-position: right 12px center;
         padding-right: 36px;
+    }
+    [data-theme="light"] .form-select {
+        background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23505560' stroke-width='1.5'/%3E%3C/svg%3E");
     }
     .form-select option { background: var(--sw-bg); color: var(--sw-text); }
     .form-textarea { resize: vertical; min-height: 60px; }
@@ -1538,10 +1562,21 @@
         border: none;
         color: var(--sw-bg);
         cursor: pointer;
-        transition: all 0.25s;
+        transition: box-shadow 0.25s, background 0.25s;
+        clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+        position: relative;
+        overflow: hidden;
+    }
+    .btn-submit .btn-shine {
+        position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+        pointer-events: none;
+        transition: left 0.6s ease-out;
     }
     .btn-submit:hover { box-shadow: 0 0 16px var(--sw-accent-glow); }
+    .btn-submit:hover .btn-shine { left: 110%; }
     .btn-submit:disabled { opacity: 0.5; cursor: default; }
+    .btn-submit:disabled .btn-shine { display: none; }
 
     /* ═══════════════════════════════════════════════
        TERMINAL AUTH VEIL
@@ -2197,9 +2232,13 @@
 
             <!-- Add/Edit Product Modal -->
             <div class="modal-overlay" id="productModalOverlay">
-                <div class="modal">
+                <div class="modal cb">
+                    <div class="cb-b"></div>
                     <div class="modal-header">
-                        <div class="modal-title" id="productModalTitle">ADD NEW PRODUCT</div>
+                        <div class="modal-title-group">
+                            <div class="modal-title" id="productModalTitle">ADD NEW PRODUCT</div>
+                            <div class="modal-subtitle" id="productModalSubtitle">&gt; DEPLOY NEW PRODUCT //</div>
+                        </div>
                         <button class="modal-close" id="productModalClose">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                         </button>
@@ -2281,7 +2320,7 @@
                     </div>
                     <div class="modal-footer">
                         <button class="btn-cancel" id="productModalCancel" type="button">CANCEL</button>
-                        <button class="btn-submit" id="productModalSubmit" type="button">DEPLOY PRODUCT</button>
+                        <button class="btn-submit" id="productModalSubmit" type="button"><span class="btn-shine"></span>DEPLOY PRODUCT</button>
                     </div>
                 </div>
             </div>

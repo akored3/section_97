@@ -880,7 +880,9 @@ function openProductModal(product = null) {
     const submitBtn = document.getElementById('productModalSubmit');
 
     title.textContent = product ? 'EDIT PRODUCT' : 'ADD NEW PRODUCT';
-    submitBtn.textContent = product ? 'UPDATE PRODUCT' : 'DEPLOY PRODUCT';
+    const subtitle = document.getElementById('productModalSubtitle');
+    if (subtitle) subtitle.textContent = product ? '> MODIFY PRODUCT //' : '> DEPLOY NEW PRODUCT //';
+    submitBtn.innerHTML = `<span class="btn-shine"></span>${product ? 'UPDATE PRODUCT' : 'DEPLOY PRODUCT'}`;
 
     document.getElementById('pf_name').value = product ? product.name : '';
     document.getElementById('pf_price').value = product ? product.price : '';
@@ -970,7 +972,7 @@ async function submitProduct() {
     });
 
     btn.disabled = true;
-    btn.textContent = 'UPLOADING...';
+    btn.innerHTML = '<span class="btn-shine"></span>UPLOADING...';
 
     try {
         // Upload images if they're File objects, otherwise keep existing URLs
@@ -995,7 +997,7 @@ async function submitProduct() {
             imageBack = pendingImageBack;
         }
 
-        btn.textContent = 'DEPLOYING...';
+        btn.innerHTML = '<span class="btn-shine"></span>DEPLOYING...';
 
         if (editingProductId) {
             // Update existing product
@@ -1057,7 +1059,7 @@ async function submitProduct() {
         showToast('FAILED TO SAVE PRODUCT', true);
     } finally {
         btn.disabled = false;
-        btn.textContent = wasEditing ? 'UPDATE PRODUCT' : 'DEPLOY PRODUCT';
+        btn.innerHTML = `<span class="btn-shine"></span>${wasEditing ? 'UPDATE PRODUCT' : 'DEPLOY PRODUCT'}`;
     }
 }
 
