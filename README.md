@@ -70,7 +70,12 @@ A cyberpunk streetwear e-commerce store with real payments. Built from scratch w
 - Achievement badges (unlockable)
 - Stats: total spent, order count, member since
 
-### Security
+### Account Management
+- Self-service **account deletion** via Supabase Edge Function (`delete-account`)
+- Orders survive deletion as anonymized guest orders (email preserved for tax/refund records, all other identity removed via cascade)
+- Profiles, cart, wishlist, reviews all cascade-delete with the auth user
+
+### Security & Observability
 - Content Security Policy (CSP) on every page
 - Subresource Integrity (SRI) on all CDN scripts (Supabase + Paystack)
 - Row Level Security (RLS) on all Supabase tables
@@ -80,6 +85,7 @@ A cyberpunk streetwear e-commerce store with real payments. Built from scratch w
 - Avatar upload: MIME-type whitelist with extension derived from MIME (not filename)
 - Input length limits on all shipping form fields (HTML + JS enforcement)
 - Strict referrer policy + `X-Content-Type-Options: nosniff`
+- **Sentry error monitoring** — self-hosted SDK + same-origin tunnel through `/api/sentry-tunnel` (bypasses ad blockers that classify Sentry as a tracker)
 - See [SECURITY.md](SECURITY.md) for full details
 
 ---
@@ -111,11 +117,14 @@ new_web/
 ├── leaderboard.html                  # Top spenders leaderboard
 ├── dashboard.html                    # Admin command center
 ├── style.css                         # All styling
+├── api/
+│   └── sentry-tunnel.js              # Vercel Edge: forwards Sentry envelopes through same-origin (ad-blocker bypass)
 ├── js/
 │   ├── main.js                       # Entry point
 │   ├── config/
 │   │   ├── supabase.js               # Supabase client + Paystack key (gitignored)
-│   │   └── currency.js               # Currency localization (IP detect → exchange rate → format)
+│   │   ├── currency.js               # Currency localization (IP detect → exchange rate → format)
+│   │   └── sentry.js                 # Sentry init (uses /api/sentry-tunnel)
 │   ├── auth/
 │   │   └── auth.js                   # Signup, login, logout, session
 │   ├── data/
@@ -125,6 +134,10 @@ new_web/
 │   ├── components/
 │   │   ├── productRenderer.js        # Product card rendering (hearts, badges, NEW tags)
 │   │   └── filters.js                # Category + search filtering
+│   ├── utils/
+│   │   └── format.js                 # Pure formatting helpers (shortId, getInitials, abbreviateAmount)
+│   ├── vendor/
+│   │   └── sentry.bundle.min.js      # Self-hosted @sentry/browser bundle
 │   └── ui/
 │       ├── theme.js                  # Dark/light mode
 │       ├── menu.js                   # Mobile navigation drawer
@@ -139,9 +152,15 @@ new_web/
 │       └── progressBar.js            # HUD progress bar animation
 ├── supabase/
 │   └── functions/
-│       └── verify-payment/index.ts   # Payment verification Edge Function
+│       ├── _shared/cors.ts           # Shared CORS helper for Edge Functions
+│       ├── verify-payment/index.ts   # Payment verification Edge Function
+│       └── delete-account/index.ts   # Account deletion (anonymizes orders, calls auth.admin.deleteUser)
+├── tests/
+│   ├── format.test.js                # Tests for js/utils/format.js
+│   └── ranks.test.js                 # Tests for js/data/ranks.js
+├── package.json                      # type: module + node --test script (no dependencies)
 ├── fonts/                            # Self-hosted woff2 font files
-├── migrations/                       # 21 SQL migration files (run in order)
+├── migrations/                       # SQL migration files (run in order)
 │   ├── supabase_migration.sql
 │   ├── supabase_cart_migration.sql
 │   ├── ...
@@ -191,6 +210,9 @@ cd section_97
    - `supabase_wishlist_counts_migration.sql` — public like count access
    - `supabase_stock_restore_migration.sql` — auto-restore stock on cancel/fail
    - `supabase_payment_ref_notnull_migration.sql` — NOT NULL payment reference
+   - `supabase_reviews_migration.sql` — reviews table + RLS + submit/delete RPCs
+   - `supabase_profiles_cascade_migration.sql` — profiles.id FK now cascades on auth.users delete
+   - `supabase_profile_stats_searchpath_migration.sql` — pin search_path on update_profile_stats so it works under supabase_auth_admin context
 
 2. **Config** — Create `js/config/supabase.js`:
    ```js
@@ -245,6 +267,11 @@ node --test
 - [x] Self-hosted fonts (no Google Fonts dependency, FOUT-free with preloading)
 - [x] Concurrency hardening (atomic cart upserts, stock restore on cancel, NOT NULL payment ref)
 - [x] Rank-up FAB redesign (pill shape, shimmer, vibrate, scroll collapse on mobile)
+- [x] Self-service account deletion (Edge Function + order anonymization)
+- [x] Sentry error monitoring (self-hosted SDK, same-origin tunnel for ad-blocker bypass)
+- [x] Unit tests for pure helpers (Node's built-in test runner, no dependencies)
+- [x] Admin dashboard perf pass (surgical mutations, lazy product images, throttled realtime, prefers-reduced-motion)
+- [x] Add-product modal UX overhaul (split-view live preview, drag-drop upload, size chips, Cmd+Enter submit)
 - [ ] Stripe integration (international payments)
 - [ ] Drop countdowns / "Notify Me"
 - [ ] Quick View modal
