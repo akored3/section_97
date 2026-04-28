@@ -95,9 +95,11 @@
         @keyframes lp-scan-down { 0% { top: 0; opacity: 0; } 5% { opacity: 1; } 95% { opacity: .4; } 100% { top: 100%; opacity: 0; } }
 
         /* ── Scroll reveal (used by sections we'll add later) ── */
-        .reveal { opacity: 0; transform: translateY(40px); transition: opacity .7s cubic-bezier(0.2, 0, 0, 1), transform .7s cubic-bezier(0.2, 0, 0, 1); }
-        .reveal.from-left { transform: translateX(-40px); }
-        .reveal.from-right { transform: translateX(40px); }
+        /* .reveal is gated on .lp-js so content stays visible if JS fails. */
+        .reveal { transition: opacity .7s cubic-bezier(0.2, 0, 0, 1), transform .7s cubic-bezier(0.2, 0, 0, 1); }
+        .lp-js .reveal { opacity: 0; transform: translateY(40px); }
+        .lp-js .reveal.from-left { transform: translateX(-40px); }
+        .lp-js .reveal.from-right { transform: translateX(40px); }
         .reveal.visible { opacity: 1 !important; transform: none !important; }
 
         /* ── Buttons (parallelogram clip-path) ── */
@@ -217,6 +219,65 @@
             justify-content: center;
         }
         .lp-nav-hamburger svg { display: block; }
+        .lp-nav-hamburger .lp-ham-close { display: none; }
+        .lp-nav-hamburger[aria-expanded="true"] .lp-ham-open { display: none; }
+        .lp-nav-hamburger[aria-expanded="true"] .lp-ham-close { display: block; }
+
+        /* Mobile drawer */
+        .lp-nav-drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 280px;
+            max-width: 80vw;
+            height: 100dvh;
+            background: var(--lp-bg);
+            border-left: 1px solid rgba(0, 255, 100, 0.2);
+            box-shadow: -20px 0 40px rgba(0, 0, 0, 0.5);
+            transform: translateX(100%);
+            transition: transform .35s cubic-bezier(0.2, 0, 0, 1);
+            z-index: 100;
+            padding: 84px 28px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .lp-nav-drawer.open { transform: translateX(0); }
+        .lp-nav-drawer-tag {
+            font-family: var(--lp-font-mono);
+            font-size: 9px;
+            letter-spacing: 3px;
+            color: var(--lp-fg3);
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .lp-drawer-link {
+            font-family: var(--lp-font-mono);
+            font-size: 12px;
+            letter-spacing: 2px;
+            color: var(--lp-fg2);
+            text-transform: uppercase;
+            text-decoration: none;
+            padding: 14px 4px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            transition: color .2s, padding-left .2s;
+        }
+        .lp-drawer-link:hover { color: var(--lp-accent); padding-left: 8px; }
+        .lp-drawer-cta { margin-top: 24px; align-self: flex-start; }
+
+        .lp-nav-scrim {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 99;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .25s;
+        }
+        .lp-nav-scrim.open { opacity: 1; pointer-events: auto; }
 
         /* ══════════════════════════════════════════════════════════
            HERO
@@ -682,14 +743,30 @@
 
         <a href="auth.html" class="lp-nav-cta">Join Now</a>
 
-        <button class="lp-nav-hamburger" id="lpHamburger" aria-label="Open menu" aria-expanded="false">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <button class="lp-nav-hamburger" id="lpHamburger" aria-label="Open menu" aria-expanded="false" aria-controls="lpDrawer">
+            <svg class="lp-ham-open"  width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="3" y1="6" x2="21" y2="6"/>
                 <line x1="3" y1="12" x2="21" y2="12"/>
                 <line x1="3" y1="18" x2="21" y2="18"/>
             </svg>
+            <svg class="lp-ham-close" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="5" y1="5" x2="19" y2="19"/>
+                <line x1="19" y1="5" x2="5" y2="19"/>
+            </svg>
         </button>
     </nav>
+
+    <!-- Mobile nav drawer -->
+    <div class="lp-nav-scrim" id="lpScrim" hidden></div>
+    <aside class="lp-nav-drawer" id="lpDrawer" aria-hidden="true">
+        <div class="lp-nav-drawer-tag">// NAVIGATION</div>
+        <a href="#hero" class="lp-drawer-link">Home</a>
+        <a href="#store" class="lp-drawer-link">Store</a>
+        <a href="#ranks" class="lp-drawer-link">Ranks</a>
+        <a href="#leaderboard" class="lp-drawer-link">Leaderboard</a>
+        <a href="#profile" class="lp-drawer-link">Profile</a>
+        <a href="auth.html" class="btn-p lp-drawer-cta">Join Now</a>
+    </aside>
 
     <!-- ══════════════════════════════════════════════════════════
          MAIN

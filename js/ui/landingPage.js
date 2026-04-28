@@ -141,6 +141,9 @@ function initNavObserver() {
 function initScrollReveal() {
     const els = document.querySelectorAll('.reveal');
     if (!els.length) return;
+    // Gate the initial-hidden state on JS so .reveal content stays visible
+    // if anything in this module fails before observing.
+    document.documentElement.classList.add('lp-js');
     const obs = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
             if (entry.isIntersecting) {
@@ -152,6 +155,31 @@ function initScrollReveal() {
     els.forEach((el) => obs.observe(el));
 }
 
+function initMobileDrawer() {
+    const btn = document.getElementById('lpHamburger');
+    const drawer = document.getElementById('lpDrawer');
+    const scrim = document.getElementById('lpScrim');
+    if (!btn || !drawer || !scrim) return;
+
+    function setOpen(open) {
+        drawer.classList.toggle('open', open);
+        scrim.classList.toggle('open', open);
+        btn.setAttribute('aria-expanded', String(open));
+        drawer.setAttribute('aria-hidden', String(!open));
+        scrim.toggleAttribute('hidden', !open);
+        document.body.style.overflow = open ? 'hidden' : '';
+    }
+
+    btn.addEventListener('click', () => setOpen(!drawer.classList.contains('open')));
+    scrim.addEventListener('click', () => setOpen(false));
+    drawer.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && drawer.classList.contains('open')) setOpen(false);
+    });
+}
+
+// Reveals first so JS-gated CSS applies before paint.
+initScrollReveal();
 initHero();
 initNavObserver();
-initScrollReveal();
+initMobileDrawer();
