@@ -122,6 +122,8 @@
             transition: background 150ms, transform 150ms;
         }
         .btn-p:hover { background: var(--lp-accent-bright); transform: translateY(-1px); }
+        /* Make clicks/taps on icon glyphs always hit the parent anchor */
+        .btn-p > svg, .btn-o > svg { pointer-events: none; }
         .btn-o {
             display: inline-flex;
             align-items: center;
@@ -1052,7 +1054,7 @@
                     </h1>
                     <p class="hero-desc">Premium cyberpunk streetwear for the ones who move different. Shop drops, earn XP, rank up, dominate the leaderboard. Nigeria to the world.</p>
                     <div class="hero-ctas">
-                        <a href="index.html" class="btn-p">
+                        <a href="/" class="btn-p">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <circle cx="9" cy="20" r="1.5"/>
                                 <circle cx="17" cy="20" r="1.5"/>
@@ -1110,7 +1112,7 @@
                         <li><span class="dot accent">●</span> WISHLIST — SYNC ON LOGIN</li>
                     </ul>
 
-                    <a href="index.html" class="btn-p store-cta">VIEW ALL →</a>
+                    <a href="/" class="btn-p store-cta">VIEW ALL →</a>
                 </div>
 
                 <div class="store-grid reveal from-right">
