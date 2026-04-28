@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SECTION-97 | Stay Metal — Cyberpunk Streetwear, Lagos</title>
-    <meta name="description" content="SECTION-97 — premium streetwear from Lagos. Supreme, Corteiz, Balenciaga NBA, Stussy, Nike. Earn XP on every drop, climb the global leaderboard, stay metal.">
+    <meta name="description" content="SECTION-97 — premium streetwear from Nigeria. Supreme, Corteiz, Balenciaga NBA, Stussy, Nike. Earn XP on every drop, climb the global leaderboard, stay metal.">
     <meta name="keywords" content="streetwear, Lagos, Supreme, Corteiz, Balenciaga, Stussy, Nike, premium, hoodies, sneakers">
 
     <meta property="og:type" content="website">
@@ -415,6 +415,179 @@
             margin-top: 2px;
         }
 
+        /* ══════════════════════════════════════════════════════════
+           SHARED SECTION HEADERS (reused by store, ranks, leaderboard, etc.)
+           ══════════════════════════════════════════════════════════ */
+        .section-tag {
+            font-family: var(--lp-font-mono);
+            font-size: 10px;
+            letter-spacing: 3px;
+            color: var(--lp-accent);
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .section-tag::before {
+            content: '';
+            display: block;
+            width: 28px;
+            height: 1px;
+            background: var(--lp-accent);
+            box-shadow: 0 0 8px var(--lp-accent);
+        }
+        .section-h {
+            font-family: var(--lp-font-display);
+            font-weight: 700;
+            font-size: clamp(32px, 4.5vw, 64px);
+            line-height: .92;
+            letter-spacing: -1px;
+            color: #fff;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+        .section-h .acc { color: var(--lp-accent); display: block; }
+        .section-h .stroke {
+            color: transparent;
+            -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.2);
+            display: block;
+        }
+        .section-sub {
+            font-family: var(--lp-font-body);
+            font-size: 17px;
+            font-weight: 400;
+            color: var(--lp-fg2);
+            line-height: 1.65;
+            max-width: 500px;
+            text-wrap: pretty;
+        }
+
+        /* ══════════════════════════════════════════════════════════
+           STORE
+           ══════════════════════════════════════════════════════════ */
+        #store {
+            padding: 120px 0;
+            background: var(--lp-bg2);
+            overflow: hidden;
+        }
+        .store-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1.3fr;
+            gap: 0;
+            align-items: center;
+        }
+        .store-text { padding: 0 64px; }
+
+        .brand-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 28px;
+        }
+        .b-chip {
+            font-family: var(--lp-font-mono);
+            font-size: 9px;
+            letter-spacing: 2px;
+            color: var(--lp-fg3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 5px 12px;
+            text-transform: uppercase;
+        }
+
+        .feature-bullets {
+            margin-top: 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .feature-bullets li {
+            list-style: none;
+            font-family: var(--lp-font-mono);
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: var(--lp-fg3);
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .feature-bullets .dot { line-height: 1; }
+        .feature-bullets .dot.error  { color: var(--lp-error); }
+        .feature-bullets .dot.gold   { color: var(--lp-gold); }
+        .feature-bullets .dot.accent { color: var(--lp-accent); }
+
+        .store-cta { margin-top: 32px; display: inline-flex; }
+
+        /* Product grid: 2x2 with vertical stagger */
+        .store-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3px;
+        }
+        .s-card {
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 3 / 4;
+            background: #111;
+        }
+        .s-card:nth-child(1) { margin-bottom: -40px; }
+        .s-card:nth-child(3) { margin-top: -40px; }
+        .s-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: saturate(0.8) contrast(1.05);
+            transition: transform 600ms cubic-bezier(0.2, 0, 0, 1);
+            display: block;
+        }
+        .s-card:hover img { transform: scale(1.04); }
+        .s-card .card-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .s-card .card-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 16px; }
+        .s-card .c-brand {
+            font-family: var(--lp-font-mono);
+            font-size: 9px;
+            letter-spacing: 2.5px;
+            color: var(--lp-accent);
+            text-transform: uppercase;
+        }
+        .s-card .c-name {
+            font-family: var(--lp-font-display);
+            font-weight: 700;
+            font-size: 14px;
+            color: #fff;
+            text-transform: uppercase;
+            margin-top: 3px;
+            letter-spacing: 1px;
+        }
+        .s-card .c-price {
+            font-family: var(--lp-font-mono);
+            font-size: 12px;
+            color: var(--lp-fg1);
+            margin-top: 4px;
+        }
+        .s-card .c-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            font-family: var(--lp-font-mono);
+            font-size: 9px;
+            letter-spacing: 1.5px;
+            padding: 4px 8px;
+            border: 1px solid;
+            text-transform: uppercase;
+            background: rgba(0, 0, 0, 0.6);
+        }
+        .s-card .c-badge.new { color: var(--lp-error); border-color: rgba(255, 60, 60, 0.6); }
+        .s-card .c-badge.low { color: #ff6b35;          border-color: rgba(255, 107, 53, 0.6); }
+
         /* ── Ticker bar ── */
         .ticker-bar {
             background: rgba(0, 255, 100, 0.1);
@@ -441,6 +614,9 @@
             .lp-nav-hamburger { display: inline-flex; }
             .hero-h1 { font-size: clamp(52px, 7vw, 80px); }
             .hero-right { padding: 40px 32px 40px 16px; }
+            #store { padding: 80px 0; }
+            .store-inner { grid-template-columns: 1fr; gap: 48px; }
+            .store-text { padding: 0 40px; }
         }
 
         /* ── Responsive: mobile (≤768px) ── */
@@ -461,6 +637,9 @@
             .hero-desc { font-size: 15px; max-width: 100%; }
             .hero-ctas { flex-direction: row; flex-wrap: wrap; }
             .hero-stat .val { font-size: 20px; }
+            #store { padding: 64px 0; }
+            .store-text { padding: 0 20px; }
+            .s-card:nth-child(1), .s-card:nth-child(3) { margin: 0; }
         }
 
         /* ── Responsive: small mobile (≤390px) ── */
@@ -468,6 +647,8 @@
             .hero-h1 { font-size: 40px; }
             .hero-stat .val { font-size: 18px; }
             .hero-stat .lbl { font-size: 7px; }
+            .store-grid { grid-template-columns: 1fr; }
+            .s-card { max-height: 300px; aspect-ratio: 4 / 5; }
         }
 
         /* ── Reduced motion ── */
@@ -533,12 +714,12 @@
                 </div>
 
                 <div class="hero-right">
-                    <div class="hero-eyebrow">// SECTION-97 · CYBER STREETWEAR · LAGOS</div>
+                    <div class="hero-eyebrow">// SECTION-97 · CYBER STREETWEAR · NIGERIA</div>
                     <h1 class="hero-h1">
                         STAY
                         <span class="acc">METAL<span class="cur">_</span></span>
                     </h1>
-                    <p class="hero-desc">Premium cyberpunk streetwear for the ones who move different. Shop drops, earn XP, rank up, dominate the leaderboard. Lagos to the world.</p>
+                    <p class="hero-desc">Premium cyberpunk streetwear for the ones who move different. Shop drops, earn XP, rank up, dominate the leaderboard. Nigeria to the world.</p>
                     <div class="hero-ctas">
                         <a href="index.html" class="btn-p">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -569,6 +750,77 @@
                 <div class="ticker-inner">
                     ★ NEW DROP · SUPREME SS26 &nbsp;&nbsp; ◆ CORTEIZ ALCATRAZ DENIM &nbsp;&nbsp; ▶ BALENCIAGA NBA COLLECTION &nbsp;&nbsp; ★ YARD SALE CHECKERED ZIP &nbsp;&nbsp; ◆ STUSSY 8-BALL CREW &nbsp;&nbsp; ▶ NIKE × CARHARTT COLLAB &nbsp;&nbsp; ★ ALD SWEATSHIRT DROP &nbsp;&nbsp; ◆ EARN XP WITH EVERY PURCHASE &nbsp;&nbsp; ▶ RANK UP · DOMINATE THE BOARD &nbsp;&nbsp;&nbsp;&nbsp;
                     ★ NEW DROP · SUPREME SS26 &nbsp;&nbsp; ◆ CORTEIZ ALCATRAZ DENIM &nbsp;&nbsp; ▶ BALENCIAGA NBA COLLECTION &nbsp;&nbsp; ★ YARD SALE CHECKERED ZIP &nbsp;&nbsp; ◆ STUSSY 8-BALL CREW &nbsp;&nbsp; ▶ NIKE × CARHARTT COLLAB &nbsp;&nbsp; ★ ALD SWEATSHIRT DROP &nbsp;&nbsp; ◆ EARN XP WITH EVERY PURCHASE &nbsp;&nbsp; ▶ RANK UP · DOMINATE THE BOARD
+                </div>
+            </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════════════
+             STORE
+             ══════════════════════════════════════════════════════════ -->
+        <section id="store">
+            <div class="store-inner">
+                <div class="store-text reveal from-left">
+                    <div class="section-tag">THE ARSENAL</div>
+                    <h2 class="section-h">SHOP<br>THE<br><span class="acc">DROPS</span></h2>
+                    <p class="section-sub">Curated exclusives from the world's hardest brands. Every purchase earns XP toward your rank. New drops pinned to the top automatically.</p>
+
+                    <div class="brand-row">
+                        <span class="b-chip">SUPREME</span>
+                        <span class="b-chip">CORTEIZ</span>
+                        <span class="b-chip">BALENCIAGA</span>
+                        <span class="b-chip">STUSSY</span>
+                        <span class="b-chip">YARD SALE</span>
+                        <span class="b-chip">NIKE × CARHARTT</span>
+                    </div>
+
+                    <ul class="feature-bullets">
+                        <li><span class="dot error">●</span> NEW TAGS &amp; LOW STOCK ALERTS</li>
+                        <li><span class="dot gold">●</span> PER-SIZE STOCK TRACKING</li>
+                        <li><span class="dot accent">●</span> WISHLIST — SYNC ON LOGIN</li>
+                    </ul>
+
+                    <a href="index.html" class="btn-p store-cta">VIEW ALL →</a>
+                </div>
+
+                <div class="store-grid reveal from-right">
+                    <div class="s-card">
+                        <img src="images/red_supreme_hoodie1.jpeg" alt="Supreme Box Logo Hoodie" loading="lazy" decoding="async">
+                        <div class="card-overlay"></div>
+                        <div class="c-badge new">NEW</div>
+                        <div class="card-info">
+                            <div class="c-brand">SUPREME</div>
+                            <div class="c-name">BOX LOGO HOODIE</div>
+                            <div class="c-price">₦185,000</div>
+                        </div>
+                    </div>
+                    <div class="s-card">
+                        <img src="images/black_balenciaga_nba_jersey25.jpeg" alt="Balenciaga NBA Oversized Jersey" loading="lazy" decoding="async">
+                        <div class="card-overlay"></div>
+                        <div class="c-badge low">4 LEFT</div>
+                        <div class="card-info">
+                            <div class="c-brand">BALENCIAGA · NBA</div>
+                            <div class="c-name">OVERSIZED JERSEY</div>
+                            <div class="c-price">₦1,200,000</div>
+                        </div>
+                    </div>
+                    <div class="s-card">
+                        <img src="images/corteiz_denim_jacket19.jpeg" alt="Corteiz Alcatraz Denim Jacket" loading="lazy" decoding="async">
+                        <div class="card-overlay"></div>
+                        <div class="card-info">
+                            <div class="c-brand">CORTEIZ</div>
+                            <div class="c-name">ALCATRAZ DENIM JACKET</div>
+                            <div class="c-price">₦240,000</div>
+                        </div>
+                    </div>
+                    <div class="s-card">
+                        <img src="images/checkered_yardsale_hooodie51.jpeg" alt="Yard Sale Checkered Zip Hoodie" loading="lazy" decoding="async">
+                        <div class="card-overlay"></div>
+                        <div class="card-info">
+                            <div class="c-brand">YARD SALE</div>
+                            <div class="c-name">CHECKERED ZIP HOODIE</div>
+                            <div class="c-price">₦145,000</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
