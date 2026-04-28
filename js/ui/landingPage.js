@@ -178,8 +178,45 @@ function initMobileDrawer() {
     });
 }
 
+// ── Rank timeline data ──
+// Marketing display values per design handoff. NOT the same as the in-game
+// XP scale in js/data/ranks.js (handoff shows 25x scale: 50 XP = ₦50K spent).
+// Names + colors match RANK_DATA exactly. Revisit if we want to align them.
+const LP_RANKS = [
+    { tier: 1,  name: 'NEWBIE',         color: '#4a9eff', xp: '0',      chevs: 1, desc: 'Your first step. Just joined the community.' },
+    { tier: 2,  name: 'FIT_ROOKIE',     color: '#22c55e', xp: '50',     chevs: 1, desc: 'Getting started. A few purchases in.' },
+    { tier: 3,  name: 'STREET_STYLER',  color: '#cd7f32', xp: '125',    chevs: 2, desc: "You know what you're doing. Regulars know your name." },
+    { tier: 4,  name: 'NEON_DRIPPER',   color: '#e86e2a', xp: '250',    chevs: 2, desc: "Neon-lit and dripping. Can't be ignored." },
+    { tier: 5,  name: 'FIT_COMMANDER',  color: '#b0b0b0', xp: '450',    chevs: 3, desc: 'You command the fit. Others take notes.' },
+    { tier: 6,  name: 'CYBER_SWAGLORD', color: '#a78bfa', xp: '750',    chevs: 3, desc: 'Full cyber mode. The board watches you.' },
+    { tier: 7,  name: 'DRIP_ARCHITECT', color: '#ffd700', xp: '1.2K',   chevs: 4, desc: 'You design the wave others ride.' },
+    { tier: 8,  name: 'OUTFIT_WARLORD', color: '#ff6b35', xp: '1.8K',   chevs: 4, desc: 'No negotiation. The fits speak for themselves.' },
+    { tier: 9,  name: 'FITBOSS_2099',   color: '#b9f2ff', xp: '2.6K',   chevs: 5, desc: 'Two steps from the top. Legendary status near.' },
+    { tier: 10, name: 'GODOFDRIP.EXE',  color: '#ff44cc', xp: '5.25K+', chevs: 5, desc: 'You are the leaderboard. Permanent top-tier.' },
+];
+
+function initRankPath() {
+    const root = document.getElementById('lpRankPath');
+    if (!root) return;
+    root.innerHTML = LP_RANKS.map((r) => `
+        <li class="rp-row" style="--rcolor: ${r.color}">
+            <div class="rp-dot"><span class="rp-dot-inner"></span></div>
+            <div class="rp-info">
+                <span class="rp-tier">T-${String(r.tier).padStart(2, '0')}</span>
+                <span class="rp-name" style="color: ${r.color}">${r.name}</span>
+                <span class="rp-desc">${r.desc}</span>
+            </div>
+            <div class="rp-right">
+                <div class="rp-xp">${r.xp} XP</div>
+                <div class="rp-chevs">${'▶'.repeat(r.chevs)}</div>
+            </div>
+        </li>
+    `).join('');
+}
+
 // Reveals first so JS-gated CSS applies before paint.
 initScrollReveal();
 initHero();
 initNavObserver();
 initMobileDrawer();
+initRankPath();
