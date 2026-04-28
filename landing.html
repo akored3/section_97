@@ -89,13 +89,56 @@
         }
 
         /* ── Animations ── */
-        @keyframes lp-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+        @keyframes lp-blink     { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+        @keyframes lp-ticker    { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        @keyframes lp-slide-r   { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes lp-scan-down { 0% { top: 0; opacity: 0; } 5% { opacity: 1; } 95% { opacity: .4; } 100% { top: 100%; opacity: 0; } }
 
         /* ── Scroll reveal (used by sections we'll add later) ── */
         .reveal { opacity: 0; transform: translateY(40px); transition: opacity .7s cubic-bezier(0.2, 0, 0, 1), transform .7s cubic-bezier(0.2, 0, 0, 1); }
         .reveal.from-left { transform: translateX(-40px); }
         .reveal.from-right { transform: translateX(40px); }
         .reveal.visible { opacity: 1 !important; transform: none !important; }
+
+        /* ── Buttons (parallelogram clip-path) ── */
+        .btn-p {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--lp-accent);
+            color: #000;
+            font-family: var(--lp-font-display);
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 2px;
+            padding: 16px 32px;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+            transition: background 150ms, transform 150ms;
+        }
+        .btn-p:hover { background: var(--lp-accent-bright); transform: translateY(-1px); }
+        .btn-o {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: transparent;
+            color: var(--lp-accent);
+            font-family: var(--lp-font-display);
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 2px;
+            padding: 14px 30px;
+            text-transform: uppercase;
+            border: 2px solid rgba(0, 255, 100, 0.5);
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 150ms, border-color 150ms;
+            clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+        }
+        .btn-o:hover { background: rgba(0, 255, 100, 0.1); border-color: var(--lp-accent); }
 
         /* ── NAV ── */
         .lp-nav {
@@ -175,32 +218,256 @@
         }
         .lp-nav-hamburger svg { display: block; }
 
-        /* ── Placeholder for sections (removed once we add real content) ── */
-        .lp-placeholder {
-            min-height: calc(100vh - 60px);
-            margin-top: 60px;
-            display: grid;
-            place-items: center;
+        /* ══════════════════════════════════════════════════════════
+           HERO
+           ══════════════════════════════════════════════════════════ */
+        #hero { min-height: 100vh; display: flex; flex-direction: column; padding-top: 60px; position: relative; overflow: hidden; }
+        .hero-main { flex: 1; display: flex; min-height: calc(100vh - 60px - 38px); }
+
+        /* Left panel: diagonal-clipped image stack with parallax */
+        .hero-left {
+            flex: 1.15;
+            position: relative;
+            overflow: hidden;
+            clip-path: polygon(0 0, 94% 0, 100% 100%, 0 100%);
+            background: #111;
+        }
+        .hero-left .img-stack { position: absolute; inset: 0; }
+        .hero-left .img-slide { position: absolute; inset: 0; opacity: 0; transition: opacity .8s cubic-bezier(0.2, 0, 0, 1); }
+        .hero-left .img-slide.active { opacity: 1; }
+        .hero-left .img-slide img {
+            width: 100%;
+            height: 115%;
+            object-fit: cover;
+            filter: saturate(0.75) contrast(1.1);
+            will-change: transform;
+        }
+        .hero-left .overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.25) 0%, rgba(6, 6, 10, 0.6) 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
+        .hero-left .scan-v {
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(0deg, transparent 0, transparent 3px, rgba(0, 255, 100, 0.04) 4px, transparent 5px);
+            pointer-events: none;
+            z-index: 2;
+        }
+        .hero-left .scan-beam {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 100, 0.35), transparent);
+            animation: lp-scan-down 5s ease-in-out infinite;
+            top: 0;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .hero-left .img-corner {
+            position: absolute;
+            top: 28px;
+            left: 28px;
+            z-index: 3;
             font-family: var(--lp-font-mono);
-            font-size: 11px;
+            font-size: 9px;
+            letter-spacing: 2px;
+            color: rgba(0, 255, 100, 0.7);
+            border: 1px solid rgba(0, 255, 100, 0.35);
+            padding: 5px 10px;
+            background: rgba(0, 0, 0, 0.5);
+            text-transform: uppercase;
+            transition: opacity .5s, transform .5s;
+        }
+        .hero-left .img-meta { position: absolute; bottom: 28px; left: 28px; z-index: 3; }
+        .hero-left .img-meta .brand {
+            font-family: var(--lp-font-mono);
+            font-size: 10px;
+            letter-spacing: 2.5px;
+            color: rgba(0, 255, 100, 0.9);
+            text-transform: uppercase;
+            transition: opacity .5s, transform .5s;
+        }
+        .hero-left .img-meta .prodname {
+            font-family: var(--lp-font-display);
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: 1px;
+            color: #fff;
+            margin-top: 4px;
+            text-transform: uppercase;
+            transition: opacity .5s, transform .5s;
+        }
+        .hero-left .img-meta .prodprice {
+            font-family: var(--lp-font-mono);
+            font-size: 13px;
+            color: var(--lp-accent);
+            margin-top: 3px;
+            transition: opacity .5s, transform .5s;
+        }
+        .hero-left .dots {
+            position: absolute;
+            bottom: 28px;
+            right: 28px;
+            z-index: 3;
+            display: flex;
+            gap: 6px;
+        }
+        .hero-left .dots button {
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            transition: width .3s, background .3s;
+        }
+        .hero-left .dots button.active { width: 24px; background: var(--lp-accent); }
+
+        /* Right panel: copy + CTAs + stats */
+        .hero-right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px 56px 60px 24px;
+        }
+        .hero-eyebrow {
+            font-family: var(--lp-font-mono);
+            font-size: 10px;
             letter-spacing: 3px;
+            color: var(--lp-accent);
+            text-transform: uppercase;
+            animation: lp-slide-r .7s .3s both;
+        }
+        .hero-h1 {
+            font-family: var(--lp-font-display);
+            font-weight: 700;
+            font-size: clamp(64px, 7.5vw, 100px);
+            line-height: .88;
+            letter-spacing: -2px;
+            color: #fff;
+            text-transform: uppercase;
+            margin: 18px 0 0;
+            animation: lp-slide-r .85s .42s both;
+        }
+        .hero-h1 .acc { color: var(--lp-accent); display: block; text-shadow: 0 0 40px rgba(0, 255, 100, 0.5); }
+        .hero-h1 .cur { display: inline-block; animation: lp-blink 1s infinite; }
+        .hero-desc {
+            font-family: var(--lp-font-body);
+            font-size: 17px;
+            font-weight: 400;
+            color: var(--lp-fg2);
+            max-width: 420px;
+            line-height: 1.65;
+            margin-top: 24px;
+            animation: lp-slide-r .8s .56s both;
+            text-wrap: pretty;
+        }
+        .hero-ctas {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 36px;
+            align-items: flex-start;
+            animation: lp-slide-r .8s .7s both;
+        }
+        .hero-hud {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 28px;
+            font-family: var(--lp-font-mono);
+            font-size: 10px;
+            letter-spacing: 2px;
             color: var(--lp-fg3);
             text-transform: uppercase;
+            flex-wrap: wrap;
+            animation: lp-slide-r .8s .84s both;
         }
-        .lp-placeholder::before { content: '// LANDING_PAGE :: SECTIONS_PENDING'; }
+        .hero-hud .chip { color: var(--lp-accent); border: 1px solid rgba(0, 255, 100, 0.3); padding: 3px 8px; }
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            margin-top: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            animation: lp-slide-r .8s .96s both;
+        }
+        .hero-stat { padding: 14px 16px; border-right: 1px solid rgba(255, 255, 255, 0.07); background: rgba(255, 255, 255, 0.02); }
+        .hero-stat:last-child { border-right: none; }
+        .hero-stat .val {
+            font-family: var(--lp-font-display);
+            font-weight: 700;
+            font-size: 26px;
+            color: var(--lp-accent);
+            letter-spacing: -1px;
+        }
+        .hero-stat .lbl {
+            font-family: var(--lp-font-mono);
+            font-size: 9px;
+            letter-spacing: 2px;
+            color: var(--lp-fg3);
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
 
-        /* ── Responsive: tablet ── */
+        /* ── Ticker bar ── */
+        .ticker-bar {
+            background: rgba(0, 255, 100, 0.1);
+            border-top: 1px solid rgba(0, 255, 100, 0.3);
+            border-bottom: 1px solid rgba(0, 255, 100, 0.3);
+            padding: 9px 0;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .ticker-inner {
+            display: inline-block;
+            animation: lp-ticker 22s linear infinite;
+            font-family: var(--lp-font-mono);
+            font-size: 10px;
+            letter-spacing: 2.5px;
+            color: rgba(0, 255, 100, 0.85);
+            text-transform: uppercase;
+        }
+
+        /* ── Responsive: tablet (≤1024px) ── */
         @media (max-width: 1024px) {
             .lp-nav { padding: 0 28px; }
             .lp-nav-links { display: none; }
             .lp-nav-hamburger { display: inline-flex; }
+            .hero-h1 { font-size: clamp(52px, 7vw, 80px); }
+            .hero-right { padding: 40px 32px 40px 16px; }
         }
 
-        /* ── Responsive: mobile ── */
+        /* ── Responsive: mobile (≤768px) ── */
         @media (max-width: 768px) {
             .lp-nav { height: 52px; padding: 0 20px; }
             .lp-nav-cta { font-size: 10px; padding: 7px 14px; }
-            .lp-placeholder { margin-top: 52px; min-height: calc(100vh - 52px); }
+            .hero-main { flex-direction: column; min-height: auto; }
+            .hero-left {
+                clip-path: none;
+                height: 56vw;
+                min-height: 260px;
+                max-height: 380px;
+                width: 100%;
+            }
+            .hero-left .img-slide img { height: 120%; }
+            .hero-right { padding: 32px 20px 40px; }
+            .hero-h1 { font-size: clamp(44px, 12vw, 68px); letter-spacing: -1px; }
+            .hero-desc { font-size: 15px; max-width: 100%; }
+            .hero-ctas { flex-direction: row; flex-wrap: wrap; }
+            .hero-stat .val { font-size: 20px; }
+        }
+
+        /* ── Responsive: small mobile (≤390px) ── */
+        @media (max-width: 390px) {
+            .hero-h1 { font-size: 40px; }
+            .hero-stat .val { font-size: 18px; }
+            .hero-stat .lbl { font-size: 7px; }
         }
 
         /* ── Reduced motion ── */
@@ -244,45 +511,70 @@
     </nav>
 
     <!-- ══════════════════════════════════════════════════════════
-         MAIN — sections will be added in subsequent commits:
-         hero, ticker, store, ranks, leaderboard, profile, cta
+         MAIN
          ══════════════════════════════════════════════════════════ -->
     <main>
-        <section id="hero" class="lp-placeholder" aria-label="Hero placeholder"></section>
+
+        <!-- HERO -->
+        <section id="hero" aria-label="Hero">
+            <div class="hero-main">
+                <div class="hero-left" id="lpHeroLeft">
+                    <div class="img-stack" id="lpImgStack"></div>
+                    <div class="overlay"></div>
+                    <div class="scan-v"></div>
+                    <div class="scan-beam"></div>
+                    <div class="img-corner" id="lpImgCorner">// SUPREME · SS26 DROP</div>
+                    <div class="img-meta">
+                        <div class="brand" id="lpImgBrand">SUPREME</div>
+                        <div class="prodname" id="lpImgName">Box Logo Hoodie — Red</div>
+                        <div class="prodprice" id="lpImgPrice">₦185,000</div>
+                    </div>
+                    <div class="dots" id="lpDots" role="tablist" aria-label="Hero slideshow"></div>
+                </div>
+
+                <div class="hero-right">
+                    <div class="hero-eyebrow">// SECTION-97 · CYBER STREETWEAR · LAGOS</div>
+                    <h1 class="hero-h1">
+                        STAY
+                        <span class="acc">METAL<span class="cur">_</span></span>
+                    </h1>
+                    <p class="hero-desc">Premium cyberpunk streetwear for the ones who move different. Shop drops, earn XP, rank up, dominate the leaderboard. Lagos to the world.</p>
+                    <div class="hero-ctas">
+                        <a href="index.html" class="btn-p">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <circle cx="9" cy="20" r="1.5"/>
+                                <circle cx="17" cy="20" r="1.5"/>
+                                <path d="M3 4h2l2 12h12l2-8H6"/>
+                            </svg>
+                            Enter the store
+                        </a>
+                        <a href="#ranks" class="btn-o">Rank up →</a>
+                    </div>
+                    <div class="hero-hud">
+                        <span class="chip">SYS ●</span>
+                        <span class="chip">NET ●</span>
+                        <span class="chip">GFX ●</span>
+                        STATUS: ALL ONLINE
+                    </div>
+                    <div class="hero-stats">
+                        <div class="hero-stat"><div class="val">67+</div><div class="lbl">Products</div></div>
+                        <div class="hero-stat"><div class="val">10</div><div class="lbl">Rank tiers</div></div>
+                        <div class="hero-stat"><div class="val">∞</div><div class="lbl">Drip</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ticker bar (content duplicated for seamless loop) -->
+            <div class="ticker-bar">
+                <div class="ticker-inner">
+                    ★ NEW DROP · SUPREME SS26 &nbsp;&nbsp; ◆ CORTEIZ ALCATRAZ DENIM &nbsp;&nbsp; ▶ BALENCIAGA NBA COLLECTION &nbsp;&nbsp; ★ YARD SALE CHECKERED ZIP &nbsp;&nbsp; ◆ STUSSY 8-BALL CREW &nbsp;&nbsp; ▶ NIKE × CARHARTT COLLAB &nbsp;&nbsp; ★ ALD SWEATSHIRT DROP &nbsp;&nbsp; ◆ EARN XP WITH EVERY PURCHASE &nbsp;&nbsp; ▶ RANK UP · DOMINATE THE BOARD &nbsp;&nbsp;&nbsp;&nbsp;
+                    ★ NEW DROP · SUPREME SS26 &nbsp;&nbsp; ◆ CORTEIZ ALCATRAZ DENIM &nbsp;&nbsp; ▶ BALENCIAGA NBA COLLECTION &nbsp;&nbsp; ★ YARD SALE CHECKERED ZIP &nbsp;&nbsp; ◆ STUSSY 8-BALL CREW &nbsp;&nbsp; ▶ NIKE × CARHARTT COLLAB &nbsp;&nbsp; ★ ALD SWEATSHIRT DROP &nbsp;&nbsp; ◆ EARN XP WITH EVERY PURCHASE &nbsp;&nbsp; ▶ RANK UP · DOMINATE THE BOARD
+                </div>
+            </div>
+        </section>
+
     </main>
 
-    <script type="module">
-        // Nav active state — IntersectionObserver toggles .active on link matching the visible section.
-        // Keeps the nav in sync as the user scrolls. Threshold 0.4 = section must be ≥40% in view.
-        const navLinks = document.querySelectorAll('.lp-nav-link');
-        const sections = document.querySelectorAll('main section[id]');
-
-        if (sections.length && navLinks.length) {
-            const navObs = new IntersectionObserver((entries) => {
-                entries.forEach((entry) => {
-                    if (!entry.isIntersecting) return;
-                    const id = entry.target.id;
-                    navLinks.forEach((link) => {
-                        link.classList.toggle('active', link.getAttribute('href') === '#' + id);
-                    });
-                });
-            }, { threshold: 0.4 });
-            sections.forEach((s) => navObs.observe(s));
-        }
-
-        // Scroll reveal for elements marked .reveal (sections added later will use this)
-        const revealEls = document.querySelectorAll('.reveal');
-        if (revealEls.length) {
-            const revObs = new IntersectionObserver((entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                        revObs.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.08, rootMargin: '0px 0px -50px 0px' });
-            revealEls.forEach((el) => revObs.observe(el));
-        }
-    </script>
+    <script type="module" src="js/ui/landingPage.js"></script>
 </body>
 </html>
