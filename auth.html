@@ -87,7 +87,7 @@
             </svg>
         </button>
 
-        <a href="index.html" class="back-link">
+        <a href="store.html" class="back-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
                 <path d="M19 12H5M12 19l-7-7 7-7"/>
             </svg>
@@ -204,7 +204,7 @@
                 </div>
 
                 <!-- Guest button -->
-                <a href="index.html" class="auth-guest-btn">CONTINUE AS GUEST</a>
+                <a href="store.html" class="auth-guest-btn">CONTINUE AS GUEST</a>
 
                 <!-- Auth mode indicator -->
                 <div class="auth-mode-bar">
@@ -232,7 +232,7 @@
         // Check if already logged in
         getCurrentUser().then(user => {
             if (user) {
-                window.location.href = 'index.html';
+                window.location.href = 'store.html';
             }
         });
 
@@ -324,7 +324,7 @@
             if (result.success) {
                 showMessage(result.message, 'success');
                 setTimeout(() => {
-                    window.location.href = 'index.html';
+                    window.location.href = 'store.html';
                 }, 1500);
             } else {
                 authExtras.forEach(el => el.classList.remove('hidden'));

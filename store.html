@@ -41,21 +41,19 @@
 
                 // Swap SVG icon for cached avatar photo (only if avatar exists)
                 const cachedAvatar = localStorage.getItem('section97-avatar');
-                if (cachedAvatar) {
-                    function swapIcon(el) {
-                        if (!el) return;
-                        const svg = el.querySelector('svg');
-                        if (svg) {
-                            const img = document.createElement('img');
-                            img.className = 'auth-avatar';
-                            img.alt = cachedUser;
-                            img.src = cachedAvatar;
-                            img.onerror = () => { img.onerror = null; /* SVG already gone, just hide broken img */ img.style.display = 'none'; };
-                            svg.replaceWith(img);
-                        }
+                function swapIcon(el) {
+                    if (!el || !cachedAvatar) return;
+                    const svg = el.querySelector('svg');
+                    if (svg) {
+                        const img = document.createElement('img');
+                        img.className = 'auth-avatar';
+                        img.alt = cachedUser;
+                        img.src = cachedAvatar;
+                        img.onerror = () => { img.onerror = null; img.style.display = 'none'; };
+                        svg.replaceWith(img);
                     }
-                    swapIcon(document.getElementById('auth-btn'));
                 }
+                swapIcon(document.getElementById('auth-btn'));
 
                 const mobileLogin = document.getElementById('mobile-login-btn');
                 const mobileUserInfo = document.getElementById('mobile-user-info');
@@ -64,7 +62,7 @@
                 if (mobileLogin) mobileLogin.classList.add('hidden');
                 if (mobileUserInfo) {
                     mobileUserInfo.classList.remove('hidden');
-                    if (cachedAvatar) swapIcon(mobileUserInfo);
+                    swapIcon(mobileUserInfo);
                 }
                 if (mobileUsername) mobileUsername.textContent = cachedUser;
                 if (mobileLogout) mobileLogout.classList.remove('hidden');
@@ -153,6 +151,15 @@
             </svg>
         </button>
     </header>
+
+    <!-- Rank Up FAB (floating, guests only) -->
+    <button class="rank-up-fab hidden" id="rank-up-btn" aria-label="Join to rank up">
+        <span class="fab-ring"></span>
+        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" width="18" height="18">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+        <span class="fab-label">RANK UP</span>
+    </button>
 
     <!-- Hamburger menu for mobile -->
     <div class="mobile-menu" id="mobile-menu" role="dialog" aria-label="Navigation menu">
@@ -388,6 +395,55 @@
             <button class="cart-drawer-checkout">Checkout</button>
         </div>
     </aside>
+
+    <!-- Rank Up Modal (guests only) -->
+    <div class="rankup-overlay" id="rankup-overlay"></div>
+    <div class="rankup-modal" id="rankup-modal" role="dialog" aria-label="Join SECTION-97">
+        <button class="rankup-close" id="rankup-close" aria-label="Close">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+        <div class="rankup-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="40">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+        </div>
+        <h2 class="rankup-title">JOIN THE RANKS</h2>
+        <p class="rankup-subtitle">Create an account to unlock the rank system. Spend, level up, earn badges, and climb the leaderboard.</p>
+        <div class="rankup-perks">
+            <div class="rankup-perk">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18">
+                    <path d="M6 9H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h2"/>
+                    <path d="M18 9h2a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1h-2"/>
+                    <path d="M6 3h12v6a6 6 0 0 1-12 0V3z"/>
+                    <path d="M12 15v3"/><path d="M8 21h8"/>
+                </svg>
+                <span>Earn XP & rank badges</span>
+            </div>
+            <div class="rankup-perk">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+                <span>Compete on the leaderboard</span>
+            </div>
+            <div class="rankup-perk">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+                <span>Save your wishlist forever</span>
+            </div>
+            <div class="rankup-perk">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18">
+                    <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+                </svg>
+                <span>Track orders & spending</span>
+            </div>
+        </div>
+        <a href="auth.html?mode=signup" class="rankup-cta">SIGN UP NOW</a>
+        <p class="rankup-note">Already have an account? <a href="auth.html">Log in</a></p>
+    </div>
 
     <!-- Supabase Client Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.95.2/dist/umd/supabase.min.js" integrity="sha384-O3Y0txdelyzhAPieX5MdbO1gTZ6zC6OPZWkeMpKKWrLqkDY+aR7MIcVR5oxNfmo3" crossorigin="anonymous"></script>
