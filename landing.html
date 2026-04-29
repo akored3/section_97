@@ -771,6 +771,167 @@
         }
 
         /* ══════════════════════════════════════════════════════════
+           LEADERBOARD
+           ══════════════════════════════════════════════════════════ */
+        #leaderboard {
+            padding: 120px 64px;
+            background: var(--lp-bg2);
+        }
+        .lb-inner {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: start;
+        }
+        .lb-feature-row {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+            margin-top: 24px;
+        }
+        .lb-feature-row li {
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: var(--lp-font-mono);
+            font-size: 10px;
+            color: var(--lp-fg3);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+        .lb-feature-row .gold   { color: var(--lp-gold); }
+        .lb-feature-row .accent { color: var(--lp-accent); }
+        .lb-feature-row .ice    { color: #b9f2ff; }
+
+        /* Podium */
+        .lb-podium {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 3px;
+            margin-top: 44px;
+            align-items: flex-end;
+        }
+        .pod {
+            padding: 20px 14px 16px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .pod.first  {
+            background: rgba(255, 215, 0, 0.07);
+            border: 1px solid rgba(255, 215, 0, 0.35);
+            padding-top: 28px;
+        }
+        .pod.second { background: rgba(0, 255, 100, 0.05);  border: 1px solid rgba(0, 255, 100, 0.2);   }
+        .pod.third  { background: rgba(205, 127, 50, 0.05); border: 1px solid rgba(205, 127, 50, 0.25); }
+        .pod .p-crown {
+            font-size: 20px;
+            margin-bottom: 6px;
+            display: block;
+        }
+        .pod .p-pos {
+            font-family: var(--lp-font-mono);
+            font-size: 9px;
+            letter-spacing: 2px;
+            color: var(--lp-fg3);
+            text-transform: uppercase;
+        }
+        .pod .p-name {
+            font-family: var(--lp-font-display);
+            font-weight: 700;
+            font-size: 11px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin: 8px 0 5px;
+        }
+        .pod .p-xp {
+            font-family: var(--lp-font-mono);
+            font-size: 11px;
+        }
+
+        /* Live rankings table */
+        .lb-live-label {
+            font-family: var(--lp-font-mono);
+            font-size: 9px;
+            letter-spacing: 2.5px;
+            color: var(--lp-accent);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .lb-live-label::before {
+            content: '';
+            width: 7px;
+            height: 7px;
+            background: var(--lp-accent);
+            box-shadow: 0 0 6px var(--lp-accent);
+            animation: lp-blink 1s infinite;
+        }
+        .lb-table {
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .lb-th {
+            display: grid;
+            grid-template-columns: 52px 1fr 90px;
+            padding: 12px 18px;
+            background: rgba(0, 255, 100, 0.07);
+            border-bottom: 1px solid rgba(0, 255, 100, 0.25);
+            font-family: var(--lp-font-mono);
+            font-size: 9px;
+            letter-spacing: 2px;
+            color: var(--lp-accent);
+            text-transform: uppercase;
+        }
+        .lb-row {
+            display: grid;
+            grid-template-columns: 52px 1fr 90px;
+            padding: 13px 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            align-items: center;
+            transition: background 120ms;
+        }
+        .lb-row:last-child { border-bottom: none; }
+        .lb-row:hover { background: rgba(0, 255, 100, 0.04); }
+        .lb-row.you {
+            background: rgba(0, 255, 100, 0.08);
+            border-left: 2px solid var(--lp-accent);
+            padding-left: 16px;
+        }
+        .lb-row .p {
+            font-family: var(--lp-font-mono);
+            font-size: 11px;
+            color: var(--lp-fg3);
+        }
+        .lb-row .n {
+            font-family: var(--lp-font-display);
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+        .lb-row .x {
+            font-family: var(--lp-font-mono);
+            font-size: 11px;
+            text-align: right;
+        }
+        .you-tag {
+            font-family: var(--lp-font-mono);
+            font-size: 8px;
+            letter-spacing: 1.5px;
+            color: var(--lp-accent);
+            border: 1px solid rgba(0, 255, 100, 0.4);
+            padding: 2px 6px;
+            margin-left: 8px;
+        }
+        .lb-cta-row { margin-top: 14px; }
+        .lb-cta-row .btn-o { font-size: 11px; padding: 11px 22px; }
+
+        /* ══════════════════════════════════════════════════════════
            STORE
            ══════════════════════════════════════════════════════════ */
         #store {
@@ -926,6 +1087,9 @@
             .store-text { padding: 0 40px; }
             #ranks { padding: 80px 40px; }
             .ranks-top { grid-template-columns: 1fr; gap: 48px; }
+            #leaderboard { padding: 80px 40px; }
+            .lb-inner { grid-template-columns: 1fr; gap: 56px; }
+            .lb-podium { max-width: 480px; }
         }
 
         /* ── Responsive: mobile (≤768px) ── */
@@ -957,6 +1121,9 @@
             .rp-dot { width: 56px; }
             .rp-name { font-size: 13px; }
             .rp-desc { display: none; }
+            #leaderboard { padding: 64px 20px; }
+            .lb-podium { max-width: 100%; }
+            .lb-th, .lb-row { padding: 12px 14px; }
         }
 
         /* ── Responsive: small mobile (≤390px) ── */
@@ -1229,6 +1396,65 @@
                     <div class="reveal from-right">
                         <div class="rank-path-label">// ALL 10 RANKS</div>
                         <ol class="rank-path" id="lpRankPath" aria-label="All 10 rank tiers"></ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════════════
+             LEADERBOARD
+             ══════════════════════════════════════════════════════════ -->
+        <section id="leaderboard">
+            <div class="lb-inner">
+                <!-- LEFT: intro + podium -->
+                <div>
+                    <div class="reveal from-left">
+                        <div class="section-tag">COMPETITION</div>
+                        <h2 class="section-h">WHO'S<br>ON<br><span class="acc">TOP?</span></h2>
+                        <p class="section-sub">The top 50 spenders ranked globally. Your position updates with every order. Spend totals tracked in real time. Can you crack the top 3?</p>
+
+                        <ul class="lb-feature-row">
+                            <li><span class="gold">★</span> PODIUM TROPHIES FOR TOP 3</li>
+                            <li><span class="accent">▶</span> REAL-TIME SPEND TRACKING</li>
+                            <li><span class="ice">◆</span> YOUR POSITION ALWAYS VISIBLE</li>
+                        </ul>
+                    </div>
+
+                    <div class="lb-podium reveal" style="transition-delay: .15s">
+                        <div class="pod second">
+                            <span class="p-crown" style="color: var(--lp-accent)">▲</span>
+                            <div class="p-pos">#2</div>
+                            <div class="p-name" style="color: var(--lp-accent)">FITBOSS_2099</div>
+                            <div class="p-xp" style="color: var(--lp-fg2)">39,140 XP</div>
+                        </div>
+                        <div class="pod first">
+                            <span class="p-crown" style="color: var(--lp-gold)">★</span>
+                            <div class="p-pos">#1</div>
+                            <div class="p-name" style="color: var(--lp-gold)">GODOFDRIP.EXE</div>
+                            <div class="p-xp" style="color: var(--lp-gold)">48,210 XP</div>
+                        </div>
+                        <div class="pod third">
+                            <span class="p-crown" style="color: #cd7f32">▲</span>
+                            <div class="p-pos">#3</div>
+                            <div class="p-name" style="color: #cd7f32">OUTFIT_WARLORD</div>
+                            <div class="p-xp" style="color: var(--lp-fg2)">31,875 XP</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: live rankings table -->
+                <div class="reveal from-right">
+                    <div class="lb-live-label">LIVE RANKINGS</div>
+                    <div class="lb-table" id="lpLbTable">
+                        <div class="lb-th">
+                            <span>POS</span>
+                            <span>OPERATOR</span>
+                            <span style="text-align:right">XP</span>
+                        </div>
+                        <!-- Rows rendered by JS -->
+                    </div>
+                    <div class="lb-cta-row">
+                        <a href="auth.html" class="btn-o">JOIN TO CLAIM YOUR SPOT →</a>
                     </div>
                 </div>
             </div>

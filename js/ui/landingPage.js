@@ -214,9 +214,37 @@ function initRankPath() {
     `).join('');
 }
 
+// ── Leaderboard demo data (positions 4–10, with one "you" row) ──
+// Hardcoded for marketing display. Real leaderboard fetches from Supabase
+// on the actual /leaderboard.html page.
+const LP_LB = [
+    { pos: 4,  name: 'DRIP_ARCHITECT',  xp: '24,050', color: '#ffd700' },
+    { pos: 5,  name: 'CYBER_SWAGLORD',  xp: '18,430', color: '#a78bfa' },
+    { pos: 6,  name: 'FIT_COMMANDER',   xp: '12,100', color: '#b0b0b0' },
+    { pos: 7,  name: 'NEON_DRIPPER',    xp: '8,870',  color: '#e86e2a' },
+    { pos: 8,  name: 'STREET_STYLER',   xp: '5,240',  color: '#cd7f32', you: true },
+    { pos: 9,  name: 'FIT_ROOKIE',      xp: '2,110',  color: '#22c55e' },
+    { pos: 10, name: 'NEWBIE_42',       xp: '430',    color: '#4a9eff' },
+];
+
+function initLeaderboard() {
+    const root = document.getElementById('lpLbTable');
+    if (!root) return;
+    const rows = LP_LB.map((r) => `
+        <div class="lb-row${r.you ? ' you' : ''}">
+            <span class="p">#${r.pos}</span>
+            <span class="n" style="color: ${r.color}">${r.name}${r.you ? '<span class="you-tag">YOU</span>' : ''}</span>
+            <span class="x">${r.xp}</span>
+        </div>
+    `).join('');
+    // Append rows after the existing header row
+    root.insertAdjacentHTML('beforeend', rows);
+}
+
 // Reveals first so JS-gated CSS applies before paint.
 initScrollReveal();
 initHero();
 initNavObserver();
 initMobileDrawer();
 initRankPath();
+initLeaderboard();
