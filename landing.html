@@ -932,6 +932,260 @@
         .lb-cta-row .btn-o { font-size: 11px; padding: 11px 22px; }
 
         /* ══════════════════════════════════════════════════════════
+           PROFILE
+           ══════════════════════════════════════════════════════════ */
+        #profile {
+            padding: 120px 64px;
+            background: var(--lp-bg);
+        }
+        .profile-inner {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+        .profile-perks {
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+            margin-top: 32px;
+        }
+        .perk {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+        .perk-icon {
+            width: 42px;
+            height: 42px;
+            flex-shrink: 0;
+            border: 1px solid rgba(0, 255, 100, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--lp-accent);
+            background: rgba(0, 255, 100, 0.06);
+        }
+        .perk-body h5 {
+            font-family: var(--lp-font-display);
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 2px;
+            color: #fff;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .perk-body p {
+            font-family: var(--lp-font-body);
+            font-size: 15px;
+            color: var(--lp-fg2);
+            line-height: 1.6;
+        }
+
+        /* Profile HUD card */
+        .pcard {
+            border: 1px solid rgba(0, 255, 100, 0.3);
+            background: rgba(4, 6, 4, 0.9);
+            padding: 28px;
+            position: relative;
+            box-shadow: 0 0 60px rgba(0, 255, 100, 0.06), 0 24px 64px rgba(0, 0, 0, 0.6);
+        }
+        .pcard::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 100, 0.6), transparent);
+        }
+        .pc-bracket { position: absolute; width: 16px; height: 16px; }
+        .pc-bracket.tl { top: -1px; left: -1px;  border-left: 2px solid var(--lp-accent);  border-top: 2px solid var(--lp-accent); }
+        .pc-bracket.tr { top: -1px; right: -1px; border-right: 2px solid var(--lp-accent); border-top: 2px solid var(--lp-accent); }
+        .pc-bracket.bl { bottom: -1px; left: -1px;  border-left: 2px solid var(--lp-accent);  border-bottom: 2px solid var(--lp-accent); }
+        .pc-bracket.br { bottom: -1px; right: -1px; border-right: 2px solid var(--lp-accent); border-bottom: 2px solid var(--lp-accent); }
+        .pc-tag {
+            font-family: var(--lp-font-mono);
+            font-size: 9px;
+            letter-spacing: 2.5px;
+            color: var(--lp-accent);
+            text-transform: uppercase;
+            margin-bottom: 18px;
+        }
+        .pc-top {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+        .pc-avatar {
+            width: 56px;
+            height: 56px;
+            background: var(--lp-accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--lp-font-display);
+            font-weight: 700;
+            font-size: 18px;
+            color: #000;
+            flex-shrink: 0;
+            animation: lp-breathe 4s ease-in-out infinite;
+        }
+        .pc-id .uname {
+            font-family: var(--lp-font-display);
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: 1.5px;
+            color: #fff;
+            text-transform: uppercase;
+        }
+        .pc-id .uid {
+            font-family: var(--lp-font-mono);
+            font-size: 9px;
+            color: var(--lp-fg3);
+            letter-spacing: 1px;
+            margin-top: 3px;
+        }
+        .pc-rank {
+            font-family: var(--lp-font-mono);
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: var(--lp-accent);
+            margin-top: 5px;
+        }
+        .pc-xp { margin-bottom: 20px; }
+        .pc-xp-labels {
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--lp-font-mono);
+            font-size: 9px;
+            color: var(--lp-fg3);
+            letter-spacing: 1px;
+            margin-bottom: 7px;
+            text-transform: uppercase;
+        }
+        .pc-xp-labels .accent { color: var(--lp-accent); }
+        .pc-xp-note {
+            font-family: var(--lp-font-mono);
+            font-size: 8px;
+            color: var(--lp-fg3);
+            margin-top: 5px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .pc-track {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.07);
+            position: relative;
+            overflow: hidden;
+        }
+        .pc-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--lp-accent-dim), var(--lp-accent));
+            box-shadow: 0 0 12px rgba(0, 255, 100, 0.6);
+            width: 59%;
+        }
+        .pc-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 3px;
+            margin-bottom: 18px;
+        }
+        .pc-stat {
+            background: rgba(0, 255, 100, 0.04);
+            border: 1px solid rgba(0, 255, 100, 0.1);
+            padding: 12px;
+            text-align: center;
+        }
+        .pc-stat .v {
+            font-family: var(--lp-font-display);
+            font-weight: 700;
+            font-size: 22px;
+            color: var(--lp-accent);
+            letter-spacing: -1px;
+        }
+        .pc-stat .l {
+            font-family: var(--lp-font-mono);
+            font-size: 8px;
+            letter-spacing: 1.5px;
+            color: var(--lp-fg3);
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+        .order-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .order-list-label {
+            font-family: var(--lp-font-mono);
+            font-size: 9px;
+            letter-spacing: 2px;
+            color: var(--lp-fg3);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .order-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .order-id {
+            font-family: var(--lp-font-mono);
+            font-size: 10px;
+            color: var(--lp-accent);
+            letter-spacing: 1px;
+        }
+        .order-amt {
+            font-family: var(--lp-font-mono);
+            font-size: 10px;
+            color: var(--lp-fg2);
+        }
+        .order-status {
+            font-family: var(--lp-font-mono);
+            font-size: 8px;
+            letter-spacing: 1.5px;
+            border: 1px solid;
+            padding: 2px 7px;
+            text-transform: uppercase;
+        }
+        .order-status.delivered { color: var(--lp-accent); border-color: rgba(0, 255, 100, 0.4); }
+        .order-status.shipped   { color: var(--lp-gold);   border-color: rgba(255, 215, 0, 0.4); }
+        .pc-badges {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+        }
+        .pc-badges .badge {
+            font-family: var(--lp-font-mono);
+            font-size: 8px;
+            letter-spacing: 1.5px;
+            padding: 4px 8px;
+            text-transform: uppercase;
+        }
+        .pc-badges .badge.gold {
+            color: var(--lp-gold);
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            background: rgba(255, 215, 0, 0.05);
+        }
+        .pc-badges .badge.locked {
+            color: var(--lp-fg3);
+            border: 1px dashed rgba(255, 255, 255, 0.15);
+        }
+
+        @keyframes lp-breathe {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 100, 0.3); }
+            50%      { box-shadow: 0 0 40px rgba(0, 255, 100, 0.7); }
+        }
+
+        /* ══════════════════════════════════════════════════════════
            STORE
            ══════════════════════════════════════════════════════════ */
         #store {
@@ -1090,6 +1344,8 @@
             #leaderboard { padding: 80px 40px; }
             .lb-inner { grid-template-columns: 1fr; gap: 56px; }
             .lb-podium { max-width: 480px; }
+            #profile { padding: 80px 40px; }
+            .profile-inner { grid-template-columns: 1fr; gap: 56px; }
         }
 
         /* ── Responsive: mobile (≤768px) ── */
@@ -1124,6 +1380,8 @@
             #leaderboard { padding: 64px 20px; }
             .lb-podium { max-width: 100%; }
             .lb-th, .lb-row { padding: 12px 14px; }
+            #profile { padding: 64px 20px; }
+            .pcard { padding: 20px; }
         }
 
         /* ── Responsive: small mobile (≤390px) ── */
@@ -1455,6 +1713,117 @@
                     </div>
                     <div class="lb-cta-row">
                         <a href="auth.html" class="btn-o">JOIN TO CLAIM YOUR SPOT →</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════════════════
+             PROFILE
+             ══════════════════════════════════════════════════════════ -->
+        <section id="profile">
+            <div class="profile-inner">
+                <!-- LEFT: intro + perks list -->
+                <div class="reveal from-left">
+                    <div class="section-tag">YOUR PROFILE</div>
+                    <h2 class="section-h">TRACK<br>EVERY<br><span class="acc">MOVE.</span></h2>
+                    <p class="section-sub">Your SECTION-97 profile is a mission-control HUD for your spending history, XP progress, wishlist, and order tracking.</p>
+
+                    <div class="profile-perks">
+                        <div class="perk reveal" style="transition-delay: .05s">
+                            <div class="perk-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+                                </svg>
+                            </div>
+                            <div class="perk-body">
+                                <h5>ORDER HISTORY</h5>
+                                <p>Every order logged with ID, status, and per-item details. Expandable and searchable.</p>
+                            </div>
+                        </div>
+                        <div class="perk reveal" style="transition-delay: .12s">
+                            <div class="perk-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <polygon points="12 2 15 9 22 10 17 15 18 22 12 19 6 22 7 15 2 10 9 9"/>
+                                </svg>
+                            </div>
+                            <div class="perk-body">
+                                <h5>XP &amp; RANK PROGRESS</h5>
+                                <p>Live bar to your next rank, global position, and full XP history.</p>
+                            </div>
+                        </div>
+                        <div class="perk reveal" style="transition-delay: .2s">
+                            <div class="perk-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                                </svg>
+                            </div>
+                            <div class="perk-body">
+                                <h5>WISHLIST</h5>
+                                <p>Save items across sessions. Hearts sync to your account on login and persist forever.</p>
+                            </div>
+                        </div>
+                        <div class="perk reveal" style="transition-delay: .28s">
+                            <div class="perk-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M6 9H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h2"/>
+                                    <path d="M18 9h2a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1h-2"/>
+                                    <path d="M6 3h12v6a6 6 0 0 1-12 0V3z"/>
+                                    <path d="M12 15v3"/><path d="M8 21h8"/>
+                                </svg>
+                            </div>
+                            <div class="perk-body">
+                                <h5>ACHIEVEMENT BADGES</h5>
+                                <p>Unlock milestones — first drop, 10 orders, early adopter. Displayed on your public profile.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: HUD profile card -->
+                <div class="reveal from-right">
+                    <div class="pcard">
+                        <span class="pc-bracket tl"></span><span class="pc-bracket tr"></span>
+                        <span class="pc-bracket bl"></span><span class="pc-bracket br"></span>
+
+                        <div class="pc-tag">// OPERATOR_PROFILE · LIVE</div>
+
+                        <div class="pc-top">
+                            <div class="pc-avatar">CM</div>
+                            <div class="pc-id">
+                                <div class="uname">COMMANDER_97</div>
+                                <div class="uid">S97-A4F2-91X7 · JOINED 03/2026</div>
+                                <div class="pc-rank">▶▶▶ STREET_STYLER · T-03</div>
+                            </div>
+                        </div>
+
+                        <div class="pc-xp">
+                            <div class="pc-xp-labels">
+                                <span>XP PROGRESS</span>
+                                <span class="accent">5,240 / 8,870</span>
+                            </div>
+                            <div class="pc-track"><div class="pc-fill"></div></div>
+                            <div class="pc-xp-note">3,630 XP TO NEON_DRIPPER</div>
+                        </div>
+
+                        <div class="pc-stats">
+                            <div class="pc-stat"><div class="v">7</div><div class="l">ORDERS</div></div>
+                            <div class="pc-stat"><div class="v">5.2K</div><div class="l">XP</div></div>
+                            <div class="pc-stat"><div class="v">#8</div><div class="l">GLOBAL</div></div>
+                        </div>
+
+                        <div class="order-list">
+                            <div class="order-list-label">// RECENT ORDERS</div>
+                            <div class="order-row"><span class="order-id">S97-8F2A-33C1</span><span class="order-amt">₦185,000</span><span class="order-status delivered">DELIVERED</span></div>
+                            <div class="order-row"><span class="order-id">S97-7D1B-90E4</span><span class="order-amt">₦240,000</span><span class="order-status shipped">SHIPPED</span></div>
+                            <div class="order-row"><span class="order-id">S97-5A3F-12B8</span><span class="order-amt">₦98,000</span><span class="order-status delivered">DELIVERED</span></div>
+                        </div>
+
+                        <div class="pc-badges">
+                            <span class="badge gold">FIRST DROP</span>
+                            <span class="badge gold">EARLY ADOPTER</span>
+                            <span class="badge locked">? LOCKED</span>
+                        </div>
                     </div>
                 </div>
             </div>
