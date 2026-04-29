@@ -1186,6 +1186,135 @@
         }
 
         /* ══════════════════════════════════════════════════════════
+           CTA
+           ══════════════════════════════════════════════════════════ */
+        #cta {
+            padding: 120px 64px;
+            background: var(--lp-bg2);
+            position: relative;
+            overflow: hidden;
+        }
+        #cta .glow-bg {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 70% 80% at 50% 50%, rgba(0, 255, 100, 0.09) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        #cta .diagonal {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(0, 255, 100, 0.04) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .cta-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        .cta-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: var(--lp-font-mono);
+            font-size: 10px;
+            letter-spacing: 2.5px;
+            color: var(--lp-accent);
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+        .cta-status::before {
+            content: '';
+            width: 7px;
+            height: 7px;
+            background: var(--lp-accent);
+            box-shadow: 0 0 8px var(--lp-accent);
+            animation: lp-blink 1s infinite;
+        }
+        #cta h2 {
+            font-family: var(--lp-font-display);
+            font-weight: 700;
+            font-size: clamp(40px, 6vw, 88px);
+            line-height: .88;
+            letter-spacing: -2px;
+            color: #fff;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+        #cta h2 .acc { color: var(--lp-accent); display: block; }
+        #cta p {
+            font-family: var(--lp-font-body);
+            font-size: 17px;
+            color: var(--lp-fg2);
+            max-width: 520px;
+            margin: 0 auto 40px;
+            line-height: 1.65;
+        }
+        .cta-btns {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .cta-footnote {
+            margin-top: 32px;
+            font-family: var(--lp-font-mono);
+            font-size: 9px;
+            letter-spacing: 2.5px;
+            color: var(--lp-fg3);
+            text-transform: uppercase;
+        }
+
+        /* ══════════════════════════════════════════════════════════
+           FOOTER
+           ══════════════════════════════════════════════════════════ */
+        .lp-footer {
+            border-top: 1px solid rgba(0, 255, 100, 0.15);
+            padding: 24px 48px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            background: var(--lp-bg);
+        }
+        .lp-footer-logo {
+            font-family: var(--lp-font-display);
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: 3px;
+            color: #fff;
+            text-transform: uppercase;
+        }
+        .lp-footer-logo .acc { color: var(--lp-accent); }
+        .lp-footer-copy {
+            font-family: var(--lp-font-mono);
+            font-size: 9px;
+            letter-spacing: 2px;
+            color: var(--lp-fg3);
+        }
+        .lp-footer-status {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-family: var(--lp-font-mono);
+            font-size: 9px;
+            letter-spacing: 2px;
+            color: var(--lp-fg3);
+            text-transform: uppercase;
+        }
+        .lp-footer-status::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--lp-accent);
+            box-shadow: 0 0 6px var(--lp-accent);
+            animation: lp-blink 1s infinite;
+        }
+
+        /* ══════════════════════════════════════════════════════════
            STORE
            ══════════════════════════════════════════════════════════ */
         #store {
@@ -1346,6 +1475,8 @@
             .lb-podium { max-width: 480px; }
             #profile { padding: 80px 40px; }
             .profile-inner { grid-template-columns: 1fr; gap: 56px; }
+            #cta { padding: 80px 40px; }
+            .lp-footer { padding: 20px 32px; }
         }
 
         /* ── Responsive: mobile (≤768px) ── */
@@ -1382,6 +1513,15 @@
             .lb-th, .lb-row { padding: 12px 14px; }
             #profile { padding: 64px 20px; }
             .pcard { padding: 20px; }
+            #cta { padding: 64px 20px; }
+            .cta-btns { flex-direction: column; align-items: center; }
+            #cta h2 { font-size: clamp(36px, 10vw, 64px); }
+            .lp-footer {
+                padding: 20px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
         }
 
         /* ── Responsive: small mobile (≤390px) ── */
@@ -1829,7 +1969,40 @@
             </div>
         </section>
 
+        <!-- ══════════════════════════════════════════════════════════
+             CTA — Join the ranks
+             ══════════════════════════════════════════════════════════ -->
+        <section id="cta">
+            <div class="glow-bg" aria-hidden="true"></div>
+            <div class="diagonal" aria-hidden="true"></div>
+            <div class="cta-inner reveal">
+                <div class="cta-status">ALL SYSTEMS OPERATIONAL</div>
+                <h2>JOIN<br><span class="acc">THE RANKS</span></h2>
+                <p>Create a free account, start shopping, and watch your rank climb. Or check out as a guest — your cart saves either way.</p>
+                <div class="cta-btns">
+                    <a href="auth.html" class="btn-p">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="8" r="3.5"/>
+                            <path d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6"/>
+                        </svg>
+                        SIGN UP — FREE
+                    </a>
+                    <a href="/" class="btn-o">SHOP AS GUEST →</a>
+                </div>
+                <div class="cta-footnote">SECTION-97 // PAYSTACK PAYMENTS // ENCRYPTED // 2026</div>
+            </div>
+        </section>
+
     </main>
+
+    <!-- ══════════════════════════════════════════════════════════
+         FOOTER
+         ══════════════════════════════════════════════════════════ -->
+    <footer class="lp-footer">
+        <div class="lp-footer-logo">SECTION<span class="acc">-97</span></div>
+        <div class="lp-footer-copy">© 2026 METALBEARD · STAY METAL</div>
+        <div class="lp-footer-status">ALL SYSTEMS OPERATIONAL</div>
+    </footer>
 
     <script type="module" src="js/ui/landingPage.js"></script>
 </body>
