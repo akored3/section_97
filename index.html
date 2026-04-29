@@ -104,6 +104,7 @@
 
         /* ── Buttons (parallelogram clip-path) ── */
         .btn-p {
+            position: relative;
             display: inline-flex;
             align-items: center;
             gap: 10px;
@@ -119,11 +120,41 @@
             cursor: pointer;
             text-decoration: none;
             clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
-            transition: background 150ms, transform 150ms;
+            filter: drop-shadow(0 0 10px rgba(0, 255, 100, 0.35));
+            transition: background 180ms, transform 180ms cubic-bezier(0.2, 0, 0, 1), filter 220ms;
         }
-        .btn-p:hover { background: var(--lp-accent-bright); transform: translateY(-1px); }
+        .btn-p > * { position: relative; z-index: 1; }
+        .btn-p::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -60%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.55) 50%, transparent 100%);
+            transform: skewX(-18deg);
+            transition: left 600ms cubic-bezier(0.2, 0, 0, 1);
+            pointer-events: none;
+        }
+        .btn-p:hover {
+            background: var(--lp-accent-bright);
+            transform: translateY(-2px);
+            filter: drop-shadow(0 6px 22px rgba(0, 255, 100, 0.7));
+        }
+        .btn-p:hover::before { left: 110%; }
+        .btn-p:active { transform: translateY(0); transition-duration: 60ms; }
+        .btn-p:focus-visible { outline: 2px solid #fff; outline-offset: 4px; }
         /* Make clicks/taps on icon glyphs always hit the parent anchor */
-        .btn-p > svg, .btn-o > svg { pointer-events: none; }
+        .btn-p > svg, .btn-o > svg { pointer-events: none; transition: transform 220ms cubic-bezier(0.2, 0, 0, 1); }
+        .btn-p:hover > svg { transform: translateX(2px); }
+
+        /* Hero CTA — breathing pulse to draw the eye as the primary action */
+        .btn-pulse { animation: lp-btn-breathe 2.6s ease-in-out infinite; }
+        .btn-pulse:hover { animation: none; }
+        @keyframes lp-btn-breathe {
+            0%, 100% { filter: drop-shadow(0 0 10px rgba(0, 255, 100, 0.35)); }
+            50%      { filter: drop-shadow(0 0 22px rgba(0, 255, 100, 0.75)); }
+        }
         .btn-o {
             display: inline-flex;
             align-items: center;
@@ -1619,7 +1650,7 @@
                     </h1>
                     <p class="hero-desc">Premium cyberpunk streetwear for the ones who move different. Shop drops, earn XP, rank up, dominate the leaderboard. Nigeria to the world.</p>
                     <div class="hero-ctas">
-                        <a href="store.html" class="btn-p">
+                        <a href="store.html" class="btn-p btn-pulse">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <circle cx="9" cy="20" r="1.5"/>
                                 <circle cx="17" cy="20" r="1.5"/>
