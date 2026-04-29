@@ -120,40 +120,42 @@
             cursor: pointer;
             text-decoration: none;
             clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
-            filter: drop-shadow(0 0 10px rgba(0, 255, 100, 0.35));
-            transition: background 180ms, transform 180ms cubic-bezier(0.2, 0, 0, 1), filter 220ms;
+            overflow: hidden;
+            transform-origin: center;
+            will-change: transform;
+            transition: background 180ms, transform 220ms cubic-bezier(0.2, 0, 0, 1);
         }
         .btn-p > * { position: relative; z-index: 1; }
+        /* Diagonal white shine that sweeps across on hover */
         .btn-p::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: -60%;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.55) 50%, transparent 100%);
-            transform: skewX(-18deg);
-            transition: left 600ms cubic-bezier(0.2, 0, 0, 1);
+            top: -10%;
+            left: -75%;
+            width: 55%;
+            height: 120%;
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.85) 50%, transparent 100%);
+            transform: skewX(-22deg);
+            transition: left 850ms cubic-bezier(0.2, 0, 0, 1);
             pointer-events: none;
         }
         .btn-p:hover {
             background: var(--lp-accent-bright);
-            transform: translateY(-2px);
-            filter: drop-shadow(0 6px 22px rgba(0, 255, 100, 0.7));
+            transform: translateY(-2px) scale(1.03);
         }
-        .btn-p:hover::before { left: 110%; }
-        .btn-p:active { transform: translateY(0); transition-duration: 60ms; }
+        .btn-p:hover::before { left: 130%; }
+        .btn-p:active { transform: translateY(0) scale(0.98); transition-duration: 80ms; }
         .btn-p:focus-visible { outline: 2px solid #fff; outline-offset: 4px; }
         /* Make clicks/taps on icon glyphs always hit the parent anchor */
         .btn-p > svg, .btn-o > svg { pointer-events: none; transition: transform 220ms cubic-bezier(0.2, 0, 0, 1); }
-        .btn-p:hover > svg { transform: translateX(2px); }
+        .btn-p:hover > svg { transform: translateX(3px); }
 
-        /* Hero CTA — breathing pulse to draw the eye as the primary action */
-        .btn-pulse { animation: lp-btn-breathe 2.6s ease-in-out infinite; }
+        /* Hero CTA — breathing pulse via scale (clip-path can't kill this) */
+        .btn-pulse { animation: lp-btn-breathe 2.4s ease-in-out infinite; }
         .btn-pulse:hover { animation: none; }
         @keyframes lp-btn-breathe {
-            0%, 100% { filter: drop-shadow(0 0 10px rgba(0, 255, 100, 0.35)); }
-            50%      { filter: drop-shadow(0 0 22px rgba(0, 255, 100, 0.75)); }
+            0%, 100% { transform: scale(1); background: var(--lp-accent); }
+            50%      { transform: scale(1.04); background: var(--lp-accent-bright); }
         }
         .btn-o {
             display: inline-flex;
