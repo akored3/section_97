@@ -3,6 +3,7 @@
 // they only need the .reveal class hook here.
 
 import './imgFallback.js';
+import { fetchProducts } from '../data/products.js';
 
 // ── Hero slideshow source data ──
 const SLIDES = [
@@ -227,6 +228,62 @@ const LP_LB = [
     { pos: 10, name: 'NEWBIE_42',       xp: '430',    color: '#4a9eff' },
 ];
 
+// ── Store grid: pull 4 real products from Supabase, fall back to the
+// hardcoded cards already in the HTML if anything goes wrong. ──
+function escapeHtml(s) {
+    return String(s ?? '').replace(/[&<>"']/g, (c) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+    }[c]));
+}
+
+function totalStock(product) {
+    if (Array.isArray(product.sizes) && product.sizes.length) {
+        return product.sizes.reduce((sum, s) => sum + (Number(s.stock) || 0), 0);
+    }
+    return Number(product.stock) || 0;
+}
+
+function buildStoreCard(p) {
+    const stock = totalStock(p);
+    let badge = '';
+    if (stock === 0) {
+        badge = `<div class="c-badge low">SOLD OUT</div>`;
+    } else if (p.isNew) {
+        badge = `<div class="c-badge new">NEW</div>`;
+    } else if (stock <= 10) {
+        badge = `<div class="c-badge low">${stock} LEFT</div>`;
+    }
+    const price = Number(p.price || 0).toLocaleString('en-NG');
+    const img = escapeHtml(p.imageSrc || '');
+    const brand = escapeHtml(p.brand || '');
+    const name = escapeHtml(p.name || '');
+    return `
+        <a class="s-card" href="product.html?id=${encodeURIComponent(p.id)}" aria-label="${name} — ${brand}">
+            <img src="${img}" alt="${name}" loading="lazy" decoding="async">
+            <div class="card-overlay"></div>
+            ${badge}
+            <div class="card-info">
+                <div class="c-brand">${brand.toUpperCase()}</div>
+                <div class="c-name">${name.toUpperCase()}</div>
+                <div class="c-price">₦${price}</div>
+            </div>
+        </a>
+    `;
+}
+
+async function initStoreGrid() {
+    const grid = document.getElementById('lpStoreGrid');
+    if (!grid) return;
+    try {
+        const products = await fetchProducts();
+        if (!products.length) return; // keep fallback cards
+        const top4 = products.slice(0, 4);
+        grid.innerHTML = top4.map(buildStoreCard).join('');
+    } catch (_) {
+        // Network or Supabase failure — leave the hardcoded fallback cards in place
+    }
+}
+
 function initLeaderboard() {
     const root = document.getElementById('lpLbTable');
     if (!root) return;
@@ -248,3 +305,4 @@ initNavObserver();
 initMobileDrawer();
 initRankPath();
 initLeaderboard();
+initStoreGrid();
