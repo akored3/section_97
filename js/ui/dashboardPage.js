@@ -55,15 +55,55 @@ function setupImageUpload(inputId, previewId, zoneId, setter) {
     });
 }
 
+// Convert any image File to WebP (and downscale to maxWidth) using the
+// browser's Canvas API — no library, no build step. Cuts file size 50–70%
+// versus JPEG with no visible quality loss at 0.82, and a 1200px ceiling
+// on width covers retina mobile + desktop product display.
+async function convertToWebP(file, maxWidth = 1200, quality = 0.82) {
+    if (!(file instanceof Blob)) throw new Error('convertToWebP: not a Blob');
+    if (file.type === 'image/webp') return file;
+
+    const url = URL.createObjectURL(file);
+    let img;
+    try {
+        img = await new Promise((resolve, reject) => {
+            const i = new Image();
+            i.onload = () => resolve(i);
+            i.onerror = () => reject(new Error('Failed to decode image for WebP conversion'));
+            i.src = url;
+        });
+    } finally {
+        URL.revokeObjectURL(url);
+    }
+
+    const scale = Math.min(maxWidth / img.naturalWidth, 1);
+    const w = Math.max(1, Math.round(img.naturalWidth * scale));
+    const h = Math.max(1, Math.round(img.naturalHeight * scale));
+
+    const canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, w, h);
+
+    const blob = await new Promise((resolve, reject) => {
+        canvas.toBlob((b) => b ? resolve(b) : reject(new Error('canvas.toBlob returned null')), 'image/webp', quality);
+    });
+
+    const baseName = (file.name || 'image').replace(/\.[^.]+$/, '');
+    return new File([blob], `${baseName}.webp`, { type: 'image/webp', lastModified: Date.now() });
+}
+
 async function uploadImage(file, folder = 'products') {
-    const ext = file.name.split('.').pop().toLowerCase();
-    const fileName = `${folder}/${Date.now()}_${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const optimized = await convertToWebP(file, 1200, 0.82);
+    const fileName = `${folder}/${Date.now()}_${Math.random().toString(36).slice(2, 8)}.webp`;
 
     const { data, error } = await supabase.storage
         .from('product-images')
-        .upload(fileName, file, {
+        .upload(fileName, optimized, {
             cacheControl: '31536000',
-            upsert: false
+            upsert: false,
+            contentType: 'image/webp'
         });
 
     if (error) throw new Error(`Upload failed: ${error.message}`);
