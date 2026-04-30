@@ -241,7 +241,7 @@ function setupAuthUI(user) {
     // Logout handlers
     const doLogout = async () => {
         const result = await signOut();
-        if (result.success) window.location.href = 'store.html';
+        if (result.success) window.location.href = 'shop.html';
     };
     if (logoutBtn) logoutBtn.addEventListener('click', doLogout);
     if (mobileLogoutBtn) mobileLogoutBtn.addEventListener('click', doLogout);

@@ -109,7 +109,7 @@ A cyberpunk streetwear e-commerce store with real payments. Built from scratch w
 ```
 new_web/
 ├── index.html                        # Main store page (Vercel entry point)
-├── store.html                        # Store page (alias)
+├── shop.html                        # Store page (alias)
 ├── product.html                      # Product detail page
 ├── auth.html                         # Login / signup
 ├── profile.html                      # User profile (orders, wishlist, achievements)
@@ -228,7 +228,7 @@ cd section_97
 3. **Run** — Open with Live Server or:
    ```bash
    python -m http.server 8000
-   # Visit http://localhost:8000/store.html
+   # Visit http://localhost:8000/shop.html
    ```
 
 ### Test Payment

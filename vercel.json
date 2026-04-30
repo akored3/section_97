@@ -15,6 +15,7 @@
     }
   ],
   "redirects": [
-    { "source": "/landing.html", "destination": "/", "permanent": true }
+    { "source": "/landing.html", "destination": "/", "permanent": true },
+    { "source": "/store.html",   "destination": "/shop.html", "permanent": false }
   ]
 }

@@ -1200,7 +1200,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!user) {
         skeleton.classList.add('hidden');
         authGate.classList.remove('hidden');
-        setTimeout(() => { window.location.href = 'store.html'; }, 2000);
+        setTimeout(() => { window.location.href = 'shop.html'; }, 2000);
         return;
     }
 
@@ -1210,13 +1210,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (error || !isAdmin) {
             skeleton.classList.add('hidden');
             authGate.classList.remove('hidden');
-            setTimeout(() => { window.location.href = 'store.html'; }, 2000);
+            setTimeout(() => { window.location.href = 'shop.html'; }, 2000);
             return;
         }
     } catch (e) {
         skeleton.classList.add('hidden');
         authGate.classList.remove('hidden');
-        setTimeout(() => { window.location.href = 'store.html'; }, 2000);
+        setTimeout(() => { window.location.href = 'shop.html'; }, 2000);
         return;
     }
 

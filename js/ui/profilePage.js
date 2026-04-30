@@ -337,7 +337,7 @@ function renderEmptyOrders() {
             <p>COLLECTION EMPTY</p>
             <span class="profile-empty-sub">Your drip history will appear here</span>
             <br>
-            <a href="store.html" class="profile-empty-cta">Start your collection</a>
+            <a href="shop.html" class="profile-empty-cta">Start your collection</a>
         </div>
     `;
 }
@@ -549,7 +549,7 @@ function setupLogout() {
                 localStorage.removeItem('section97-username');
             } catch (e) { /* storage unavailable */ }
 
-            window.location.href = 'store.html';
+            window.location.href = 'shop.html';
         } else {
             btn.disabled = false;
             btn.innerHTML = `
@@ -607,7 +607,7 @@ function setupDeleteAccount() {
 
         const result = await deleteAccount();
         if (result.success) {
-            window.location.href = 'store.html';
+            window.location.href = 'shop.html';
         } else {
             confirmBtn.textContent = 'Delete Forever';
             confirmBtn.disabled = false;
@@ -643,7 +643,7 @@ function renderWishlist() {
                 <p>WISHLIST EMPTY</p>
                 <span class="profile-empty-sub">Tap the heart on any product to save it here</span>
                 <br>
-                <a href="store.html" class="profile-empty-cta">Browse products</a>
+                <a href="shop.html" class="profile-empty-cta">Browse products</a>
             </div>`;
         return;
     }
