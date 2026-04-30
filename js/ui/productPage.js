@@ -42,14 +42,27 @@ function renderProduct(product) {
     // Dynamic page title
     document.title = `${product.name} | SECTION-97`;
 
-    // Main image with error fallback
+    // Main image with error fallback. fetchPriority high so the browser
+    // doesn't deprioritize it under other below-the-fold work.
     const mainImage = document.getElementById('pdp-main-image');
+    mainImage.fetchPriority = 'high';
+    mainImage.decoding = 'async';
     mainImage.src = product.imageSrc;
     mainImage.alt = safeName;
     mainImage.onerror = () => {
         mainImage.onerror = null;
         mainImage.src = 'images/placeholder.png';
     };
+
+    // Warm the back image into the browser cache as soon as we know it
+    // exists, so tapping the second thumbnail/arrow is instant instead
+    // of a cold Supabase Storage round-trip.
+    if (product.imageBack) {
+        const warmer = new Image();
+        warmer.fetchPriority = 'low';
+        warmer.decoding = 'async';
+        warmer.src = product.imageBack;
+    }
 
     // Thumbnails (front + back if available)
     const thumbContainer = document.getElementById('pdp-thumbnails');
