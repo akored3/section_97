@@ -115,6 +115,7 @@ export function renderProducts(productsToRender) {
 
     // Initialize gallery arrows
     initGalleryArrows();
+    initBackImagePreload();
     initCardNavigation();
     initWishlistHearts();
 }
@@ -158,6 +159,31 @@ function initGalleryArrows() {
             }
         });
     });
+}
+
+// Warm each product card's back-image into the browser cache as soon as the
+// card scrolls near the viewport, so tapping the gallery arrow swaps to an
+// already-downloaded image instead of a cold Supabase Storage round-trip.
+// Low fetch priority means it doesn't compete with the visible front images.
+function initBackImagePreload() {
+    if (!('IntersectionObserver' in window)) return;
+    const imgs = document.querySelectorAll('img.product[data-back]');
+    if (!imgs.length) return;
+    const obs = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            const img = entry.target;
+            const back = img.dataset.back;
+            if (back) {
+                const warmer = new Image();
+                warmer.fetchPriority = 'low';
+                warmer.decoding = 'async';
+                warmer.src = back;
+            }
+            obs.unobserve(img);
+        });
+    }, { rootMargin: '200px 0px' });
+    imgs.forEach((img) => obs.observe(img));
 }
 
 function initWishlistHearts() {
