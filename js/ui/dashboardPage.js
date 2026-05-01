@@ -56,10 +56,11 @@ function setupImageUpload(inputId, previewId, zoneId, setter) {
 }
 
 // Convert any image File to WebP (and downscale to maxWidth) using the
-// browser's Canvas API — no library, no build step. Cuts file size 50–70%
-// versus JPEG with no visible quality loss at 0.82, and a 1200px ceiling
-// on width covers retina mobile + desktop product display.
-async function convertToWebP(file, maxWidth = 1200, quality = 0.82) {
+// browser's Canvas API — no library, no build step. Cuts file size ~60%
+// versus JPEG with no visible quality loss at 0.85. The 1600px ceiling
+// covers retina/4K desktop displays without sacrificing retina-mobile
+// fidelity; sources smaller than 1600px are passed through unchanged.
+async function convertToWebP(file, maxWidth = 1600, quality = 0.85) {
     if (!(file instanceof Blob)) throw new Error('convertToWebP: not a Blob');
     if (file.type === 'image/webp') return file;
 
@@ -95,7 +96,7 @@ async function convertToWebP(file, maxWidth = 1200, quality = 0.82) {
 }
 
 async function uploadImage(file, folder = 'products') {
-    const optimized = await convertToWebP(file, 1200, 0.82);
+    const optimized = await convertToWebP(file, 1600, 0.85);
     const fileName = `${folder}/${Date.now()}_${Math.random().toString(36).slice(2, 8)}.webp`;
 
     const { data, error } = await supabase.storage
