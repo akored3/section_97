@@ -16,6 +16,13 @@
   ],
   "redirects": [
     { "source": "/landing.html", "destination": "/", "permanent": true },
-    { "source": "/store.html",   "destination": "/shop.html", "permanent": false }
+    { "source": "/store.html",   "destination": "/shop.html", "permanent": false },
+
+    { "source": "/",                 "destination": "/maintenance.html", "permanent": false },
+    { "source": "/shop.html",        "destination": "/maintenance.html", "permanent": false },
+    { "source": "/product.html",     "destination": "/maintenance.html", "permanent": false },
+    { "source": "/profile.html",     "destination": "/maintenance.html", "permanent": false },
+    { "source": "/leaderboard.html", "destination": "/maintenance.html", "permanent": false },
+    { "source": "/checkout.html",    "destination": "/maintenance.html", "permanent": false }
   ]
 }
