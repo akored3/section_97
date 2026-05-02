@@ -1024,8 +1024,14 @@ async function submitProduct() {
     const category = document.getElementById('pf_category').value;
     const stock = parseInt(document.getElementById('pf_stock').value) || 0;
 
-    if (!name || !price || !brand || !category || !pendingImageFront) {
-        showToast('FILL ALL REQUIRED FIELDS', true);
+    const missing = [];
+    if (!name) missing.push('NAME');
+    if (!price) missing.push('PRICE');
+    if (!brand) missing.push('BRAND');
+    if (!category) missing.push('CATEGORY');
+    if (!pendingImageFront) missing.push('FRONT IMAGE');
+    if (missing.length) {
+        showToast(`MISSING: ${missing.join(', ')}`, true);
         return;
     }
 
@@ -1122,7 +1128,8 @@ async function submitProduct() {
         document.getElementById('productsCount').textContent = `${allProducts.length} PRODUCTS`;
         renderProductsGrid();
     } catch (err) {
-        showToast('FAILED TO SAVE PRODUCT', true);
+        console.error('[product upload] failed:', err);
+        showToast(`FAILED: ${err?.message || 'unknown error'}`, true);
     } finally {
         btn.disabled = false;
         btn.innerHTML = `<span class="btn-shine"></span>${wasEditing ? 'UPDATE PRODUCT' : 'DEPLOY PRODUCT'}`;
