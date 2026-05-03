@@ -16,6 +16,7 @@ const PAGE_SIZE = 15;
 // Image upload state — holds File objects or existing URL strings
 let pendingImageFront = null; // File | string (existing URL) | null
 let pendingImageBack = null;
+let pendingImageModel = null;
 
 // ─── Image Upload ───────────────────────────────
 function setupImageUpload(inputId, previewId, zoneId, setter) {
@@ -955,10 +956,13 @@ function openProductModal(product = null) {
     // Reset file inputs and previews
     document.getElementById('pf_image_front').value = '';
     document.getElementById('pf_image_back').value = '';
+    document.getElementById('pf_image_model').value = '';
     const previewFront = document.getElementById('preview_front');
     const previewBack = document.getElementById('preview_back');
+    const previewModel = document.getElementById('preview_model');
     const zoneFront = document.getElementById('zone_front');
     const zoneBack = document.getElementById('zone_back');
+    const zoneModel = document.getElementById('zone_model');
 
     if (product && product.image_front) {
         previewFront.src = product.image_front;
@@ -978,6 +982,16 @@ function openProductModal(product = null) {
         previewBack.src = '';
         zoneBack.classList.remove('has-image');
         pendingImageBack = null;
+    }
+
+    if (product && product.image_model) {
+        previewModel.src = product.image_model;
+        zoneModel.classList.add('has-image');
+        pendingImageModel = product.image_model;
+    } else {
+        previewModel.src = '';
+        zoneModel.classList.remove('has-image');
+        pendingImageModel = null;
     }
 
     const cat = product ? product.category : document.getElementById('pf_category').value;
@@ -1003,15 +1017,20 @@ function closeProductModal() {
     document.getElementById('productForm').reset();
     document.getElementById('zone_front').classList.remove('has-image');
     document.getElementById('zone_back').classList.remove('has-image');
+    document.getElementById('zone_model').classList.remove('has-image');
     // Revoke blob URLs before clearing
     const prevFront = document.getElementById('preview_front');
     const prevBack = document.getElementById('preview_back');
+    const prevModel = document.getElementById('preview_model');
     if (prevFront.src.startsWith('blob:')) URL.revokeObjectURL(prevFront.src);
     if (prevBack.src.startsWith('blob:')) URL.revokeObjectURL(prevBack.src);
+    if (prevModel.src.startsWith('blob:')) URL.revokeObjectURL(prevModel.src);
     prevFront.src = '';
     prevBack.src = '';
+    prevModel.src = '';
     pendingImageFront = null;
     pendingImageBack = null;
+    pendingImageModel = null;
     editingProductId = null;
 }
 
@@ -1050,6 +1069,7 @@ async function submitProduct() {
         // Upload images if they're File objects, otherwise keep existing URLs
         const zoneFront = document.getElementById('zone_front');
         const zoneBack = document.getElementById('zone_back');
+        const zoneModel = document.getElementById('zone_model');
 
         let imageFront;
         if (pendingImageFront instanceof File) {
@@ -1069,13 +1089,22 @@ async function submitProduct() {
             imageBack = pendingImageBack;
         }
 
+        let imageModel = null;
+        if (pendingImageModel instanceof File) {
+            zoneModel.classList.add('uploading');
+            imageModel = await uploadImage(pendingImageModel, 'models');
+            zoneModel.classList.remove('uploading');
+        } else if (pendingImageModel) {
+            imageModel = pendingImageModel;
+        }
+
         btn.innerHTML = '<span class="btn-shine"></span>DEPLOYING...';
 
         if (editingProductId) {
             // Update existing product
             const { error } = await supabase
                 .from('products')
-                .update({ name, price, brand, category, stock, image_front: imageFront, image_back: imageBack })
+                .update({ name, price, brand, category, stock, image_front: imageFront, image_back: imageBack, image_model: imageModel })
                 .eq('id', editingProductId);
             if (error) throw error;
 
@@ -1093,7 +1122,7 @@ async function submitProduct() {
                 allProducts[idx] = {
                     ...allProducts[idx],
                     name, price, brand, category, stock,
-                    image_front: imageFront, image_back: imageBack,
+                    image_front: imageFront, image_back: imageBack, image_model: imageModel,
                     product_sizes: sizes.map(s => ({ size: s.size, stock: s.stock })),
                 };
             }
@@ -1103,7 +1132,7 @@ async function submitProduct() {
             // Insert new product
             const { data: newProd, error } = await supabase
                 .from('products')
-                .insert([{ name, price, brand, category, stock, image_front: imageFront, image_back: imageBack }])
+                .insert([{ name, price, brand, category, stock, image_front: imageFront, image_back: imageBack, image_model: imageModel }])
                 .select()
                 .single();
             if (error) throw error;
@@ -1205,6 +1234,7 @@ function setupProductModal() {
     // Image upload listeners — wrap setter to refresh preview
     setupImageUpload('pf_image_front', 'preview_front', 'zone_front', (f) => { pendingImageFront = f; setTimeout(updateLivePreview, 0); });
     setupImageUpload('pf_image_back', 'preview_back', 'zone_back', (f) => { pendingImageBack = f; });
+    setupImageUpload('pf_image_model', 'preview_model', 'zone_model', (f) => { pendingImageModel = f; });
 
     // Bulk actions
     document.getElementById('selectAllProducts').addEventListener('change', (e) => {

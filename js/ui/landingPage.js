@@ -3,10 +3,15 @@
 // they only need the .reveal class hook here.
 
 import './imgFallback.js';
-import { fetchProducts } from '../data/products.js';
+import { fetchProducts, fetchHeroProducts } from '../data/products.js';
 
-// ── Hero slideshow source data ──
-const SLIDES = [
+// ── Hero slideshow ──
+// Three layers of "instant first paint":
+//   1. Hardcoded FALLBACK_SLIDES paint immediately if no cache (first visit).
+//   2. localStorage cache paints immediately on repeat visits (synchronous).
+//   3. Background fetch refreshes silently and swaps in real product data.
+// Slides without a productId stay non-clickable; real-product slides link to PDP.
+const FALLBACK_SLIDES = [
     { src: 'images/supreme_model2.jpeg',           brand: 'SUPREME',         name: 'Box Logo Hoodie — Red',  price: '₦185,000', tag: '// SUPREME · SS26 DROP' },
     { src: 'images/grey_nikeXcarhatt_model5.jpeg', brand: 'NIKE × CARHARTT', name: 'Double-Knee Workpant',   price: '₦155,000', tag: '// NIKE × CARHARTT COLLAB' },
     { src: 'images/supreme_model3.jpeg',           brand: 'SUPREME',         name: 'Skull Pile Tee — White', price: '₦72,000',  tag: '// SUPREME · LIMITED RUN' },
@@ -14,8 +19,46 @@ const SLIDES = [
     { src: 'images/nike_model4.jpeg',              brand: 'NIKE',            name: 'Oversized Tee — Green',  price: '₦80,000',  tag: '// NIKE · STREETWEAR EDIT' },
 ];
 
+const HERO_CACHE_KEY = 's97_hero_slides_v1';
+const HERO_CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
 const SLIDE_INTERVAL_MS = 4000;
 const META_FADE_MS = 400;
+
+function formatPriceNGN(amount) {
+    return `₦${Number(amount || 0).toLocaleString('en-NG')}`;
+}
+
+function productToSlide(p) {
+    return {
+        productId: p.id,
+        src: p.image_model,
+        brand: (p.brand || '').toUpperCase(),
+        name: p.name || '',
+        price: formatPriceNGN(p.price),
+        tag: `// ${(p.brand || 'SECTION-97').toUpperCase()} · NEW DROP`,
+    };
+}
+
+function readHeroCache() {
+    try {
+        const raw = localStorage.getItem(HERO_CACHE_KEY);
+        if (!raw) return null;
+        const { ts, slides } = JSON.parse(raw);
+        if (!Array.isArray(slides) || !slides.length) return null;
+        if (Date.now() - ts > HERO_CACHE_TTL_MS) return null;
+        return slides;
+    } catch (_) {
+        return null;
+    }
+}
+
+function writeHeroCache(slides) {
+    try {
+        localStorage.setItem(HERO_CACHE_KEY, JSON.stringify({ ts: Date.now(), slides }));
+    } catch (_) {
+        // localStorage full / disabled — silent
+    }
+}
 
 function initHero() {
     const heroLeft = document.getElementById('lpHeroLeft');
@@ -29,34 +72,58 @@ function initHero() {
     };
     if (!heroLeft || !stack || !dotsContainer) return;
 
-    // Build slides + progress dots together so indexes always line up.
-    SLIDES.forEach((s, i) => {
-        const slide = document.createElement('div');
-        slide.className = 'img-slide' + (i === 0 ? ' active' : '');
-        const img = document.createElement('img');
-        img.src = s.src;
-        img.alt = `${s.brand} ${s.name}`;
-        img.loading = i === 0 ? 'eager' : 'lazy';
-        img.decoding = 'async';
-        slide.appendChild(img);
-        stack.appendChild(slide);
-
-        const dot = document.createElement('button');
-        dot.type = 'button';
-        dot.setAttribute('aria-label', `Show slide ${i + 1}: ${s.brand} ${s.name}`);
-        if (i === 0) dot.classList.add('active');
-        dot.addEventListener('click', () => goToSlide(i, true));
-        dotsContainer.appendChild(dot);
-    });
-
-    const slides = stack.querySelectorAll('.img-slide');
-    const dots = dotsContainer.querySelectorAll('button');
+    // Cache wins → fallback. Real data swaps in below if/when fetch returns.
+    let activeSlides = readHeroCache() || FALLBACK_SLIDES;
     let current = 0;
     let timer = null;
 
+    function renderSlides(nextSlides) {
+        // Tear down existing DOM cleanly so swap is atomic.
+        stack.innerHTML = '';
+        dotsContainer.innerHTML = '';
+        activeSlides = nextSlides;
+        current = 0;
+
+        activeSlides.forEach((s, i) => {
+            const slide = document.createElement('div');
+            slide.className = 'img-slide' + (i === 0 ? ' active' : '');
+            if (s.productId) {
+                slide.style.cursor = 'pointer';
+                slide.addEventListener('click', () => {
+                    window.location.href = `product.html?id=${encodeURIComponent(s.productId)}`;
+                });
+            }
+            const img = document.createElement('img');
+            img.src = s.src;
+            img.alt = `${s.brand} ${s.name}`;
+            img.loading = i === 0 ? 'eager' : 'lazy';
+            img.decoding = 'async';
+            slide.appendChild(img);
+            stack.appendChild(slide);
+
+            const dot = document.createElement('button');
+            dot.type = 'button';
+            dot.setAttribute('aria-label', `Show slide ${i + 1}: ${s.brand} ${s.name}`);
+            if (i === 0) dot.classList.add('active');
+            dot.addEventListener('click', () => goToSlide(i, true));
+            dotsContainer.appendChild(dot);
+        });
+
+        // Sync the meta caption to the first slide so cached/initial paint matches.
+        const first = activeSlides[0];
+        if (first) {
+            meta.brand.textContent  = first.brand;
+            meta.name.textContent   = first.name;
+            meta.price.textContent  = first.price;
+            meta.corner.textContent = first.tag;
+        }
+    }
+
     function goToSlide(idx, fromUser = false) {
-        const next = ((idx % SLIDES.length) + SLIDES.length) % SLIDES.length;
-        if (next === current) return;
+        const slides = stack.querySelectorAll('.img-slide');
+        const dots = dotsContainer.querySelectorAll('button');
+        const next = ((idx % activeSlides.length) + activeSlides.length) % activeSlides.length;
+        if (next === current || !slides.length) return;
         slides[current].classList.remove('active');
         dots[current].classList.remove('active');
         current = next;
@@ -70,7 +137,7 @@ function initHero() {
             el.style.transform = 'translateY(8px)';
         });
         setTimeout(() => {
-            const s = SLIDES[current];
+            const s = activeSlides[current];
             meta.brand.textContent  = s.brand;
             meta.name.textContent   = s.name;
             meta.price.textContent  = s.price;
@@ -88,6 +155,8 @@ function initHero() {
     function stopTimer()  { if (timer) { clearInterval(timer); timer = null; } }
     function restartTimer() { stopTimer(); startTimer(); }
 
+    renderSlides(activeSlides);
+
     heroLeft.addEventListener('mouseenter', stopTimer);
     heroLeft.addEventListener('mouseleave', startTimer);
 
@@ -98,6 +167,22 @@ function initHero() {
     });
 
     startTimer();
+
+    // Background refresh — fetch real products with model shots, swap in if any
+    // come back. If the query returns empty (no model shots uploaded yet), keep
+    // whatever's already showing (cache or fallback).
+    fetchHeroProducts(5).then((products) => {
+        if (!products.length) return;
+        const fresh = products.map(productToSlide);
+        writeHeroCache(fresh);
+        // Avoid disruptive reflow if cached/fallback already matches what we got.
+        const sameAsActive = fresh.length === activeSlides.length
+            && fresh.every((s, i) => s.src === activeSlides[i].src);
+        if (sameAsActive) return;
+        stopTimer();
+        renderSlides(fresh);
+        startTimer();
+    });
 
     // Parallax on hero images — only on hover-capable, motion-allowing devices.
     const supportsHover = window.matchMedia('(hover: hover)').matches;

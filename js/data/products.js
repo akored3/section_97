@@ -52,6 +52,25 @@ export async function fetchProducts() {
     }
 }
 
+// Fetch the newest products that have a model shot uploaded — feeds the
+// landing-page hero slideshow. Slim payload (only the fields the hero
+// renders) keeps first-paint cost low.
+export async function fetchHeroProducts(limit = 5) {
+    try {
+        const { data, error } = await supabase
+            .from('products')
+            .select('id, name, brand, price, image_model')
+            .not('image_model', 'is', null)
+            .order('id', { ascending: false })
+            .limit(limit);
+
+        if (error) throw error;
+        return data || [];
+    } catch (_) {
+        return [];
+    }
+}
+
 // Fetch a single product by ID (includes per-size stock from product_sizes)
 export async function fetchProductById(id) {
     try {
