@@ -1580,6 +1580,11 @@
             position: relative;
             overflow: hidden;
             transform: translateZ(0); /* GPU compositing — fixes iOS scroll jank */
+            /* Each row fills the visible viewport so exactly 2 cards show at
+               once with no peek of row 2. Math: 100vh - 140px header - 35px
+               grid gap = 100vh - 175px. The image inside flex-grows to fill
+               whatever space is left after the name + button. */
+            min-height: calc(100vh - 175px);
         }
 
         /* Scanline sweep effect */
@@ -1636,11 +1641,10 @@
 
         .product-image {
             width: 100%;
-            aspect-ratio: 4 / 5;
-            /* Cap image height so the card name + ATC button stay visible on
-               short laptop viewports (e.g. 1366×768). Inner img is object-fit:
-               cover, so this crops instead of letterboxing. */
-            max-height: clamp(320px, 55vh, 560px);
+            /* Image fills whatever vertical space the card has after name +
+               button — keeps row 1 fully visible at any viewport height. */
+            flex: 1;
+            min-height: 0;
             overflow: hidden;
             border-radius: var(--shape-md);
             background: rgba(0, 0, 0, 0.2);
