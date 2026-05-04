@@ -68,6 +68,27 @@
                 if (mobileLogout) mobileLogout.classList.remove('hidden');
             });
         }
+
+        // Measure the actual sticky header height and expose it as a CSS
+        // variable so .product-card's min-height calc fits the visible
+        // viewport exactly — guaranteeing 2 cards fit per row with no peek
+        // of row 2. The header height varies with viewport width because
+        // the brand title uses clamp(36px, 8vw, 56px), so a static guess
+        // breaks on different displays.
+        (function syncHeaderHeight() {
+            function update() {
+                const header = document.querySelector('.hero-section');
+                if (!header) return;
+                document.documentElement.style.setProperty('--header-h', header.offsetHeight + 'px');
+            }
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', update);
+            } else {
+                update();
+            }
+            window.addEventListener('resize', update, { passive: true });
+            window.addEventListener('load', update);
+        })();
     </script>
     <header class="hero-section">
         <button class="moon-btn" id="theme-toggle" aria-label="Toggle dark mode">
