@@ -1637,6 +1637,10 @@
         .product-image {
             width: 100%;
             aspect-ratio: 4 / 5;
+            /* Cap image height so the card name + ATC button stay visible on
+               short laptop viewports (e.g. 1366×768). Inner img is object-fit:
+               cover, so this crops instead of letterboxing. */
+            max-height: clamp(320px, 55vh, 560px);
             overflow: hidden;
             border-radius: var(--shape-md);
             background: rgba(0, 0, 0, 0.2);
