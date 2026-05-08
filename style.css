@@ -2853,23 +2853,6 @@
             }
         }
 
-        /* Above FHD (1920×1080): show 4 cards per page (2×2 grid) and
-           switch image fit to contain so the full product is visible
-           instead of zoomed-and-cropped. */
-        @media (min-width: 1921px) {
-            #product-container {
-                max-width: 1700px;
-                gap: 48px;
-                padding: 30px;
-            }
-            .product-card {
-                min-height: calc((100dvh - var(--header-h, 140px) - 120px) / 2);
-            }
-            .product-image img {
-                object-fit: contain;
-            }
-        }
-
         .product-card button:not(.wishlist-heart):not(.gallery-arrow) {
             margin: 0;
             padding: 10px 22px;
