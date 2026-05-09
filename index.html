@@ -242,12 +242,14 @@
             border: 1px solid transparent;
             transition: color 120ms, background 120ms, border-color 120ms;
         }
-        .lp-nav-link:hover,
-        .lp-nav-link.active {
+        .lp-nav-link:hover {
             color: var(--lp-accent);
             background: rgba(0, 255, 100, 0.08);
             border-color: rgba(0, 255, 100, 0.3);
         }
+        /* Active = just color. The state changes every time the user scrolls
+           past a section, so a loud chip-fill reads as "animating constantly". */
+        .lp-nav-link.active { color: var(--lp-accent); }
 
         .lp-nav-cta {
             font-family: var(--lp-font-display);
