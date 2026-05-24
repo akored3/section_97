@@ -28,7 +28,6 @@ export function renderProducts(productsToRender) {
         const safeStock = escapeHtml(product.stock ?? '');
         const safeImage = escapeHtml(product.imageSrc);
         const safeBack = hasBackImage ? escapeHtml(product.imageBack) : '';
-        const safeBrand = escapeHtml(product.brand || '');
         const formattedPrice = formatPrice(product.price);
 
         // Store sizes in JS Map keyed by product ID
@@ -87,7 +86,6 @@ export function renderProducts(productsToRender) {
                 </div>
                 <div class="product-footer">
                     <div class="product-info">
-                        ${safeBrand ? `<span class="product-brand">${safeBrand}</span>` : ''}
                         <h3>${safeName}</h3>
                     </div>
                     <div class="product-price-row">
@@ -114,10 +112,6 @@ export function renderProducts(productsToRender) {
     }).join('');
 
     productContainer.innerHTML = html;
-
-    // Update the inventory count in the page-head
-    const unitCount = document.getElementById('unit-count');
-    if (unitCount) unitCount.textContent = productsToRender.length;
 
     // Initialize gallery arrows
     initGalleryArrows();

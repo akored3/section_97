@@ -63,30 +63,7 @@
       "Read(//c/Users/akinj/OneDrive/Desktop/oh me oh my/**)",
       "Bash(gh pr *)",
       "Bash(echo \"---EXIT: $?\")",
-      "Bash(git mv *)",
-      "Bash(grep -c \"^\\\\s*\\\\*/\\\\|^\\\\s*/\\\\*\\\\|^\\\\s*$\" style.css)",
-      "Bash(git revert *)",
-      "Bash(ping -n 2 github.com)",
-      "Bash(git remote *)",
-      "Bash(python -m http.server 8000)",
-      "Bash(node --test \"c:\\\\Users\\\\akinj\\\\OneDrive\\\\Desktop\\\\oh me oh my\\\\new_web\\\\tests\\\\\" 2>&1 | tail -20)",
-      "Bash(npm test *)",
-      "Bash(node --test tests/*.test.js)",
-      "Bash(node --check \"c:\\\\Users\\\\akinj\\\\OneDrive\\\\Desktop\\\\oh me oh my\\\\new_web\\\\js\\\\ui\\\\profilePage.js\")",
-      "Bash(git stash *)",
-      "Bash(git reset *)",
-      "Bash(git push *)",
-      "Bash(git fetch *)",
-      "Bash(grep -r \"^[[:space:]]*//.*\" js/ --include=\"*.js\")",
-      "Bash(grep -r \"/\\\\*[[:space:]]*$\" js/ --include=\"*.js\" -A 3)",
-      "Bash(find '/c/Users/akinj/OneDrive/Desktop/oh me oh my/new_web' -maxdepth 1 -name '*.html' -type f)",
-      "Read(//c/c/Users/akinj/OneDrive/Desktop/oh me oh my/new_web/**)",
-      "Bash(ls assets *)",
-      "Skill(ship)",
-      "Skill(ship:*)"
-    ],
-    "additionalDirectories": [
-      "C:\\Users\\akinj\\OneDrive\\Desktop\\oh me oh my\\new_web"
+      "Bash(git mv *)"
     ]
   }
 }
