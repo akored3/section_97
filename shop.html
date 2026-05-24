@@ -69,17 +69,21 @@
             });
         }
 
-        // Measure the actual sticky header height and expose it as a CSS
-        // variable so .product-card's min-height calc fits the visible
-        // viewport exactly — guaranteeing 2 cards fit per row with no peek
-        // of row 2. The header height varies with viewport width because
-        // the brand title uses clamp(36px, 8vw, 56px), so a static guess
-        // breaks on different displays.
+        // Measure the actual sticky header height + page-head block and expose
+        // them as CSS vars so .product-card's min-height calc fits the visible
+        // viewport exactly — guaranteeing 2 cards fit per row with no peek of
+        // row 2. Both heights vary with viewport width (header brand title
+        // uses clamp, page-head title also clamp) so static guesses break.
         (function syncHeaderHeight() {
             function update() {
                 const header = document.querySelector('.hero-section');
-                if (!header) return;
-                document.documentElement.style.setProperty('--header-h', header.offsetHeight + 'px');
+                if (header) {
+                    document.documentElement.style.setProperty('--header-h', header.offsetHeight + 'px');
+                }
+                const pageHead = document.querySelector('.page-head');
+                if (pageHead) {
+                    document.documentElement.style.setProperty('--page-head-h', pageHead.offsetHeight + 'px');
+                }
             }
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', update);
@@ -301,7 +305,19 @@
             </nav>
         </aside>
 
-        <section class="container" id="product-container" aria-label="Product catalog">
+        <div class="store-main">
+            <div class="page-head">
+                <div class="page-head-left">
+                    <span class="page-head-tag">// INVENTORY · <span id="unit-count">0</span> UNITS</span>
+                    <h2 class="page-head-title">THE ARSENAL</h2>
+                </div>
+                <div class="page-head-status">
+                    <span class="page-head-dot" aria-hidden="true"></span>
+                    <span>ALL SYSTEMS OPERATIONAL</span>
+                </div>
+            </div>
+
+            <section class="container" id="product-container" aria-label="Product catalog">
             <div id="store-loader" class="s97-loader">
                 <div class="s97-progress">
                     <div class="s97-progress__header">
@@ -335,6 +351,7 @@
                 </div>
             </div>
         </section>
+        </div>
     </main>
 
     <footer>
