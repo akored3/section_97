@@ -6274,12 +6274,12 @@ a.dropdown-item {
     }
 
     .profile-order-row-meta {
-        font-size: 0.5rem;
+        font-size: 0.65rem;
     }
 
     .profile-order-status {
-        font-size: 0.5rem;
-        padding: 2px 5px;
+        font-size: 0.65rem;
+        padding: 3px 6px;
     }
 
     .profile-order-row-price {
@@ -8898,7 +8898,7 @@ html[data-auth-mode="signup"] #signup-form { display: flex !important; }
 }
 @media (max-width: 480px) {
     .lb-header-desc { font-size: 0.75rem; }
-    .lb-stat-label { font-size: 0.5rem; }
+    .lb-stat-label { font-size: 0.65rem; }
     .lb-table-header, .lb-row {
         grid-template-columns: 30px 1fr auto;
         padding: 10px;
@@ -8910,7 +8910,7 @@ html[data-auth-mode="signup"] #signup-form { display: flex !important; }
     .lb-row > :nth-child(4) {
         display: none;
     }
-    .lb-badge { padding: 3px 6px; font-size: 0.55rem; }
+    .lb-badge { padding: 3px 6px; font-size: 0.65rem; }
     .lb-avatar-small { width: 28px; height: 28px; }
     .lb-avatar-small svg { width: 12px; height: 12px; }
     .lb-name { font-size: 0.7rem; }
@@ -8919,7 +8919,7 @@ html[data-auth-mode="signup"] #signup-form { display: flex !important; }
 }
 @media (max-width: 360px) {
     .lb-stat-card { padding: 10px 12px; }
-    .lb-stat-label { font-size: 0.55rem; }
+    .lb-stat-label { font-size: 0.6rem; }
     .lb-table-header, .lb-row { padding: 8px; }
 }
 
