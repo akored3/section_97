@@ -1618,9 +1618,11 @@
             100% { left: 100%; }
         }
 
-        .product-card:hover {
-            transform: translateY(-8px) rotate(0deg);
-            box-shadow: var(--elevation-3), 0 0 0 2px var(--outline-accent-strong);
+        @media (hover: hover) and (pointer: fine) {
+            .product-card:hover {
+                transform: translateY(-8px) rotate(0deg);
+                box-shadow: var(--elevation-3), 0 0 0 2px var(--outline-accent-strong);
+            }
         }
 
         /* Subtle rotation breaks the perfect grid without affecting row
@@ -1635,9 +1637,11 @@
             transform: rotate(0.3deg);
         }
 
-        .product-card:nth-child(odd):hover,
-        .product-card:nth-child(even):hover {
-            transform: translateY(-8px) rotate(0deg);
+        @media (hover: hover) and (pointer: fine) {
+            .product-card:nth-child(odd):hover,
+            .product-card:nth-child(even):hover {
+                transform: translateY(-8px) rotate(0deg);
+            }
         }
 
         .product-image {
@@ -1746,7 +1750,7 @@
             box-shadow: 0 0 6px var(--glow-accent-strong);
         }
 
-        @media (hover: hover) {
+        @media (hover: hover) and (pointer: fine) {
             .product-card:hover .product-image img {
                 transform: scale(1.05);
                 filter: saturate(1.1);
@@ -1774,7 +1778,7 @@
             box-shadow: inset 2px 0 0 rgba(0, 255, 255, 0.15);
         }
 
-        @media (hover: hover) {
+        @media (hover: hover) and (pointer: fine) {
             .product-card:hover .product-image::before,
             .product-card:hover .product-image::after {
                 opacity: 1;
@@ -2138,8 +2142,10 @@
             animation: heart-pop 0.4s ease-out;
         }
 
-        /* Always show heart on touch devices */
-        @media (hover: none) {
+        /* Always show heart on touch devices. Uses pointer: coarse as well as
+           hover: none because some mobile browsers wrongly report hover: hover —
+           pointer: coarse is reported honestly by touchscreens. */
+        @media (hover: none), (pointer: coarse) {
             .wishlist-heart { opacity: 1; transform: scale(1); }
         }
 
