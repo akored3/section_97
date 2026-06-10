@@ -1661,19 +1661,16 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform var(--duration-long) var(--motion-emphasized),
-                        opacity 0.6s var(--motion-standard),
+            transition: opacity 0.6s var(--motion-standard),
                         filter var(--duration-medium) var(--motion-standard);
         }
 
         .product-image img.lazy-load {
             opacity: 0;
-            transform: scale(0.95);
         }
 
         .product-image img.loaded {
             opacity: 1;
-            transform: scale(1);
         }
 
         /* Gallery arrows for front/back images */
@@ -1748,13 +1745,6 @@
         .gallery-dot.active {
             background: var(--accent);
             box-shadow: 0 0 6px var(--glow-accent-strong);
-        }
-
-        @media (hover: hover) and (pointer: fine) {
-            .product-card:hover .product-image img {
-                transform: scale(1.05);
-                filter: saturate(1.1);
-            }
         }
 
         /* Chromatic aberration on hover - subtle RGB split */
