@@ -1585,7 +1585,7 @@
                in shop.html so the calc adapts to whatever the sticky header
                actually renders at on this viewport. The 60px subtracts: 35
                grid gap + 20 container padding-top + 5 safety. */
-            min-height: calc(100dvh - var(--header-h, 140px) - 60px);
+            min-height: calc(100svh - var(--header-h, 140px) - 60px);
         }
 
         /* Scanline sweep effect */
