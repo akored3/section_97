@@ -4640,7 +4640,6 @@ a.dropdown-item {
     color: var(--text-primary);
     margin: 0;
     white-space: nowrap;
-    animation: auth-glitch 4s ease infinite;
 }
 
 .profile-username::before {
@@ -4663,8 +4662,7 @@ a.dropdown-item {
     color: var(--rank-color, #8a8a8a);
     background: color-mix(in srgb, var(--rank-color, #8a8a8a) 12%, transparent);
     border: 1px solid color-mix(in srgb, var(--rank-color, #8a8a8a) 30%, transparent);
-    box-shadow: 0 0 8px color-mix(in srgb, var(--rank-color, #8a8a8a) 25%, transparent),
-                0 0 20px color-mix(in srgb, var(--rank-color, #8a8a8a) 10%, transparent);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--rank-color, #8a8a8a) 20%, transparent);
     transition: color var(--duration-medium) var(--motion-standard),
                 background var(--duration-medium) var(--motion-standard),
                 border-color var(--duration-medium) var(--motion-standard),
@@ -4712,7 +4710,7 @@ a.dropdown-item {
 
 .profile-xp-fill {
     height: 100%;
-    background: linear-gradient(90deg, #00ff64 0%, #00ffd5 40%, #00d4ff 65%, #ff00ff 100%);
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-secondary) 100%);
     box-shadow: 0 0 12px rgba(0, 255, 100, 0.5), 0 0 4px rgba(0, 255, 100, 0.8);
     transition: width var(--duration-xl) var(--motion-emphasized);
     position: relative;
@@ -4731,7 +4729,6 @@ a.dropdown-item {
 }
 
 :root[data-theme="light"] .profile-xp-fill {
-    background: linear-gradient(90deg, #00a842 0%, #00b89c 40%, #0099cc 65%, #cc00cc 100%);
     box-shadow: 0 0 8px rgba(0, 168, 64, 0.4);
 }
 
@@ -4824,54 +4821,46 @@ a.dropdown-item {
     align-items: center;
     gap: var(--space-sm);
     padding: 0.6rem 2rem;
-    background: rgba(255, 60, 60, 0.08);
-    border: 2px solid rgba(255, 100, 100, 0.2);
-    color: var(--error-hover);
+    background: transparent;
+    border: 1px solid var(--outline);
+    color: var(--text-secondary);
     font-family: var(--font-body);
     font-size: 0.8rem;
     font-weight: 700;
     letter-spacing: 2px;
     cursor: pointer;
-    box-shadow: 0 0 12px rgba(255, 60, 60, 0.05);
     transition: background var(--duration-short) var(--motion-standard),
                 border-color var(--duration-short) var(--motion-standard),
-                box-shadow var(--duration-short) var(--motion-standard);
+                color var(--duration-short) var(--motion-standard);
 }
 
 .profile-logout-btn:hover {
-    background: rgba(255, 60, 60, 0.15);
-    border-color: var(--error-hover);
-    box-shadow: 0 0 20px rgba(255, 60, 60, 0.15);
-}
-
-:root[data-theme="light"] .profile-logout-btn {
-    background: rgba(200, 30, 30, 0.06);
-    border-color: rgba(200, 50, 50, 0.25);
-    color: #c41e1e;
+    background: var(--error-container);
+    border-color: var(--error);
+    color: var(--error-hover);
 }
 
 :root[data-theme="light"] .profile-logout-btn:hover {
-    background: rgba(200, 30, 30, 0.12);
     border-color: #c41e1e;
+    color: #c41e1e;
 }
 
 /* ── Achievements card ── */
 .profile-achievements-card {
     position: relative;
     background: rgba(10, 10, 15, 0.92);
-    border: 3px solid rgba(var(--gold-rgb), 0.2);
+    border: 1px solid var(--outline);
     padding: 0;
     overflow: hidden;
-    box-shadow: 0 0 20px rgba(var(--gold-rgb), 0.06),
-                0 0 50px rgba(var(--gold-rgb), 0.02),
-                inset 0 0 25px rgba(var(--gold-rgb), 0.02);
+    transition: border-color var(--duration-short) var(--motion-standard);
+}
+
+.profile-achievements-card:hover {
+    border-color: var(--outline-accent);
 }
 
 :root[data-theme="light"] .profile-achievements-card {
     background: rgba(255, 255, 255, 0.88);
-    border-width: 2px;
-    border-color: rgba(184, 150, 12, 0.25);
-    box-shadow: 0 2px 18px rgba(184, 150, 12, 0.06);
 }
 
 /* Achievements dropdown button */
@@ -4879,140 +4868,32 @@ a.dropdown-item {
     width: 100%;
     display: flex;
     align-items: center;
-    gap: var(--space-sm);
-    padding: var(--space-lg) var(--space-lg);
-    background: rgba(var(--gold-rgb), 0.04);
+    gap: var(--space-md);
+    padding: var(--space-md) var(--space-xl);
+    background: transparent;
     border: none;
     cursor: pointer;
-    font-family: var(--font-display);
-    font-size: 1rem;
-    font-weight: 700;
-    letter-spacing: 3px;
-    color: var(--gold);
     position: relative;
     overflow: hidden;
-    animation: btn-glitch-strike 5s infinite;
-}
-
-/* Lightning flash overlay */
-.achievements-dropdown-btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent 0%, rgba(var(--gold-rgb), 0.3) 45%, rgba(255, 255, 255, 0.2) 50%, rgba(var(--gold-rgb), 0.3) 55%, transparent 100%);
-    opacity: 0;
-    animation: lightning-sweep 5s infinite;
-    pointer-events: none;
-}
-
-/* Horizontal screen-tear line */
-.achievements-dropdown-btn::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: rgba(255, 225, 50, 0.9);
-    box-shadow: 0 0 8px rgba(var(--gold-rgb), 0.8), 0 0 20px rgba(var(--gold-rgb), 0.4);
-    opacity: 0;
-    animation: scanline-tear 5s infinite;
-    pointer-events: none;
-}
-
-/* The whole button glitches — shifts, flickers, border flash */
-@keyframes btn-glitch-strike {
-    0%, 100% {
-        transform: none;
-        box-shadow: inset 0 0 0 1px rgba(var(--gold-rgb), 0.08);
-        background: rgba(var(--gold-rgb), 0.04);
-    }
-    /* Calm phase */
-    80% {
-        transform: none;
-        box-shadow: inset 0 0 0 1px rgba(var(--gold-rgb), 0.08);
-        background: rgba(var(--gold-rgb), 0.04);
-    }
-    /* STRIKE — hard jolt left */
-    81% {
-        transform: translateX(-3px) skewX(-1deg);
-        box-shadow: inset 0 0 0 1px rgba(var(--gold-rgb), 0.8),
-                    0 0 15px rgba(var(--gold-rgb), 0.4),
-                    3px 0 0 rgba(255, 255, 200, 0.3);
-        background: rgba(var(--gold-rgb), 0.12);
-    }
-    /* Snap right */
-    82% {
-        transform: translateX(2px) skewX(0.5deg);
-        box-shadow: inset 0 0 0 1px rgba(var(--gold-rgb), 0.6),
-                    0 0 25px rgba(var(--gold-rgb), 0.3),
-                    -2px 0 0 rgba(255, 200, 0, 0.4);
-        background: rgba(var(--gold-rgb), 0.15);
-    }
-    /* Flash white-hot */
-    83% {
-        transform: translateX(-1px);
-        box-shadow: inset 0 0 0 1px rgba(255, 235, 100, 1),
-                    0 0 40px rgba(var(--gold-rgb), 0.5),
-                    0 0 80px rgba(var(--gold-rgb), 0.2);
-        background: rgba(255, 225, 50, 0.2);
-    }
-    /* Aftershock */
-    84% {
-        transform: translateX(1px) skewX(-0.3deg);
-        box-shadow: inset 0 0 0 1px rgba(var(--gold-rgb), 0.3),
-                    0 0 10px rgba(var(--gold-rgb), 0.15);
-        background: rgba(var(--gold-rgb), 0.08);
-    }
-    /* Settle */
-    86% {
-        transform: none;
-        box-shadow: inset 0 0 0 1px rgba(var(--gold-rgb), 0.1);
-        background: rgba(var(--gold-rgb), 0.04);
-    }
-}
-
-/* Lightning bolt sweeps across button */
-@keyframes lightning-sweep {
-    0%, 80%, 86%, 100% { opacity: 0; transform: translateX(-100%); }
-    81% { opacity: 1; transform: translateX(-60%); }
-    83% { opacity: 1; transform: translateX(120%); }
-    84% { opacity: 0; transform: translateX(120%); }
-}
-
-/* Horizontal tear line races across */
-@keyframes scanline-tear {
-    0%, 80%, 85%, 100% { opacity: 0; top: 50%; }
-    81% { opacity: 1; top: 30%; }
-    82% { opacity: 0.8; top: 70%; }
-    83% { opacity: 1; top: 20%; }
-    84% { opacity: 0; top: 60%; }
+    font: var(--text-label-lg);
+    color: var(--text-primary);
+    letter-spacing: 0.15em;
+    transition: background var(--duration-short) var(--motion-standard);
 }
 
 .achievements-dropdown-btn:hover {
-    background: rgba(var(--gold-rgb), 0.1);
-    box-shadow: inset 0 0 0 1px rgba(var(--gold-rgb), 0.25),
-                0 0 12px rgba(var(--gold-rgb), 0.1);
+    background: var(--surface-1);
 }
 
 .achievements-dropdown-btn svg:first-child {
     width: 18px;
     height: 18px;
-    color: var(--gold);
-    filter: drop-shadow(0 0 4px rgba(var(--gold-rgb), 0.5));
+    color: var(--text-muted);
+    transition: color var(--duration-short) var(--motion-standard);
 }
 
-:root[data-theme="light"] .achievements-dropdown-btn {
-    background: rgba(184, 150, 12, 0.06);
-    color: #b8960c;
-}
-
-:root[data-theme="light"] .achievements-dropdown-btn:hover {
-    background: rgba(184, 150, 12, 0.1);
-}
-
-:root[data-theme="light"] .achievements-dropdown-btn svg:first-child {
-    color: #b8960c;
-    filter: drop-shadow(0 0 3px rgba(184, 150, 12, 0.4));
+.achievements-dropdown-btn:hover svg:first-child {
+    color: var(--accent);
 }
 
 /* Button text — no individual glitch, rides with the whole button */
@@ -5023,42 +4904,21 @@ a.dropdown-item {
     font-weight: 700;
 }
 
-/* IMPORTANT tag */
+/* Section tag */
 .achievements-btn-tag {
-    font-family: var(--font-display);
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 2px;
-    padding: 4px 12px;
-    background: rgba(var(--gold-rgb), 0.12);
-    border: 1px solid rgba(var(--gold-rgb), 0.35);
-    color: var(--gold);
-    box-shadow: 0 0 8px rgba(var(--gold-rgb), 0.2),
-                0 0 20px rgba(var(--gold-rgb), 0.08);
-    animation: tag-pulse 2s ease-in-out infinite;
-}
-
-:root[data-theme="light"] .achievements-btn-tag {
-    background: rgba(184, 150, 12, 0.1);
-    border-color: rgba(184, 150, 12, 0.3);
-    color: #b8960c;
-    box-shadow: 0 0 6px rgba(184, 150, 12, 0.15),
-                0 0 16px rgba(184, 150, 12, 0.06);
-}
-
-@keyframes tag-pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.6; }
+    font: var(--text-label-sm);
+    padding: 2px 8px;
+    background: transparent;
+    border: 1px solid var(--outline);
+    color: var(--text-muted);
+    letter-spacing: 0.12em;
 }
 
 /* Chevron rotation */
 .achievements-chevron {
-    color: var(--gold);
+    color: var(--text-muted);
     transition: transform var(--duration-medium) var(--motion-standard);
-}
-
-:root[data-theme="light"] .achievements-chevron {
-    color: #b8960c;
+    flex-shrink: 0;
 }
 
 .achievements-dropdown-btn[aria-expanded="true"] .achievements-chevron {
@@ -5086,54 +4946,34 @@ a.dropdown-item {
     display: none; /* Header replaced by dropdown button */
 }
 
-/* ── Orders dropdown button (blue themed) ── */
+/* ── Orders dropdown button ── */
 .orders-dropdown-btn {
     width: 100%;
     display: flex;
     align-items: center;
     gap: var(--space-md);
     padding: var(--space-md) var(--space-xl);
-    background: rgba(74, 158, 255, 0.06);
+    background: transparent;
     border: none;
-    border-bottom: 1px solid rgba(74, 158, 255, 0.1);
     cursor: pointer;
     position: relative;
     overflow: hidden;
     font: var(--text-label-lg);
-    color: #4a9eff;
+    color: var(--text-primary);
     letter-spacing: 0.15em;
     transition: background var(--duration-short) var(--motion-standard);
 }
-.orders-dropdown-btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(74, 158, 255, 0.08), transparent);
-    opacity: 0;
-    transition: opacity var(--duration-short);
-}
-.orders-dropdown-btn:hover::before { opacity: 1; }
 .orders-dropdown-btn:hover {
-    background: rgba(74, 158, 255, 0.1);
-    box-shadow: inset 0 0 0 1px rgba(74, 158, 255, 0.25),
-                0 0 20px rgba(74, 158, 255, 0.08);
+    background: var(--surface-1);
 }
 .orders-dropdown-btn svg:first-child {
     width: 18px;
     height: 18px;
-    color: #4a9eff;
-    filter: drop-shadow(0 0 4px rgba(74, 158, 255, 0.5));
+    color: var(--text-muted);
+    transition: color var(--duration-short) var(--motion-standard);
 }
-:root[data-theme="light"] .orders-dropdown-btn {
-    background: rgba(37, 99, 200, 0.06);
-    color: #2563c8;
-}
-:root[data-theme="light"] .orders-dropdown-btn:hover {
-    background: rgba(37, 99, 200, 0.1);
-}
-:root[data-theme="light"] .orders-dropdown-btn svg:first-child {
-    color: #2563c8;
-    filter: drop-shadow(0 0 3px rgba(37, 99, 200, 0.4));
+.orders-dropdown-btn:hover svg:first-child {
+    color: var(--accent);
 }
 .orders-btn-text {
     flex: 1;
@@ -5143,22 +4983,16 @@ a.dropdown-item {
 .orders-btn-tag {
     font: var(--text-label-sm);
     padding: 2px 8px;
-    background: rgba(74, 158, 255, 0.1);
-    border: 1px solid rgba(74, 158, 255, 0.2);
-    color: #4a9eff;
+    background: transparent;
+    border: 1px solid var(--outline);
+    color: var(--text-muted);
     letter-spacing: 0.12em;
 }
-:root[data-theme="light"] .orders-btn-tag {
-    background: rgba(37, 99, 200, 0.08);
-    border-color: rgba(37, 99, 200, 0.2);
-    color: #2563c8;
-}
 .orders-chevron {
-    color: #4a9eff;
+    color: var(--text-muted);
     transition: transform var(--duration-medium) var(--motion-standard);
     flex-shrink: 0;
 }
-:root[data-theme="light"] .orders-chevron { color: #2563c8; }
 .orders-dropdown-btn[aria-expanded="true"] .orders-chevron {
     transform: rotate(180deg);
 }
@@ -5185,37 +5019,28 @@ a.dropdown-item {
     align-items: center;
     gap: var(--space-md);
     padding: var(--space-md) var(--space-xl);
-    background: rgba(255, 68, 204, 0.04);
-    border: 2px solid rgba(255, 68, 204, 0.15);
+    background: rgba(10, 10, 15, 0.92);
+    border: 1px solid var(--outline);
     text-decoration: none;
     font: var(--text-label-lg);
-    color: #ff44cc;
+    color: var(--text-primary);
     letter-spacing: 0.15em;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 0 15px rgba(255, 68, 204, 0.05),
-                inset 0 0 20px rgba(255, 68, 204, 0.02);
     transition: background var(--duration-short) var(--motion-standard),
-                border-color var(--duration-short) var(--motion-standard),
-                box-shadow var(--duration-short) var(--motion-standard);
+                border-color var(--duration-short) var(--motion-standard);
 }
-.profile-leaderboard-link::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(255, 68, 204, 0.06), transparent);
-    opacity: 0;
-    transition: opacity var(--duration-short);
-}
-.profile-leaderboard-link:hover::before { opacity: 1; }
 .profile-leaderboard-link:hover {
-    background: rgba(255, 68, 204, 0.08);
-    border-color: rgba(255, 68, 204, 0.25);
-    box-shadow: 0 0 20px rgba(255, 68, 204, 0.08);
+    background: var(--surface-1);
+    border-color: var(--outline-accent);
 }
 .profile-leaderboard-link svg:first-child {
-    color: #ff44cc;
-    filter: drop-shadow(0 0 4px rgba(255, 68, 204, 0.5));
+    color: var(--gold);
+    opacity: 0.7;
+    transition: opacity var(--duration-short) var(--motion-standard);
+}
+.profile-leaderboard-link:hover svg:first-child {
+    opacity: 1;
 }
 .profile-leaderboard-text {
     flex: 1;
@@ -5224,13 +5049,13 @@ a.dropdown-item {
 .profile-leaderboard-tag {
     font: var(--text-label-sm);
     padding: 2px 8px;
-    background: rgba(255, 68, 204, 0.1);
-    border: 1px solid rgba(255, 68, 204, 0.2);
-    color: #ff44cc;
+    background: transparent;
+    border: 1px solid var(--outline);
+    color: var(--text-muted);
     letter-spacing: 0.12em;
 }
 .profile-leaderboard-arrow {
-    color: #ff44cc;
+    color: var(--text-muted);
     flex-shrink: 0;
     transition: transform var(--duration-short) var(--motion-standard);
 }
@@ -5238,21 +5063,9 @@ a.dropdown-item {
     transform: translateX(3px);
 }
 :root[data-theme="light"] .profile-leaderboard-link {
-    background: rgba(204, 0, 153, 0.04);
-    border-color: rgba(204, 0, 153, 0.12);
-    color: #cc0099;
+    background: rgba(255, 255, 255, 0.88);
 }
-:root[data-theme="light"] .profile-leaderboard-link:hover {
-    background: rgba(204, 0, 153, 0.08);
-    border-color: rgba(204, 0, 153, 0.25);
-}
-:root[data-theme="light"] .profile-leaderboard-link svg:first-child { color: #cc0099; }
-:root[data-theme="light"] .profile-leaderboard-tag {
-    background: rgba(204, 0, 153, 0.08);
-    border-color: rgba(204, 0, 153, 0.2);
-    color: #cc0099;
-}
-:root[data-theme="light"] .profile-leaderboard-arrow { color: #cc0099; }
+:root[data-theme="light"] .profile-leaderboard-link svg:first-child { color: #b8960c; }
 
 .profile-section-title {
     font: var(--text-headline-md);
@@ -5414,16 +5227,17 @@ a.dropdown-item {
 .profile-wishlist-card {
     position: relative;
     background: rgba(10, 10, 15, 0.92);
-    border: 2px solid rgba(255, 40, 40, 0.18);
+    border: 1px solid var(--outline);
     overflow: hidden;
-    box-shadow: 0 0 18px rgba(255, 40, 40, 0.06),
-                inset 0 0 25px rgba(255, 40, 40, 0.02);
+    transition: border-color var(--duration-short) var(--motion-standard);
+}
+
+.profile-wishlist-card:hover {
+    border-color: var(--outline-accent);
 }
 
 :root[data-theme="light"] .profile-wishlist-card {
     background: rgba(255, 255, 255, 0.88);
-    border-color: rgba(200, 40, 40, 0.18);
-    box-shadow: 0 2px 15px rgba(200, 40, 40, 0.06);
 }
 
 .wishlist-dropdown-btn {
@@ -5432,46 +5246,27 @@ a.dropdown-item {
     align-items: center;
     gap: var(--space-md);
     padding: var(--space-md) var(--space-xl);
-    background: rgba(255, 40, 40, 0.04);
+    background: transparent;
     border: none;
     cursor: pointer;
     position: relative;
     overflow: hidden;
     font: var(--text-label-lg);
-    color: #ff4444;
+    color: var(--text-primary);
     letter-spacing: 0.15em;
     transition: background var(--duration-short) var(--motion-standard);
 }
-.wishlist-dropdown-btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(255, 40, 40, 0.08), transparent);
-    opacity: 0;
-    transition: opacity var(--duration-short);
-}
-.wishlist-dropdown-btn:hover::before { opacity: 1; }
 .wishlist-dropdown-btn:hover {
-    background: rgba(255, 40, 40, 0.1);
-    box-shadow: inset 0 0 0 1px rgba(255, 40, 40, 0.25),
-                0 0 20px rgba(255, 40, 40, 0.08);
+    background: var(--surface-1);
 }
 .wishlist-dropdown-btn svg:first-child {
     width: 18px;
     height: 18px;
-    color: #ff4444;
-    filter: drop-shadow(0 0 4px rgba(255, 40, 40, 0.5));
+    color: var(--text-muted);
+    transition: color var(--duration-short) var(--motion-standard);
 }
-:root[data-theme="light"] .wishlist-dropdown-btn {
-    background: rgba(200, 40, 40, 0.06);
-    color: #cc2020;
-}
-:root[data-theme="light"] .wishlist-dropdown-btn:hover {
-    background: rgba(200, 40, 40, 0.1);
-}
-:root[data-theme="light"] .wishlist-dropdown-btn svg:first-child {
-    color: #cc2020;
-    filter: drop-shadow(0 0 3px rgba(200, 40, 40, 0.4));
+.wishlist-dropdown-btn:hover svg:first-child {
+    color: var(--accent);
 }
 .wishlist-btn-text {
     flex: 1;
@@ -5481,22 +5276,16 @@ a.dropdown-item {
 .wishlist-btn-tag {
     font: var(--text-label-sm);
     padding: 2px 8px;
-    background: rgba(255, 40, 40, 0.1);
-    border: 1px solid rgba(255, 40, 40, 0.2);
-    color: #ff4444;
+    background: transparent;
+    border: 1px solid var(--outline);
+    color: var(--text-muted);
     letter-spacing: 0.12em;
 }
-:root[data-theme="light"] .wishlist-btn-tag {
-    background: rgba(200, 40, 40, 0.08);
-    border-color: rgba(200, 40, 40, 0.2);
-    color: #cc2020;
-}
 .wishlist-chevron {
-    color: #ff4444;
+    color: var(--text-muted);
     transition: transform var(--duration-medium) var(--motion-standard);
     flex-shrink: 0;
 }
-:root[data-theme="light"] .wishlist-chevron { color: #cc2020; }
 .wishlist-dropdown-btn[aria-expanded="true"] .wishlist-chevron {
     transform: rotate(180deg);
 }
@@ -5522,7 +5311,7 @@ a.dropdown-item {
     align-items: center;
     gap: var(--space-md);
     padding: var(--space-md) 0;
-    border-bottom: 1px solid rgba(255, 40, 40, 0.08);
+    border-bottom: 1px solid var(--outline-variant);
 }
 .profile-wishlist-item:last-child { border-bottom: none; }
 
@@ -5573,18 +5362,17 @@ a.dropdown-item {
     font-size: 0.65rem;
     letter-spacing: 0.1em;
     padding: 4px 10px;
-    border: 1px solid rgba(255, 40, 40, 0.2);
-    color: #ff4444;
+    border: 1px solid var(--outline-accent);
+    color: var(--accent);
     text-decoration: none;
     transition: all var(--duration-short) var(--motion-standard);
 }
 .profile-wishlist-view-btn:hover {
-    background: rgba(255, 40, 40, 0.1);
-    border-color: rgba(255, 40, 40, 0.4);
+    background: var(--surface-1);
+    border-color: var(--outline-accent-strong);
 }
 :root[data-theme="light"] .profile-wishlist-view-btn {
-    color: #cc2020;
-    border-color: rgba(200, 40, 40, 0.2);
+    color: var(--accent-hover);
 }
 
 .profile-wishlist-remove-btn {
@@ -5613,12 +5401,11 @@ a.dropdown-item {
 .profile-danger-zone {
     margin-top: var(--space-xl);
     padding: var(--space-lg) var(--space-xl);
-    border: 2px solid rgba(255, 40, 40, 0.25);
+    border: 1px solid rgba(255, 68, 68, 0.25);
     border-radius: var(--shape-md);
-    background: rgba(255, 40, 40, 0.04);
+    background: transparent;
 }
 :root[data-theme="light"] .profile-danger-zone {
-    background: rgba(255, 40, 40, 0.06);
     border-color: rgba(200, 30, 30, 0.2);
 }
 .danger-zone-title {
@@ -5768,16 +5555,17 @@ a.dropdown-item {
 .profile-orders-card {
     position: relative;
     background: rgba(10, 10, 15, 0.92);
-    border: 2px solid rgba(74, 158, 255, 0.18);
+    border: 1px solid var(--outline);
     overflow: hidden;
-    box-shadow: 0 0 18px rgba(74, 158, 255, 0.06),
-                inset 0 0 25px rgba(74, 158, 255, 0.02);
+    transition: border-color var(--duration-short) var(--motion-standard);
+}
+
+.profile-orders-card:hover {
+    border-color: var(--outline-accent);
 }
 
 :root[data-theme="light"] .profile-orders-card {
     background: rgba(255, 255, 255, 0.88);
-    border-color: rgba(37, 99, 200, 0.18);
-    box-shadow: 0 2px 15px rgba(37, 99, 200, 0.06);
 }
 
 .profile-orders-header {
@@ -6039,7 +5827,7 @@ a.dropdown-item {
     color: #ffaa00; background: rgba(255, 170, 0, 0.08); border-color: rgba(255, 170, 0, 0.25);
 }
 .profile-order-status[data-status="processing"] {
-    color: #ff00ff; background: rgba(255, 0, 255, 0.06); border-color: rgba(255, 0, 255, 0.25);
+    color: var(--accent-secondary); background: rgba(0, 255, 213, 0.06); border-color: rgba(0, 255, 213, 0.25);
 }
 .profile-order-status[data-status="shipped"] {
     color: #00d4ff; background: rgba(0, 212, 255, 0.06); border-color: rgba(0, 212, 255, 0.25);
@@ -6057,7 +5845,7 @@ a.dropdown-item {
     color: #cc8800; background: rgba(204, 136, 0, 0.06); border-color: rgba(204, 136, 0, 0.2);
 }
 :root[data-theme="light"] .profile-order-status[data-status="processing"] {
-    color: #cc00cc; background: rgba(204, 0, 204, 0.05); border-color: rgba(204, 0, 204, 0.2);
+    color: #008c76; background: rgba(0, 140, 118, 0.05); border-color: rgba(0, 140, 118, 0.2);
 }
 :root[data-theme="light"] .profile-order-status[data-status="shipped"] {
     color: #0099cc; background: rgba(0, 153, 204, 0.05); border-color: rgba(0, 153, 204, 0.2);
