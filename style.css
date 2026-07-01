@@ -4845,7 +4845,9 @@ a.dropdown-item {
     color: #c41e1e;
 }
 
-/* ── Achievements card ── */
+/* ── Profile section rows (shared: wishlist / orders / achievements) ── */
+.profile-wishlist-card,
+.profile-orders-card,
 .profile-achievements-card {
     position: relative;
     background: rgba(10, 10, 15, 0.92);
@@ -4855,15 +4857,20 @@ a.dropdown-item {
     transition: border-color var(--duration-short) var(--motion-standard);
 }
 
+.profile-wishlist-card:hover,
+.profile-orders-card:hover,
 .profile-achievements-card:hover {
     border-color: var(--outline-accent);
 }
 
+:root[data-theme="light"] .profile-wishlist-card,
+:root[data-theme="light"] .profile-orders-card,
 :root[data-theme="light"] .profile-achievements-card {
     background: rgba(255, 255, 255, 0.88);
 }
 
-/* Achievements dropdown button */
+.wishlist-dropdown-btn,
+.orders-dropdown-btn,
 .achievements-dropdown-btn {
     width: 100%;
     display: flex;
@@ -4881,10 +4888,14 @@ a.dropdown-item {
     transition: background var(--duration-short) var(--motion-standard);
 }
 
+.wishlist-dropdown-btn:hover,
+.orders-dropdown-btn:hover,
 .achievements-dropdown-btn:hover {
     background: var(--surface-1);
 }
 
+.wishlist-dropdown-btn svg:first-child,
+.orders-dropdown-btn svg:first-child,
 .achievements-dropdown-btn svg:first-child {
     width: 18px;
     height: 18px;
@@ -4892,19 +4903,22 @@ a.dropdown-item {
     transition: color var(--duration-short) var(--motion-standard);
 }
 
+.wishlist-dropdown-btn:hover svg:first-child,
+.orders-dropdown-btn:hover svg:first-child,
 .achievements-dropdown-btn:hover svg:first-child {
     color: var(--accent);
 }
 
-/* Button text — no individual glitch, rides with the whole button */
+.wishlist-btn-text,
+.orders-btn-text,
 .achievements-btn-text {
-    position: relative;
     flex: 1;
     text-align: left;
-    font-weight: 700;
+    position: relative;
 }
 
-/* Section tag */
+.wishlist-btn-tag,
+.orders-btn-tag,
 .achievements-btn-tag {
     font: var(--text-label-sm);
     padding: 2px 8px;
@@ -4914,18 +4928,23 @@ a.dropdown-item {
     letter-spacing: 0.12em;
 }
 
-/* Chevron rotation */
+.wishlist-chevron,
+.orders-chevron,
 .achievements-chevron {
     color: var(--text-muted);
     transition: transform var(--duration-medium) var(--motion-standard);
     flex-shrink: 0;
 }
 
+.wishlist-dropdown-btn[aria-expanded="true"] .wishlist-chevron,
+.orders-dropdown-btn[aria-expanded="true"] .orders-chevron,
 .achievements-dropdown-btn[aria-expanded="true"] .achievements-chevron {
     transform: rotate(180deg);
 }
 
-/* Collapsed content */
+/* Collapsed / expanded dropdown content */
+.wishlist-collapsed,
+.orders-collapsed,
 .achievements-collapsed {
     max-height: 0;
     overflow: hidden;
@@ -4934,84 +4953,26 @@ a.dropdown-item {
     padding: 0 var(--space-xl);
 }
 
+.wishlist-expanded,
+.orders-expanded,
 .achievements-expanded {
-    max-height: 600px;
-    overflow: hidden;
-    padding: var(--space-lg) var(--space-xl);
-    transition: max-height var(--duration-long) var(--motion-standard),
-                padding var(--duration-medium) var(--motion-standard);
-}
-
-.profile-achievements-header {
-    display: none; /* Header replaced by dropdown button */
-}
-
-/* ── Orders dropdown button ── */
-.orders-dropdown-btn {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: var(--space-md);
-    padding: var(--space-md) var(--space-xl);
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    font: var(--text-label-lg);
-    color: var(--text-primary);
-    letter-spacing: 0.15em;
-    transition: background var(--duration-short) var(--motion-standard);
-}
-.orders-dropdown-btn:hover {
-    background: var(--surface-1);
-}
-.orders-dropdown-btn svg:first-child {
-    width: 18px;
-    height: 18px;
-    color: var(--text-muted);
-    transition: color var(--duration-short) var(--motion-standard);
-}
-.orders-dropdown-btn:hover svg:first-child {
-    color: var(--accent);
-}
-.orders-btn-text {
-    flex: 1;
-    text-align: left;
-    position: relative;
-}
-.orders-btn-tag {
-    font: var(--text-label-sm);
-    padding: 2px 8px;
-    background: transparent;
-    border: 1px solid var(--outline);
-    color: var(--text-muted);
-    letter-spacing: 0.12em;
-}
-.orders-chevron {
-    color: var(--text-muted);
-    transition: transform var(--duration-medium) var(--motion-standard);
-    flex-shrink: 0;
-}
-.orders-dropdown-btn[aria-expanded="true"] .orders-chevron {
-    transform: rotate(180deg);
-}
-
-/* Collapsed / expanded states */
-.orders-collapsed {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height var(--duration-medium) var(--motion-standard),
-                padding var(--duration-medium) var(--motion-standard);
-    padding: 0 var(--space-xl);
-}
-.orders-expanded {
     max-height: 2000px;
     overflow: hidden;
     padding: var(--space-lg) var(--space-xl);
     transition: max-height var(--duration-long) var(--motion-standard),
                 padding var(--duration-medium) var(--motion-standard);
 }
+
+/* Achievements grid is short — tighter cap keeps the collapse animation snappy */
+.achievements-expanded {
+    max-height: 600px;
+}
+
+.profile-achievements-header {
+    display: none; /* Header replaced by dropdown button */
+}
+
+/* Orders dropdown button — styled by the shared "Profile section rows" block above */
 
 /* ── Leaderboard link on profile page ── */
 .profile-leaderboard-link {
@@ -5223,87 +5184,7 @@ a.dropdown-item {
     background: var(--accent-hover);
 }
 
-/* ── Wishlist card (dropdown) ── */
-.profile-wishlist-card {
-    position: relative;
-    background: rgba(10, 10, 15, 0.92);
-    border: 1px solid var(--outline);
-    overflow: hidden;
-    transition: border-color var(--duration-short) var(--motion-standard);
-}
-
-.profile-wishlist-card:hover {
-    border-color: var(--outline-accent);
-}
-
-:root[data-theme="light"] .profile-wishlist-card {
-    background: rgba(255, 255, 255, 0.88);
-}
-
-.wishlist-dropdown-btn {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: var(--space-md);
-    padding: var(--space-md) var(--space-xl);
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    font: var(--text-label-lg);
-    color: var(--text-primary);
-    letter-spacing: 0.15em;
-    transition: background var(--duration-short) var(--motion-standard);
-}
-.wishlist-dropdown-btn:hover {
-    background: var(--surface-1);
-}
-.wishlist-dropdown-btn svg:first-child {
-    width: 18px;
-    height: 18px;
-    color: var(--text-muted);
-    transition: color var(--duration-short) var(--motion-standard);
-}
-.wishlist-dropdown-btn:hover svg:first-child {
-    color: var(--accent);
-}
-.wishlist-btn-text {
-    flex: 1;
-    text-align: left;
-    position: relative;
-}
-.wishlist-btn-tag {
-    font: var(--text-label-sm);
-    padding: 2px 8px;
-    background: transparent;
-    border: 1px solid var(--outline);
-    color: var(--text-muted);
-    letter-spacing: 0.12em;
-}
-.wishlist-chevron {
-    color: var(--text-muted);
-    transition: transform var(--duration-medium) var(--motion-standard);
-    flex-shrink: 0;
-}
-.wishlist-dropdown-btn[aria-expanded="true"] .wishlist-chevron {
-    transform: rotate(180deg);
-}
-
-.wishlist-collapsed {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height var(--duration-medium) var(--motion-standard),
-                padding var(--duration-medium) var(--motion-standard);
-    padding: 0 var(--space-xl);
-}
-.wishlist-expanded {
-    max-height: 2000px;
-    overflow: hidden;
-    padding: var(--space-lg) var(--space-xl);
-    transition: max-height var(--duration-long) var(--motion-standard),
-                padding var(--duration-medium) var(--motion-standard);
-}
+/* ── Wishlist card (dropdown) — styled by the shared "Profile section rows" block above ── */
 
 /* Wishlist items */
 .profile-wishlist-item {
@@ -5551,22 +5432,7 @@ a.dropdown-item {
     opacity: 0.85;
 }
 
-/* ── Order History card (dropdown) ── */
-.profile-orders-card {
-    position: relative;
-    background: rgba(10, 10, 15, 0.92);
-    border: 1px solid var(--outline);
-    overflow: hidden;
-    transition: border-color var(--duration-short) var(--motion-standard);
-}
-
-.profile-orders-card:hover {
-    border-color: var(--outline-accent);
-}
-
-:root[data-theme="light"] .profile-orders-card {
-    background: rgba(255, 255, 255, 0.88);
-}
+/* ── Order History card (dropdown) — styled by the shared "Profile section rows" block above ── */
 
 .profile-orders-header {
     display: none; /* Replaced by dropdown button */
